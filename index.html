@@ -201,7 +201,7 @@
                 <input id="preis" type="number" inputmode="decimal" min="0" step="0.01" placeholder="z. B. 1.65" aria-label="Spritpreis pro Liter in Euro" />
                 <span id="price-info" class="hint"></span>
               </div>
-              <button id="btn-reset-price" class="btn secondary" style="height:auto;padding:10px 12px;margin-top:28px" title="Zurück zum Standardpreis">Zurücksetzen</button>
+              <button id="btn-reset-price" class="btn secondary" style="height:auto;padding:8px 12px;margin-top:28px;font-size:0.9rem" title="Zum Standardpreis zurück">Standard wiederherstellen</button>
             </div>
 
             <div class="price-table" aria-hidden="false">
@@ -445,92 +445,63 @@
       const priceInfoEl = document.getElementById('price-info');
       const placeFromEl = document.getElementById('place-from');
 
-      // Country-based default fuel prices (EUR/USD per liter)
-      const countryFuelPrices = {
-        de: { super95:1.80, e10:1.77, diesel:1.65, name:'Deutschland' },
-        at: { super95:1.75, e10:1.72, diesel:1.60, name:'Österreich' },
-        ch: { super95:1.95, e10:1.92, diesel:1.85, name:'Schweiz' },
-        fr: { super95:1.85, e10:1.82, diesel:1.70, name:'Frankreich' },
-        it: { super95:1.90, e10:1.87, diesel:1.75, name:'Italien' },
-        es: { super95:1.75, e10:1.72, diesel:1.60, name:'Spanien' },
-        pl: { super95:1.55, e10:1.52, diesel:1.45, name:'Polen' },
-        nl: { super95:1.88, e10:1.85, diesel:1.70, name:'Niederlande' },
-        be: { super95:1.82, e10:1.79, diesel:1.67, name:'Belgien' },
-        cz: { super95:1.68, e10:1.65, diesel:1.55, name:'Tschechien' },
-        sk: { super95:1.62, e10:1.59, diesel:1.52, name:'Slowakei' },
-        hu: { super95:1.70, e10:1.67, diesel:1.58, name:'Ungarn' },
-        si: { super95:1.68, e10:1.65, diesel:1.57, name:'Slowenien' },
-        hr: { super95:1.65, e10:1.62, diesel:1.54, name:'Kroatien' },
-        rs: { super95:1.45, e10:1.42, diesel:1.38, name:'Serbien' },
-        ba: { super95:1.42, e10:1.39, diesel:1.35, name:'Bosnien' },
-        me: { super95:1.48, e10:1.45, diesel:1.40, name:'Montenegro' },
-        mk: { super95:1.40, e10:1.37, diesel:1.33, name:'Nordmazedonien' },
-        al: { super95:1.52, e10:1.49, diesel:1.43, name:'Albanien' },
-        bg: { super95:1.38, e10:1.35, diesel:1.30, name:'Bulgarien' },
-        ro: { super95:1.50, e10:1.47, diesel:1.42, name:'Rumänien' },
-        gr: { super95:1.88, e10:1.85, diesel:1.72, name:'Griechenland' },
-        tr: { super95:1.20, e10:1.17, diesel:1.15, name:'Türkei' },
-        ru: { super95:0.65, e10:0.63, diesel:0.68, name:'Russland' },
-        by: { super95:0.85, e10:0.82, diesel:0.88, name:'Belarus' },
-        ua: { super95:1.15, e10:1.12, diesel:1.18, name:'Ukraine' },
-        lt: { super95:1.58, e10:1.55, diesel:1.48, name:'Litauen' },
-        lv: { super95:1.62, e10:1.59, diesel:1.52, name:'Lettland' },
-        ee: { super95:1.68, e10:1.65, diesel:1.57, name:'Estland' },
-        fi: { super95:1.92, e10:1.89, diesel:1.78, name:'Finnland' },
-        se: { super95:1.95, e10:1.92, diesel:1.85, name:'Schweden' },
-        no: { super95:2.10, e10:2.07, diesel:1.95, name:'Norwegen' },
-        dk: { super95:2.05, e10:2.02, diesel:1.88, name:'Dänemark' },
-        pt: { super95:1.82, e10:1.79, diesel:1.68, name:'Portugal' },
-        us: { super95:0.95, e10:0.92, diesel:1.00, name:'USA' },
-        uk: { super95:1.75, e10:1.72, diesel:1.65, name:'Großbritannien' },
-        gb: { super95:1.75, e10:1.72, diesel:1.65, name:'Großbritannien' },
-        au: { super95:1.95, e10:1.92, diesel:1.85, name:'Australien' },
+      // Country default prices (EUR per litre) – focused on DE/AT/CH + nearby EU
+      const countryDefaultPricesEUR = {
+        DE: { super95:1.80, e10:1.77, diesel:1.65, name:'Deutschland' },
+        AT: { super95:1.75, e10:1.72, diesel:1.60, name:'Österreich' },
+        CH: { super95:1.95, e10:1.92, diesel:1.85, name:'Schweiz' },
+        FR: { super95:1.85, e10:1.82, diesel:1.70, name:'Frankreich' },
+        IT: { super95:1.90, e10:1.87, diesel:1.75, name:'Italien' },
+        ES: { super95:1.75, e10:1.72, diesel:1.60, name:'Spanien' },
+        NL: { super95:1.88, e10:1.85, diesel:1.70, name:'Niederlande' },
+        BE: { super95:1.82, e10:1.79, diesel:1.67, name:'Belgien' },
+        PL: { super95:1.55, e10:1.52, diesel:1.45, name:'Polen' },
+        CZ: { super95:1.68, e10:1.65, diesel:1.55, name:'Tschechien' },
       };
 
-      // Country name mappings
-      const countryNameMap = {
-        'germany': 'de', 'deutschland': 'de', 'de': 'de',
-        'austria': 'at', 'österreich': 'at', 'oesterreich': 'at', 'at': 'at',
-        'switzerland': 'ch', 'schweiz': 'ch', 'suisse': 'ch', 'svizzera': 'ch', 'ch': 'ch',
-        'france': 'fr', 'frankreich': 'fr', 'fr': 'fr',
-        'italy': 'it', 'italien': 'it', 'italia': 'it', 'it': 'it',
-        'spain': 'es', 'spanien': 'es', 'españa': 'es', 'es': 'es',
-        'poland': 'pl', 'polen': 'pl', 'polska': 'pl', 'pl': 'pl',
-        'netherlands': 'nl', 'niederlande': 'nl', 'holland': 'nl', 'nl': 'nl',
-        'belgium': 'be', 'belgien': 'be', 'belgique': 'be', 'belgië': 'be', 'be': 'be',
-        'czech': 'cz', 'czechia': 'cz', 'tschechien': 'cz', 'česko': 'cz', 'cz': 'cz',
-        'slovakia': 'sk', 'slowakei': 'sk', 'slovensko': 'sk', 'sk': 'sk',
-        'hungary': 'hu', 'ungarn': 'hu', 'magyarország': 'hu', 'hu': 'hu',
-        'slovenia': 'si', 'slowenien': 'si', 'slovenija': 'si', 'si': 'si',
-        'croatia': 'hr', 'kroatien': 'hr', 'hrvatska': 'hr', 'hr': 'hr',
-        'serbia': 'rs', 'serbien': 'rs', 'srbija': 'rs', 'rs': 'rs',
-        'bosnia': 'ba', 'bosnien': 'ba', 'ba': 'ba',
-        'montenegro': 'me', 'me': 'me',
-        'macedonia': 'mk', 'nordmazedonien': 'mk', 'mk': 'mk',
-        'albania': 'al', 'albanien': 'al', 'shqipëri': 'al', 'al': 'al',
-        'bulgaria': 'bg', 'bulgarien': 'bg', 'българия': 'bg', 'bg': 'bg',
-        'romania': 'ro', 'rumänien': 'ro', 'românia': 'ro', 'ro': 'ro',
-        'greece': 'gr', 'griechenland': 'gr', 'ελλάδα': 'gr', 'gr': 'gr',
-        'turkey': 'tr', 'türkei': 'tr', 'türkiye': 'tr', 'tr': 'tr',
-        'russia': 'ru', 'russland': 'ru', 'россия': 'ru', 'ru': 'ru',
-        'belarus': 'by', 'weißrussland': 'by', 'by': 'by',
-        'ukraine': 'ua', 'ua': 'ua', 'україна': 'ua',
-        'lithuania': 'lt', 'litauen': 'lt', 'lietuva': 'lt', 'lt': 'lt',
-        'latvia': 'lv', 'lettland': 'lv', 'latvija': 'lv', 'lv': 'lv',
-        'estonia': 'ee', 'estland': 'ee', 'eesti': 'ee', 'ee': 'ee',
-        'finland': 'fi', 'finnland': 'fi', 'suomi': 'fi', 'fi': 'fi',
-        'sweden': 'se', 'schweden': 'se', 'sverige': 'se', 'se': 'se',
-        'norway': 'no', 'norwegen': 'no', 'norge': 'no', 'no': 'no',
-        'denmark': 'dk', 'dänemark': 'dk', 'danmark': 'dk', 'dk': 'dk',
-        'portugal': 'pt', 'pt': 'pt',
-        'united states': 'us', 'usa': 'us', 'us': 'us', 'america': 'us',
-        'united kingdom': 'uk', 'uk': 'uk', 'gb': 'uk', 'england': 'uk', 'britain': 'uk', 'großbritannien': 'uk',
-        'australia': 'au', 'australien': 'au', 'au': 'au',
+      const fallbackPrices = { super95:1.80, e10:1.77, diesel:1.65 };
+
+      // Country aliases (normalized)
+      const countryAliasToCode = {
+        'deutschland':'DE','germany':'DE','de':'DE','allemagne':'DE',
+        'osterreich':'AT','austria':'AT','at':'AT','autriche':'AT',
+        'schweiz':'CH','switzerland':'CH','ch':'CH','suisse':'CH','svizzera':'CH',
+        'frankreich':'FR','france':'FR','fr':'FR',
+        'italien':'IT','italy':'IT','it':'IT','italia':'IT','italie':'IT',
+        'spanien':'ES','spain':'ES','es':'ES','espana':'ES',
+        'niederlande':'NL','netherlands':'NL','nl':'NL','holland':'NL','nederland':'NL',
+        'belgien':'BE','belgium':'BE','be':'BE','belgique':'BE','belgie':'BE',
+        'polen':'PL','poland':'PL','pl':'PL','polska':'PL',
+        'tschechien':'CZ','czech republic':'CZ','czechia':'CZ','cz':'CZ','cesko':'CZ'
       };
 
-      // Fallback prices (used when country not recognized)
-      let fuelPrices = { super95:1.85, e10:1.82, diesel:1.70 };
-      let userEditedPrice = false; // Track if user manually edited price
+      // City to country code (normalized) – major cities for DE/AT/CH/FR/IT/ES/NL/BE/PL/CZ
+      const cityToCode = {
+        // Germany
+        'berlin':'DE','hamburg':'DE','munchen':'DE','munich':'DE','koln':'DE','cologne':'DE','frankfurt':'DE','stuttgart':'DE','dusseldorf':'DE','duesseldorf':'DE','leipzig':'DE','dresden':'DE','hannover':'DE','hanover':'DE','nurnberg':'DE','nuremberg':'DE','bremen':'DE','essen':'DE','dortmund':'DE',
+        // Austria
+        'wien':'AT','vienna':'AT','graz':'AT','linz':'AT','salzburg':'AT','innsbruck':'AT','klagenfurt':'AT',
+        // Switzerland
+        'zurich':'CH','zuerich':'CH','genf':'CH','geneva':'CH','basel':'CH','bern':'CH','lausanne':'CH','luzern':'CH','lucerne':'CH',
+        // Czech Republic
+        'prag':'CZ','prague':'CZ','praha':'CZ','brno':'CZ','ostrava':'CZ','plzen':'CZ',
+        // Poland
+        'warschau':'PL','warsaw':'PL','warszawa':'PL','krakau':'PL','krakow':'PL','breslau':'PL','wroclaw':'PL','danzig':'PL','gdansk':'PL','posen':'PL','poznan':'PL','lodz':'PL','stettin':'PL','szczecin':'PL',
+        // France
+        'paris':'FR','lyon':'FR','marseille':'FR','lille':'FR','nizza':'FR','nice':'FR','toulouse':'FR','bordeaux':'FR','nantes':'FR','strasbourg':'FR','strassburg':'FR','rennes':'FR','montpellier':'FR',
+        // Italy
+        'rom':'IT','rome':'IT','roma':'IT','mailand':'IT','milan':'IT','milano':'IT','neapel':'IT','naples':'IT','napoli':'IT','turin':'IT','torino':'IT','florenz':'IT','florence':'IT','firenze':'IT','venedig':'IT','venice':'IT','venezia':'IT','bologna':'IT','palermo':'IT','genua':'IT','genoa':'IT','genova':'IT',
+        // Spain
+        'madrid':'ES','barcelona':'ES','valencia':'ES','sevilla':'ES','seville':'ES','bilbao':'ES','malaga':'ES','zaragoza':'ES','palma':'ES',
+        // Netherlands
+        'amsterdam':'NL','rotterdam':'NL','den haag':'NL','the hague':'NL','utrecht':'NL','eindhoven':'NL','groningen':'NL',
+        // Belgium
+        'brussel':'BE','brussels':'BE','bruxelles':'BE','antwerpen':'BE','antwerp':'BE','gent':'BE','ghent':'BE','charleroi':'BE','luik':'BE','liege':'BE','brugge':'BE','bruges':'BE'
+      };
+
+      // Fallback prices (EUR) used when no country match
+      let fuelPrices = { ...fallbackPrices };
+      let userEditedPrice = false;
       function renderAvgPrices(){
         avgSuperEl.textContent = fmt(fuelPrices.super95) + ' €';
         avgE10El.textContent = fmt(fuelPrices.e10) + ' €';
@@ -552,76 +523,95 @@
         priceInfoEl.classList.remove('error');
       });
 
-      // Parse country from location string
-      function parseCountryFromLocation(locationStr) {
-        if(!locationStr || !locationStr.trim()) return null;
-        const parts = locationStr.split(',').map(p => p.trim().toLowerCase());
-        if(parts.length === 0) return null;
-        
-        // Check last part first (usually country)
-        for(let i = parts.length - 1; i >= 0; i--) {
-          const part = parts[i];
-          if(countryNameMap[part]) {
-            return countryNameMap[part];
+      function normalizePlace(str){
+        return (str||'')
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g,'')
+          .toLowerCase()
+          .replace(/[^a-z0-9\s]/g,' ')
+          .replace(/\s+/g,' ')
+          .trim();
+      }
+
+      function matchAlias(normalized, table){
+        if(!normalized) return null;
+        const tokens = normalized.split(' ');
+        const maxWindow = Math.min(3, tokens.length);
+        for(let len = maxWindow; len >= 1; len--){
+          for(let i=0;i+len<=tokens.length;i++){
+            const phrase = tokens.slice(i, i+len).join(' ');
+            if(table[phrase]) return table[phrase];
           }
         }
         return null;
       }
 
       // Update fuel prices based on detected country
-      function updatePricesFromCountry(countryCode) {
-        if(!countryCode || !countryFuelPrices[countryCode]) return false;
-        
-        const prices = countryFuelPrices[countryCode];
+      function applyCountryDefaults(countryCode){
+        const code = countryCode && countryCode.toUpperCase();
+        const prices = (code && countryDefaultPricesEUR[code]) || null;
+        if(!prices) return false;
         fuelPrices = { super95: prices.super95, e10: prices.e10, diesel: prices.diesel };
         renderAvgPrices();
-        
-        if(!userEditedPrice) {
+        console.log('[price-detect] updating prices', { countryCode: code, prices, manualOverride: userEditedPrice });
+        if(!userEditedPrice){
           const currentFuel = fuelTypeEl.value;
           priceEl.value = fuelPrices[currentFuel] || '';
-          priceInfoEl.textContent = `Standardpreis für ${prices.name} gesetzt – du kannst ihn ändern.`;
+          priceInfoEl.textContent = `Erkannt: ${prices.name}. Standardpreis gesetzt (€/L) – du kannst ihn ändern.`;
           priceInfoEl.classList.remove('error');
+          console.log('[price-detect] applied price', { fuelType: currentFuel, appliedPrice: priceEl.value });
+        } else {
+          console.log('[price-detect] manual override active, not applying price input');
         }
         return true;
       }
 
-      // Listen to location input changes (blur + debounced input)
+      function detectCountryFromLocation(rawLocation){
+        const normalized = normalizePlace(rawLocation);
+        if(!normalized) return null;
+        const countryHit = matchAlias(normalized, countryAliasToCode);
+        if(countryHit) return countryHit;
+        const cityHit = matchAlias(normalized, cityToCode);
+        if(cityHit) return cityHit;
+        return null;
+      }
+
+      // Listen to location input changes
       let locationDebounceTimer = null;
-      
-      function detectAndApplyCountryPrice() {
+      function detectAndApplyCountryPrice(){
         const location = placeFromEl.value.trim();
         if(!location) return;
-        
-        const countryCode = parseCountryFromLocation(location);
-        if(countryCode) {
-          updatePricesFromCountry(countryCode);
+        const countryCode = detectCountryFromLocation(location);
+        console.log('[price-detect] trigger', { location, parsedCountry: countryCode, manualOverride: userEditedPrice });
+        if(countryCode){
+          applyCountryDefaults(countryCode);
         } else {
-          priceInfoEl.textContent = 'Land nicht erkannt – bitte Preis manuell eingeben.';
+          priceInfoEl.textContent = 'Ort/Land nicht erkannt – bitte Preis manuell eingeben.';
           priceInfoEl.classList.add('error');
+          console.log('[price-detect] country not recognised');
         }
       }
-      
+
       placeFromEl.addEventListener('blur', detectAndApplyCountryPrice);
-      
       placeFromEl.addEventListener('input', () => {
         clearTimeout(locationDebounceTimer);
         locationDebounceTimer = setTimeout(detectAndApplyCountryPrice, 400);
       });
 
-      // Reset price to default based on detected country
+      // Reset price to default
       document.getElementById('btn-reset-price').addEventListener('click', () => {
         userEditedPrice = false;
         const location = placeFromEl.value.trim();
         if(location) {
-          const countryCode = parseCountryFromLocation(location);
-          if(countryCode && updatePricesFromCountry(countryCode)) {
-            return; // Successfully updated
+          const countryCode = detectCountryFromLocation(location);
+          if(countryCode && applyCountryDefaults(countryCode)) {
+            return;
           }
         }
-        // Fallback to default German prices
         priceEl.value = fuelPrices[fuelTypeEl.value] || '';
         priceInfoEl.textContent = 'Standardpreis wiederhergestellt.';
         priceInfoEl.classList.remove('error');
+        console.log('[price-detect] reset price clicked', { manualOverride: userEditedPrice, fuelType: fuelTypeEl.value, appliedPrice: priceEl.value });
       });
 
       // Map
