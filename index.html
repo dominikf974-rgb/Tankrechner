@@ -102,14 +102,15 @@
             <label style="margin-top:12px">Verbrauch (L/100 km)</label>
             <input id="verbrauch" type="number" inputmode="decimal" min="0" step="0.1" value="7.5" placeholder="z. B. 7.5" />
 
-            <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
+            <div style="display:flex;gap:8px;align-items:flex-start;margin-top:8px">
               <div style="flex:1">
                 <label>Preis pro Liter (€)</label>
                 <input id="preis" type="number" inputmode="decimal" min="0" step="0.01" placeholder="z. B. 1.65" />
+                <div id="price-info" class="small" style="margin-top:4px;color:var(--muted);min-height:18px"></div>
               </div>
               <div style="width:160px">
-                <label style="visibility:hidden">Aktual.</label>
-                <button id="btn-update-prices" class="btn secondary" style="width:100%">Aktualisieren</button>
+                <label style="visibility:hidden">Reset</label>
+                <button id="btn-reset-price" class="btn secondary" style="width:100%" title="Zurück zum Standardpreis">Zurücksetzen</button>
               </div>
             </div>
 
@@ -181,10 +182,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const MAPBOX_API_KEY = '';
-      // Optional: host eine statische JSON unter HTTPS, z. B. https://spritkosten-check.github.io/data/prices.json
-      // Format: { "averages": { "super95": 1.85, "e10": 1.82, "diesel": 1.70 } }
-      const PRICES_API_URL = 'https://spritkosten-check.github.io/data/prices.json';
+      const MAPBOX_API_KEY = ''; // Optional: Mapbox API key for enhanced geocoding
 
       // Tabs
       document.querySelectorAll('.tabs [role="tab"]').forEach(btn => {
@@ -222,9 +220,47 @@
       const avgDieselEl = document.getElementById('avg-diesel');
       const btnUpdatePrices = document.getElementById('btn-update-prices');
       const tollInfoEl = document.getElementById('toll-info');
+      const priceInfoEl = document.getElementById('price-info');
+      const placeFromEl = document.getElementById('place-from');
 
-      // Fallback prices
+      // Country-based default fuel prices (EUR/USD per liter)
+      const countryFuelPrices = {
+        de: { super95:1.80, e10:1.77, diesel:1.65, name:'Deutschland' },
+        at: { super95:1.75, e10:1.72, diesel:1.60, name:'Österreich' },
+        ch: { super95:1.95, e10:1.92, diesel:1.85, name:'Schweiz' },
+        fr: { super95:1.85, e10:1.82, diesel:1.70, name:'Frankreich' },
+        it: { super95:1.90, e10:1.87, diesel:1.75, name:'Italien' },
+        es: { super95:1.75, e10:1.72, diesel:1.60, name:'Spanien' },
+        pl: { super95:1.55, e10:1.52, diesel:1.45, name:'Polen' },
+        nl: { super95:1.88, e10:1.85, diesel:1.70, name:'Niederlande' },
+        be: { super95:1.82, e10:1.79, diesel:1.67, name:'Belgien' },
+        cz: { super95:1.68, e10:1.65, diesel:1.55, name:'Tschechien' },
+        us: { super95:0.95, e10:0.92, diesel:1.00, name:'USA' },
+        uk: { super95:1.75, e10:1.72, diesel:1.65, name:'Großbritannien' },
+        gb: { super95:1.75, e10:1.72, diesel:1.65, name:'Großbritannien' },
+        au: { super95:1.95, e10:1.92, diesel:1.85, name:'Australien' },
+      };
+
+      // Country name mappings
+      const countryNameMap = {
+        'germany': 'de', 'deutschland': 'de', 'de': 'de',
+        'austria': 'at', 'österreich': 'at', 'oesterreich': 'at', 'at': 'at',
+        'switzerland': 'ch', 'schweiz': 'ch', 'suisse': 'ch', 'svizzera': 'ch', 'ch': 'ch',
+        'france': 'fr', 'frankreich': 'fr', 'fr': 'fr',
+        'italy': 'it', 'italien': 'it', 'italia': 'it', 'it': 'it',
+        'spain': 'es', 'spanien': 'es', 'españa': 'es', 'es': 'es',
+        'poland': 'pl', 'polen': 'pl', 'polska': 'pl', 'pl': 'pl',
+        'netherlands': 'nl', 'niederlande': 'nl', 'holland': 'nl', 'nl': 'nl',
+        'belgium': 'be', 'belgien': 'be', 'belgique': 'be', 'belgië': 'be', 'be': 'be',
+        'czech': 'cz', 'czechia': 'cz', 'tschechien': 'cz', 'česko': 'cz', 'cz': 'cz',
+        'united states': 'us', 'usa': 'us', 'us': 'us', 'america': 'us',
+        'united kingdom': 'uk', 'uk': 'uk', 'gb': 'uk', 'england': 'uk', 'britain': 'uk', 'großbritannien': 'uk',
+        'australia': 'au', 'australien': 'au', 'au': 'au',
+      };
+
+      // Fallback prices (used when country not recognized)
       let fuelPrices = { super95:1.85, e10:1.82, diesel:1.70 };
+      let userEditedPrice = false; // Track if user manually edited price
       function renderAvgPrices(){
         avgSuperEl.textContent = fmt(fuelPrices.super95) + ' €';
         avgE10El.textContent = fmt(fuelPrices.e10) + ' €';
@@ -233,38 +269,89 @@
       renderAvgPrices();
 
       fuelTypeEl.addEventListener('change', () => {
-        const t = fuelTypeEl.value;
-        priceEl.value = fuelPrices[t] || '';
+        if(!userEditedPrice) {
+          const t = fuelTypeEl.value;
+          priceEl.value = fuelPrices[t] || '';
+        }
       });
 
-      async function fetchAverageFuelPrices(){
-        btnUpdatePrices.disabled = true;
-        btnUpdatePrices.textContent = 'Aktualisiere…';
-        try{
-          if(!PRICES_API_URL){
-            throw new Error('Kein öffentlicher Preis-Endpoint konfiguriert.');
+      // Track manual price edits
+      priceEl.addEventListener('input', () => {
+        userEditedPrice = true;
+        priceInfoEl.textContent = '';
+      });
+
+      // Parse country from location string
+      function parseCountryFromLocation(locationStr) {
+        if(!locationStr || !locationStr.trim()) return null;
+        const parts = locationStr.split(',').map(p => p.trim().toLowerCase());
+        if(parts.length === 0) return null;
+        
+        // Check last part first (usually country)
+        for(let i = parts.length - 1; i >= 0; i--) {
+          const part = parts[i];
+          if(countryNameMap[part]) {
+            return countryNameMap[part];
           }
-          const res = await fetch(PRICES_API_URL, { mode:'cors' });
-          if(!res.ok) throw new Error('Preis-API nicht erreichbar');
-          const data = await res.json();
-          if(data && data.averages){
-            if(data.averages.super95 != null) fuelPrices.super95 = data.averages.super95;
-            if(data.averages.e10 != null) fuelPrices.e10 = data.averages.e10;
-            if(data.averages.diesel != null) fuelPrices.diesel = data.averages.diesel;
-            renderAvgPrices();
-            if(!priceEl.value) priceEl.value = fuelPrices[fuelTypeEl.value] || '';
-            return;
-          }
-          throw new Error('Antwort enthielt keine Durchschnittspreise.');
-        }catch(e){
-          console.warn('Preisabruf fehlgeschlagen, verwende Fallback.', e);
-          alert('Externer Preisabruf nicht möglich. Bitte Preis manuell eintragen.');
-        } finally {
-          btnUpdatePrices.disabled = false;
-          btnUpdatePrices.textContent = 'Aktualisieren';
+        }
+        return null;
+      }
+
+      // Update fuel prices based on detected country
+      function updatePricesFromCountry(countryCode) {
+        if(!countryCode || !countryFuelPrices[countryCode]) return false;
+        
+        const prices = countryFuelPrices[countryCode];
+        fuelPrices = { super95: prices.super95, e10: prices.e10, diesel: prices.diesel };
+        renderAvgPrices();
+        
+        if(!userEditedPrice) {
+          const currentFuel = fuelTypeEl.value;
+          priceEl.value = fuelPrices[currentFuel] || '';
+          priceInfoEl.textContent = `Standardpreis für ${prices.name} gesetzt – du kannst ihn ändern.`;
+          priceInfoEl.style.color = 'var(--accent)';
+        }
+        return true;
+      }
+
+      // Listen to location input changes (blur + debounced input)
+      let locationDebounceTimer = null;
+      
+      function detectAndApplyCountryPrice() {
+        const location = placeFromEl.value.trim();
+        if(!location) return;
+        
+        const countryCode = parseCountryFromLocation(location);
+        if(countryCode) {
+          updatePricesFromCountry(countryCode);
+        } else {
+          priceInfoEl.textContent = 'Land nicht erkannt – bitte Preis manuell eingeben.';
+          priceInfoEl.style.color = 'var(--muted)';
         }
       }
-      btnUpdatePrices.addEventListener('click', fetchAverageFuelPrices);
+      
+      placeFromEl.addEventListener('blur', detectAndApplyCountryPrice);
+      
+      placeFromEl.addEventListener('input', () => {
+        clearTimeout(locationDebounceTimer);
+        locationDebounceTimer = setTimeout(detectAndApplyCountryPrice, 400);
+      });
+
+      // Reset price to default based on detected country
+      document.getElementById('btn-reset-price').addEventListener('click', () => {
+        userEditedPrice = false;
+        const location = placeFromEl.value.trim();
+        if(location) {
+          const countryCode = parseCountryFromLocation(location);
+          if(countryCode && updatePricesFromCountry(countryCode)) {
+            return; // Successfully updated
+          }
+        }
+        // Fallback to default German prices
+        priceEl.value = fuelPrices[fuelTypeEl.value] || '';
+        priceInfoEl.textContent = 'Standardpreis wiederhergestellt.';
+        priceInfoEl.style.color = 'var(--accent)';
+      });
 
       // Map
       const map = L.map('map', { attributionControl: true }).setView([51.1657, 10.4515], 5);
@@ -356,13 +443,27 @@
       let estimatedTollPer100 = 0;
 
       document.getElementById('btn-geocode').addEventListener('click', async () => {
-        const from = document.getElementById('place-from').value.trim();
+        const from = placeFromEl.value.trim();
         const to = document.getElementById('place-to').value.trim();
-        if(!from || !to){ alert('Bitte Start und Ziel eingeben.'); return; }
+        if(!from || !to){ 
+          tollInfoEl.textContent = 'Bitte Start und Ziel eingeben.';
+          tollInfoEl.style.color = '#e53e3e';
+          return;
+        }
         try{
           const a = await geocode(from);
           const b = await geocode(to);
-          if(!a || !b){ alert('Ort nicht gefunden. Bitte genauer eingeben.'); return; }
+          if(!a || !b){ 
+            tollInfoEl.textContent = 'Ort nicht gefunden. Bitte genauer eingeben.';
+            tollInfoEl.style.color = '#e53e3e';
+            return;
+          }
+          
+          // Update prices from detected country
+          const countryCode = parseCountryFromLocation(from);
+          if(countryCode) {
+            updatePricesFromCountry(countryCode);
+          }
           clearMarkers();
           addMarker(a.lat,a.lon,'Start: '+a.name);
           addMarker(b.lat,b.lon,'Ziel: '+b.name);
@@ -382,13 +483,14 @@
           }
         }catch(e){
           console.error(e);
-          alert('Fehler bei Geocoding oder Mautschätzung. Prüfe Verbindung.');
+          tollInfoEl.textContent = 'Fehler bei Geocoding oder Mautschätzung. Prüfe Verbindung.';
+          tollInfoEl.style.color = '#e53e3e';
         }
       });
 
       document.getElementById('btn-clearmap').addEventListener('click', () => {
         clearMarkers(); map.setView([51.1657,10.4515],5);
-        document.getElementById('place-from').value=''; document.getElementById('place-to').value='';
+        placeFromEl.value=''; document.getElementById('place-to').value='';
         tollInfoEl.textContent = ''; estimatedTollPer100 = 0;
       });
 
@@ -412,9 +514,11 @@
         }
 
         if(Number.isNaN(km) || km <= 0 || Number.isNaN(v) || Number.isNaN(p)){
-          alert('Bitte Entfernung, Verbrauch und Preis korrekt eingeben.');
+          priceInfoEl.textContent = 'Bitte Entfernung, Verbrauch und Preis korrekt eingeben.';
+          priceInfoEl.style.color = '#e53e3e';
           return;
         }
+        priceInfoEl.textContent = ''; // Clear any error messages
 
         const liters = (km * v) / 100;
         const costFuel = liters * p;
@@ -441,6 +545,7 @@
         litersEl.textContent='0,00 L'; costFuelEl.textContent='0,00 €'; costRunningEl.textContent='0,00 €';
         costTotalEl.textContent='0,00 €'; costPersonEl.textContent='0,00 €'; avg100El.textContent='0,00 € /100km';
         runningEstEl.textContent='— € /100km'; tollInfoEl.textContent=''; estimatedTollPer100 = 0;
+        priceInfoEl.textContent = ''; userEditedPrice = false;
         clearMarkers(); map.setView([51.1657,10.4515],5);
       });
 
