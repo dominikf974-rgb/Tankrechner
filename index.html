@@ -168,11 +168,11 @@
         <input id="zahl1" type="number" inputmode="decimal" placeholder="Zahl 1" />
         <label>Zahl 2</label>
         <input id="zahl2" type="number" inputmode="decimal" placeholder="Zahl 2" />
-        <div style="display:flex;gap:8px;margin-top:10px">
-          <button data-op="+" class="btn">+</button>
-          <button data-op="-" class="btn">−</button>
-          <button data-op="*" class="btn">×</button>
-          <button data-op="/" class="btn">÷</button>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;max-width:240px">
+          <button data-op="+" class="btn" style="height:44px;font-size:1.1rem">+</button>
+          <button data-op="-" class="btn" style="height:44px;font-size:1.1rem">−</button>
+          <button data-op="*" class="btn" style="height:44px;font-size:1.1rem">×</button>
+          <button data-op="/" class="btn" style="height:44px;font-size:1.1rem">÷</button>
         </div>
 
       <section id="impressum" class="card" aria-hidden="true" style="display:none">
@@ -224,7 +224,13 @@
       </section>
     </main>
 
-    <footer style="margin-top:12px" class="small">Internet für Karten/Geocoding erforderlich. Preise können optional über einen eigenen HTTPS-Endpoint geladen werden.</footer>
+    <footer style="margin-top:12px" class="small">
+      Internet für Karten/Geocoding erforderlich. Preise können optional über einen eigenen HTTPS-Endpoint geladen werden.
+      <div style="margin-top:8px">
+        <a href="#" onclick="document.querySelector('[data-target=\"impressum\"]').click(); return false;" style="color:var(--accent);margin-right:12px">Impressum</a>
+        <a href="#" onclick="document.querySelector('[data-target=\"datenschutz\"]').click(); return false;" style="color:var(--accent)">Datenschutz</a>
+      </div>
+    </footer>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -283,6 +289,30 @@
         nl: { super95:1.88, e10:1.85, diesel:1.70, name:'Niederlande' },
         be: { super95:1.82, e10:1.79, diesel:1.67, name:'Belgien' },
         cz: { super95:1.68, e10:1.65, diesel:1.55, name:'Tschechien' },
+        sk: { super95:1.62, e10:1.59, diesel:1.52, name:'Slowakei' },
+        hu: { super95:1.70, e10:1.67, diesel:1.58, name:'Ungarn' },
+        si: { super95:1.68, e10:1.65, diesel:1.57, name:'Slowenien' },
+        hr: { super95:1.65, e10:1.62, diesel:1.54, name:'Kroatien' },
+        rs: { super95:1.45, e10:1.42, diesel:1.38, name:'Serbien' },
+        ba: { super95:1.42, e10:1.39, diesel:1.35, name:'Bosnien' },
+        me: { super95:1.48, e10:1.45, diesel:1.40, name:'Montenegro' },
+        mk: { super95:1.40, e10:1.37, diesel:1.33, name:'Nordmazedonien' },
+        al: { super95:1.52, e10:1.49, diesel:1.43, name:'Albanien' },
+        bg: { super95:1.38, e10:1.35, diesel:1.30, name:'Bulgarien' },
+        ro: { super95:1.50, e10:1.47, diesel:1.42, name:'Rumänien' },
+        gr: { super95:1.88, e10:1.85, diesel:1.72, name:'Griechenland' },
+        tr: { super95:1.20, e10:1.17, diesel:1.15, name:'Türkei' },
+        ru: { super95:0.65, e10:0.63, diesel:0.68, name:'Russland' },
+        by: { super95:0.85, e10:0.82, diesel:0.88, name:'Belarus' },
+        ua: { super95:1.15, e10:1.12, diesel:1.18, name:'Ukraine' },
+        lt: { super95:1.58, e10:1.55, diesel:1.48, name:'Litauen' },
+        lv: { super95:1.62, e10:1.59, diesel:1.52, name:'Lettland' },
+        ee: { super95:1.68, e10:1.65, diesel:1.57, name:'Estland' },
+        fi: { super95:1.92, e10:1.89, diesel:1.78, name:'Finnland' },
+        se: { super95:1.95, e10:1.92, diesel:1.85, name:'Schweden' },
+        no: { super95:2.10, e10:2.07, diesel:1.95, name:'Norwegen' },
+        dk: { super95:2.05, e10:2.02, diesel:1.88, name:'Dänemark' },
+        pt: { super95:1.82, e10:1.79, diesel:1.68, name:'Portugal' },
         us: { super95:0.95, e10:0.92, diesel:1.00, name:'USA' },
         uk: { super95:1.75, e10:1.72, diesel:1.65, name:'Großbritannien' },
         gb: { super95:1.75, e10:1.72, diesel:1.65, name:'Großbritannien' },
@@ -301,6 +331,30 @@
         'netherlands': 'nl', 'niederlande': 'nl', 'holland': 'nl', 'nl': 'nl',
         'belgium': 'be', 'belgien': 'be', 'belgique': 'be', 'belgië': 'be', 'be': 'be',
         'czech': 'cz', 'czechia': 'cz', 'tschechien': 'cz', 'česko': 'cz', 'cz': 'cz',
+        'slovakia': 'sk', 'slowakei': 'sk', 'slovensko': 'sk', 'sk': 'sk',
+        'hungary': 'hu', 'ungarn': 'hu', 'magyarország': 'hu', 'hu': 'hu',
+        'slovenia': 'si', 'slowenien': 'si', 'slovenija': 'si', 'si': 'si',
+        'croatia': 'hr', 'kroatien': 'hr', 'hrvatska': 'hr', 'hr': 'hr',
+        'serbia': 'rs', 'serbien': 'rs', 'srbija': 'rs', 'rs': 'rs',
+        'bosnia': 'ba', 'bosnien': 'ba', 'ba': 'ba',
+        'montenegro': 'me', 'me': 'me',
+        'macedonia': 'mk', 'nordmazedonien': 'mk', 'mk': 'mk',
+        'albania': 'al', 'albanien': 'al', 'shqipëri': 'al', 'al': 'al',
+        'bulgaria': 'bg', 'bulgarien': 'bg', 'българия': 'bg', 'bg': 'bg',
+        'romania': 'ro', 'rumänien': 'ro', 'românia': 'ro', 'ro': 'ro',
+        'greece': 'gr', 'griechenland': 'gr', 'ελλάδα': 'gr', 'gr': 'gr',
+        'turkey': 'tr', 'türkei': 'tr', 'türkiye': 'tr', 'tr': 'tr',
+        'russia': 'ru', 'russland': 'ru', 'россия': 'ru', 'ru': 'ru',
+        'belarus': 'by', 'weißrussland': 'by', 'by': 'by',
+        'ukraine': 'ua', 'ua': 'ua', 'україна': 'ua',
+        'lithuania': 'lt', 'litauen': 'lt', 'lietuva': 'lt', 'lt': 'lt',
+        'latvia': 'lv', 'lettland': 'lv', 'latvija': 'lv', 'lv': 'lv',
+        'estonia': 'ee', 'estland': 'ee', 'eesti': 'ee', 'ee': 'ee',
+        'finland': 'fi', 'finnland': 'fi', 'suomi': 'fi', 'fi': 'fi',
+        'sweden': 'se', 'schweden': 'se', 'sverige': 'se', 'se': 'se',
+        'norway': 'no', 'norwegen': 'no', 'norge': 'no', 'no': 'no',
+        'denmark': 'dk', 'dänemark': 'dk', 'danmark': 'dk', 'dk': 'dk',
+        'portugal': 'pt', 'pt': 'pt',
         'united states': 'us', 'usa': 'us', 'us': 'us', 'america': 'us',
         'united kingdom': 'uk', 'uk': 'uk', 'gb': 'uk', 'england': 'uk', 'britain': 'uk', 'großbritannien': 'uk',
         'australia': 'au', 'australien': 'au', 'au': 'au',
