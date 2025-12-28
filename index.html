@@ -175,9 +175,9 @@
 
             <div style="margin-top:12px">
               <label for="place-from">Oder: Start (Stadt, Land)</label>
-              <input id="place-from" type="text" placeholder="z. B. Berlin, Germany" aria-label="Startort" />
+              <input id="place-from" type="text" placeholder="z. B. Berlin, Deutschland" aria-label="Startort" />
               <label for="place-to" style="margin-top:10px">Ziel (Stadt, Land)</label>
-              <input id="place-to" type="text" placeholder="z. B. Moskau, Russia" aria-label="Zielort" />
+              <input id="place-to" type="text" placeholder="z. B. München, Deutschland" aria-label="Zielort" />
               <div class="map-controls" style="margin-top:10px">
                 <button id="btn-geocode" class="btn secondary">Entfernung berechnen</button>
                 <button id="btn-clearmap" class="btn secondary">Karte zurücksetzen</button>
@@ -396,6 +396,9 @@
     <footer style="margin-top:12px" class="small">
       Internet für Karten/Geocoding erforderlich. Preise können optional über einen eigenen HTTPS-Endpoint geladen werden.
       <span style="font-size:0.75rem;color:var(--muted);opacity:0.65;margin-left:10px">|
+        <a href="faq.html" style="color:inherit;text-decoration:none;margin:0 6px">FAQ</a>
+        <a href="terms.html" style="color:inherit;text-decoration:none;margin:0 6px">AGB</a>
+        <a href="contact.html" style="color:inherit;text-decoration:none;margin:0 6px">Kontakt</a>
         <a href="impressum.html" style="color:inherit;text-decoration:none;margin:0 6px">Impressum</a>
         <a href="datenschutz.html" style="color:inherit;text-decoration:none;margin:0 6px">Datenschutz</a>
       </span>
@@ -720,10 +723,10 @@
             return;
           }
           
-          // Update prices from detected country
-          const countryCode = parseCountryFromLocation(from);
+          // Preise per Land erkennen
+          const countryCode = detectCountryFromLocation(from);
           if(countryCode) {
-            updatePricesFromCountry(countryCode);
+            applyCountryDefaults(countryCode);
           }
           clearMarkers();
           addMarker(a.lat,a.lon,'Start: '+a.name);
