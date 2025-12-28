@@ -1,15 +1,46 @@
 <!DOCTYPE html>
 <html lang="de">
-  <header>
-    <div class="logo-title">
-      <a href="index.html" style="display:flex;align-items:center;gap:12px;text-decoration:none">
-        <img src="/logo.png" alt="Spritkostenrechner Logo" />
-        <div class="brand-text">
-          <h1>Spritkostenrechner</h1>
-          <p class="subtitle">Spritkosten-Check.de</p>
-        </div>
-      </a>
-    </div>
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4852698472752437" crossorigin="anonymous"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Spritkosten Rechner Deutschland | Benzinkosten berechnen | Fahrtkosten Kalkulator</title>
+  <meta name="description" content="Kostenloser Spritkosten Rechner für Deutschland, Österreich & Schweiz. Berechne Benzinkosten, Fahrtkosten, Mautgebühren & Spritverbrauch pro km. Sofort Ergebnisse mit interaktiver Karte." />
+  <meta name="keywords" content="Spritkosten Rechner, Benzinkosten berechnen, Fahrtkosten berechnen, Spritpreis Deutschland, Spritkosten pro km, Benzinpreis Österreich, Spritkosten Schweiz" />
+  <meta name="author" content="Spritkosten Rechner" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <meta name="language" content="German" />
+  <meta name="revisit-after" content="7 days" />
+  <link rel="canonical" href="https://spritkostenrechner.de/" />
+  <link rel="alternate" hreflang="de" href="https://spritkostenrechner.de/" />
+  <link rel="alternate" hreflang="de-AT" href="https://spritkostenrechner.de/at" />
+  <link rel="alternate" hreflang="de-CH" href="https://spritkostenrechner.de/ch" />
+  <link rel="alternate" hreflang="en-AU" href="https://petrolcostcalculator.com/" />
+  <link rel="alternate" hreflang="en" href="https://petrolcostcalculator.com/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://spritkostenrechner.de/" />
+  <meta property="og:title" content="Spritkosten Rechner - Fahrtkosten schnell berechnen" />
+  <meta property="og:description" content="Kostenloser Spritkosten Rechner mit Mautschätzung für 40+ Länder. Berechne Benzinpreise pro km, Betriebskosten & Reiseausgaben sofort." />
+  <meta property="og:image" content="https://spritkostenrechner.de/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="de_DE" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@spritkostrechner" />
+  <meta name="twitter:title" content="Kostenloser Spritkosten Rechner | Deutschland, Österreich & Schweiz" />
+  <meta name="twitter:description" content="Berechne Spritkosten, Benzinpreise & Fahrtausgaben. Funktioniert in 40+ Ländern mit automatischer Mautschätzung & interaktiver Karte." />
+  <meta name="twitter:image" content="https://spritkostenrechner.de/og-image.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Spritrechner" />
+  <meta name="theme-color" content="#0ea5a3" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
     :root{
       --bg:#f6f8fa; --card:#ffffff; --muted:#4b5563; --text:#0b1220;
       --accent:#0ea5a3; --accent-2:#4f46e5; --button-h:48px;
@@ -19,18 +50,27 @@
     html,body{height:100%;width:100%;overflow-x:hidden}
     body{margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
       background:linear-gradient(180deg,var(--bg) 0%, #e9eef5 100%);color:var(--text);
-      padding:16px;display:flex;align-items:flex-start;justify-content:center;min-height:100vh;}
-    .wrap{width:100%;max-width:var(--max-width);margin:0 auto;padding:0 8px}
-    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:12px;flex-wrap:wrap}
-    h1{margin:0;font-size:1.25rem}
+      padding:0;display:flex;flex-direction:column;min-height:100vh;}
+    header{position:sticky;top:0;z-index:1000;background:white;box-shadow:0 2px 8px rgba(15,23,42,0.08);
+      padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+    .logo-title{display:flex;align-items:center;gap:12px}
+    .logo-title img{height:48px;width:auto}
+    .brand-text h1{margin:0;font-size:1.3rem;line-height:1.2;color:var(--text)}
+    .brand-text .subtitle{font-size:0.75rem;color:var(--muted);margin:0}
     .tabs button{background:transparent;border:1px solid transparent;color:var(--muted);
-      padding:.6rem 1rem;border-radius:.6rem;margin-left:.5rem;cursor:pointer;font-weight:700;
+      padding:.6rem 1rem;border-radius:.6rem;cursor:pointer;font-weight:700;
       font-size:.95rem;height:var(--button-h);}
     .tabs button[aria-selected="true"]{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:white}
+    .wrap{width:100%;max-width:var(--max-width);margin:0 auto;padding:20px 16px}
+    h1{font-size:1.8rem;margin:0 0 20px 0;color:var(--text)}
+    h2{font-size:1.1rem;margin:16px 0 12px 0}
+    p{line-height:1.7;margin:12px 0;color:var(--text)}
+    a{color:var(--accent);text-decoration:none}
+    a:hover{text-decoration:underline}
     main.container{display:grid;grid-template-columns:1fr;gap:16px;width:100%}
     .card{background:var(--card);border-radius:10px;padding:16px;box-shadow:0 8px 24px rgba(15,23,42,0.06);border:1px solid rgba(15,23,42,0.04);width:100%;overflow:hidden}
     .layout{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:16px;align-items:start;width:100%}
-    label{display:block;margin:.35rem 0;font-size:.9rem;color:var(--muted)}
+    label{display:block;margin:.5rem 0 .25rem 0;font-size:.9rem;color:var(--muted);font-weight:500}
     input[type="number"], input[type="text"], select{width:100%;padding:.6rem .75rem;border-radius:8px;border:1px solid rgba(15,23,42,0.06);background:transparent;color:var(--text);outline:none;font-size:1rem;margin-top:.25rem}
     .km-row{display:flex;gap:8px;align-items:center;flex-wrap:nowrap}.km-row .km-input{flex:1;min-width:0}
     .spinner{display:flex;flex-direction:column;gap:6px}.spinner button{width:44px;height:44px;border-radius:8px;border:none;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:white;font-weight:800;font-size:18px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
@@ -41,14 +81,20 @@
     #map{width:100%;height:360px;min-height:280px;border-radius:8px;border:1px solid rgba(15,23,42,0.06)}.small{font-size:.9rem;color:var(--muted)}
     .price-table{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}.price-card{flex:1;min-width:140px;padding:8px;border-radius:8px;background:#fafafa;border:1px solid rgba(15,23,42,0.03);text-align:center}.price-card strong{display:block;font-size:1.05rem;color:var(--accent-2);margin-top:6px}
     @media(max-width:980px){
-      body{padding:12px}
       .layout{grid-template-columns:1fr}
       #map{height:260px}
       .spinner button{width:38px;height:38px}
     }
     @media(max-width:720px){
-      h1{font-size:1.1rem}
-      .tabs button{margin-left:0.25rem;padding:.55rem .85rem}
+      header{padding:10px 12px;flex-direction:column;align-items:flex-start}
+      .logo-title img{height:40px}
+      .brand-text h1{font-size:1.1rem}
+      .brand-text .subtitle{font-size:0.7rem}
+      h1{font-size:1.4rem}
+      h2{font-size:1.1rem}
+      .card{padding:16px}
+      .tabs{width:100%;display:flex;gap:8px;flex-wrap:wrap}
+      .tabs button{margin-left:0;padding:.55rem .85rem;font-size:0.85rem}
       .big-action{flex-direction:column}
       .btn{width:100%}
       .km-row{flex-wrap:wrap}
@@ -58,14 +104,23 @@
   </style>
 </head>
 <body>
+  <header>
+    <div class="logo-title">
+      <a href="index.html" style="display:flex;align-items:center;gap:12px;text-decoration:none">
+        <img src="/logo.png" alt="Spritkostenrechner Logo" />
+        <div class="brand-text">
+          <h1>Spritkostenrechner</h1>
+          <p class="subtitle">Spritkosten-Check.de</p>
+        </div>
+      </a>
+    </div>
+    <nav class="tabs" role="tablist">
+      <button role="tab" data-target="sprit" aria-selected="true">Spritkosten</button>
+      <button role="tab" data-target="calc">Taschenrechner</button>
+    </nav>
+  </header>
+
   <div class="wrap">
-    <header>
-      <h1>Spritkostenrechner</h1>
-      <nav class="tabs" role="tablist">
-        <button role="tab" data-target="sprit" aria-selected="true">Spritkosten</button>
-        <button role="tab" data-target="calc">Taschenrechner</button>
-      </nav>
-    </header>
 
     <main class="container">
       <section id="sprit" class="card active" aria-hidden="false">
@@ -182,6 +237,8 @@
     <footer style="margin-top:12px" class="small">
       Internet für Karten/Geocoding erforderlich. Preise können optional über einen eigenen HTTPS-Endpoint geladen werden.
       <span style="font-size:0.75rem;color:var(--muted);opacity:0.65;margin-left:10px">|
+        <a href="faq.html" style="color:inherit;text-decoration:none;margin:0 6px">FAQ</a>
+        <a href="contact.html" style="color:inherit;text-decoration:none;margin:0 6px">Kontakt</a>
         <a href="impressum.html" style="color:inherit;text-decoration:none;margin:0 6px">Impressum</a>
         <a href="datenschutz.html" style="color:inherit;text-decoration:none;margin:0 6px">Datenschutz</a>
       </span>
