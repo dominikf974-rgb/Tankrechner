@@ -184,7 +184,13 @@
     }
 
     /* ✅ consistent spacing between blocks (fix missing gaps) */
-    .page-container > *{ margin-top:18px; }
+    .page-container > section,
+.page-container > main,
+.page-container > .ad-block,
+.page-container > footer{
+  margin-top:18px;
+}
+
     .page-container > *:first-child{ margin-top:14px; }
     main > section{ margin-top:18px; }
     main > section:first-child{ margin-top:0; }
@@ -358,6 +364,10 @@
       padding:18px 0 30px 0;
     }
     footer a:hover{ text-decoration:underline; }
+
+    .site-header{ z-index:9999; }
+main{ margin-top:0 !important; }
+
   </style>
 </head>
 
@@ -1151,3 +1161,4 @@
   </script>
 </body>
 </html>
+
