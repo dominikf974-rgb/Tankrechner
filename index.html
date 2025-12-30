@@ -53,7 +53,6 @@
       --gapR:10px;
     }
 
-    /* verhindert seitliches "Verschieben" */
     html, body { overflow-x:hidden; }
 
     html{
@@ -104,8 +103,7 @@
     .logo-title:hover{opacity:.88;}
     .logo-title img{ height:54px; width:auto; display:block; }
     .site-title{
-      font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
-      font-weight:800;
+      font-weight:900;
       font-size:18px;
       white-space:nowrap;
       letter-spacing:.2px;
@@ -429,15 +427,17 @@
       }
     }
 
-    @media(max-width:980px){
-      .layout{grid-template-columns:1fr}
-      #map{height:260px !important;}
-      .spinner button{width:38px;height:38px}
-      /* Hamburger früher zeigen, damit nichts "quetscht" */
+    /* Hamburger aggressiver: früher aktiv, damit Mobile Browser wirklich greift */
+    @media(max-width:1200px){
       .tabs{display:none;}
       .header-actions{display:flex;}
       .header-inner{padding:10px 12px;}
       .site-title{max-width:180px;}
+    }
+    @media(max-width:980px){
+      .layout{grid-template-columns:1fr}
+      #map{height:260px !important;}
+      .spinner button{width:38px;height:38px}
     }
     @media(max-width:720px){
       .site-title{max-width:140px;}
@@ -487,7 +487,7 @@
     footer a{ text-decoration:none; }
     footer a:hover{ text-decoration:underline; }
 
-    /* Cookie banner (self-made) */
+    /* Cookie banner */
     .cookie-banner{
       position:fixed;
       left:12px; right:12px; bottom:12px;
@@ -550,8 +550,8 @@
 
       <!-- Desktop nav -->
       <nav class="tabs" aria-label="Hauptnavigation">
-        <a class="navbtn active" href="/">Spritkosten</a>
-        <a class="navbtn" href="/taschenrechner.html">Rechner</a>
+        <a class="navbtn" href="/">Spritkosten</a>
+        <a class="navbtn" href="/taschenrechner.html">Taschenrechner</a>
         <a class="navbtn" href="/ratgeber.html">Ratgeber</a>
         <a class="navbtn" href="/faq.html">FAQ</a>
         <a class="lang-link" href="https://petrolcostcalculator.com/" hreflang="en" lang="en" title="English">EN</a>
@@ -569,8 +569,8 @@
     <!-- Mobile menu -->
     <div class="mobile-menu" id="mobile-menu" aria-label="Mobiles Menü">
       <div class="grid">
-        <a class="active" href="/">Spritkosten</a>
-        <a href="/taschenrechner.html">Rechner</a>
+        <a href="/">Spritkosten</a>
+        <a href="/taschenrechner.html">Taschenrechner</a>
         <a href="/ratgeber.html">Ratgeber</a>
         <a href="/faq.html">FAQ</a>
       </div>
@@ -579,7 +579,7 @@
 
   <div class="page-container">
 
-    <!-- Ad: Top (loaded only after consent) -->
+    <!-- Ads (werden erst nach Consent geladen) -->
     <div class="ad-block">
       <ins class="adsbygoogle"
         style="display:block"
@@ -608,7 +608,6 @@
     <main aria-label="Hauptinhalt">
       <section id="fuel" class="card">
 
-        <!-- Ad: Middle -->
         <div class="ad-block">
           <ins class="adsbygoogle"
             style="display:block"
@@ -755,6 +754,107 @@
       </section>
     </main>
 
+    <!-- SEO Block -->
+    <section class="card" aria-label="Berechnung erklärt">
+      <h2>So berechnest du Spritkosten & Kosten pro Person</h2>
+      <p class="small" style="margin-top:0">
+        Für schnelle Überschläge reichen Strecke (km), Verbrauch (L/100 km) und Spritpreis (€/L).
+        Der Rechner zeigt dir zusätzlich Durchschnittskosten pro 100 km und die Aufteilung pro Person.
+      </p>
+
+      <div class="two-col">
+        <div class="card" style="box-shadow:none;border:1px solid rgba(15,23,42,0.06);background:#fbfdff">
+          <h3 style="margin:0 0 8px 0;font-size:1rem;color:var(--accent-2)">Kurzformeln</h3>
+          <ul style="margin:0;padding-left:18px;line-height:1.7">
+            <li><strong>Liter</strong> = km × Verbrauch ÷ 100</li>
+            <li><strong>Spritkosten</strong> = Liter × Preis</li>
+            <li><strong>pro Person</strong> = Gesamtkosten ÷ Personen</li>
+          </ul>
+        </div>
+
+        <div class="card" style="box-shadow:none;border:1px solid rgba(15,23,42,0.06);background:#fbfdff">
+          <h3 style="margin:0 0 8px 0;font-size:1rem;color:var(--accent-2)">Hinweise</h3>
+          <ul style="margin:0;padding-left:18px;line-height:1.7">
+            <li>Maut/Vignette sind Schätzwerte.</li>
+            <li>„Laufende Kosten“ sind eine einfache Näherung.</li>
+            <li>Für genaue Werte: echten Verbrauch + aktuellen Preis nutzen.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tips Block (war bei dir vorher da -> wieder drin) -->
+    <section class="card" aria-label="Tipps Sprit sparen">
+      <h2>Tipps: Sprit sparen & Reisekosten reduzieren</h2>
+      <p class="small" style="margin-top:0">
+        Kleine Änderungen senken die Kosten schnell: richtiger Reifendruck, gleichmäßige Geschwindigkeit
+        und realistische Verbrauchswerte. Wenn ihr zusammen fahrt, teilt die Kosten fair pro Person.
+      </p>
+      <ul style="margin:0;padding-left:18px;line-height:1.7">
+        <li><strong>Ruhig fahren:</strong> weniger stark beschleunigen und bremsen.</li>
+        <li><strong>Reifendruck prüfen:</strong> zu niedriger Druck erhöht den Verbrauch.</li>
+        <li><strong>Gewicht reduzieren:</strong> unnötige Ladung raus, Dachbox nur wenn nötig.</li>
+        <li><strong>Kosten teilen:</strong> „Personen“ nutzen für fairen Betrag pro Kopf.</li>
+      </ul>
+
+      <div style="margin-top:18px;display:flex;justify-content:center">
+        <a class="btn large" href="/ratgeber.html" style="max-width:320px">Zum Ratgeber</a>
+      </div>
+    </section>
+
+    <!-- FAQ Block (war bei dir vorher da -> wieder drin) -->
+    <section class="card faq-section" aria-label="FAQ">
+      <h2>Kurze FAQ</h2>
+
+      <details class="faq-item">
+        <summary>Wie berechne ich Spritkosten pro 100 km?</summary>
+        <p>Der Rechner zeigt dir „€/100 km“ automatisch an. Grundlage ist: Gesamtkosten ÷ Strecke × 100.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>Zählt Hin- und Rückfahrt oder nur eine Strecke?</summary>
+        <p>Du kannst beides. Gib einfach die Kilometer ein, die du wirklich fährst (einfach oder hin & zurück).</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>Wie genau sind Maut/Vignetten?</summary>
+        <p>Nur grob nach Ländern. Reale Kosten hängen von Route, Fahrzeugklasse und lokalen Regeln ab.</p>
+      </details>
+
+      <div style="margin-top:14px;display:flex;justify-content:center">
+        <a class="btn large" href="/faq.html" style="max-width:360px">Mehr FAQ ansehen</a>
+      </div>
+    </section>
+
+    <!-- Countries Block (war bei dir vorher da -> wieder drin) -->
+    <section class="card countries-section" aria-label="Spritkosten-Rechner nach Land">
+      <h2>Spritkosten-Rechner nach Land</h2>
+      <p class="small" style="margin:0 0 10px 0">Funktioniert weltweit mit Länder-Erkennung. Beliebte Regionen:</p>
+
+      <div class="countries-grid">
+        <div class="country-card">
+          <h3>Deutschland</h3>
+          <p>Plane Fahrtkosten, Spritkosten, laufende Kosten und teile fair pro Person.</p>
+        </div>
+        <div class="country-card">
+          <h3>Österreich</h3>
+          <p>Ideal für Autobahn & Alpenstrecken – inkl. grober Maut/Vignetten-Schätzung.</p>
+        </div>
+        <div class="country-card">
+          <h3>Schweiz</h3>
+          <p>Perfekt für Alpenpässe und Autobahnen – inkl. Vignetten-Schätzung.</p>
+        </div>
+        <div class="country-card">
+          <h3>Europa</h3>
+          <p>Für grenzüberschreitende Fahrten mit schneller Maut-/Kosten-Näherung.</p>
+        </div>
+        <div class="country-card">
+          <h3>Weltweit</h3>
+          <p>Für Roadtrips und Urlaubsreisen in nahezu allen Ländern & Regionen.</p>
+        </div>
+      </div>
+    </section>
+
     <!-- Ad: Bottom -->
     <div class="ad-block">
       <ins class="adsbygoogle"
@@ -765,6 +865,7 @@
         data-full-width-responsive="true"></ins>
     </div>
 
+    <!-- Footer -->
     <footer class="small">
       Kostenloser Spritkosten-Rechner für Deutschland, Europa und weltweit.
       Ideal für Pendler, Roadtrips, Urlaubsfahrten und faire Kostenaufteilung pro Person.
@@ -795,7 +896,24 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // ===== Mobile menu (Fix: no "verzogen" after selecting) =====
+      // === Active nav automatic (damit es NICHT "ständig anders" ist) ===
+      const path = (location.pathname || "/").toLowerCase();
+      function setActive(linkEl){
+        document.querySelectorAll('.tabs a.navbtn, .mobile-menu a').forEach(a => a.classList.remove('active'));
+        if(linkEl) linkEl.classList.add('active');
+      }
+      const navMap = [
+        { match: p => p === "/" || p === "/index.html", href: "/" },
+        { match: p => p.includes("taschenrechner"), href: "/taschenrechner.html" },
+        { match: p => p.includes("ratgeber"), href: "/ratgeber.html" },
+        { match: p => p.includes("faq"), href: "/faq.html" }
+      ];
+      const cur = navMap.find(x => x.match(path)) || navMap[0];
+      const desktopLink = document.querySelector(`.tabs a[href="${cur.href}"]`);
+      const mobileLink  = document.querySelector(`.mobile-menu a[href="${cur.href}"]`);
+      setActive(desktopLink); setActive(mobileLink);
+
+      // ===== Mobile Hamburger (fix: kein "verzogen" nach Auswahl) =====
       const burger = document.getElementById('hamburger');
       const mobileMenu = document.getElementById('mobile-menu');
 
@@ -806,7 +924,6 @@
       function closeMenu(){
         mobileMenu.classList.remove('open');
         burger.setAttribute('aria-expanded','false');
-        // leaflets size fix after drawer closes
         setTimeout(() => { try { map.invalidateSize(); } catch(e){} }, 220);
       }
       function toggleMenu(){
@@ -815,20 +932,12 @@
 
       burger.addEventListener('click', (e) => { e.stopPropagation(); toggleMenu(); });
       mobileMenu.addEventListener('click', (e) => e.stopPropagation());
-
-      // close on outside click
       document.addEventListener('click', () => { if(mobileMenu.classList.contains('open')) closeMenu(); });
+      document.addEventListener('keydown', (e) => { if(e.key === 'Escape' && mobileMenu.classList.contains('open')) closeMenu(); });
 
-      // close when selecting a menu item (prevents weird intermediate layout state)
+      // extrem wichtig: schließt IMMER beim Link-Klick (verhindert "Zwischenzustand")
       mobileMenu.querySelectorAll('a').forEach(a => {
-        a.addEventListener('click', () => {
-          // close immediately; navigation continues normally
-          closeMenu();
-        }, { passive: true });
-      });
-
-      document.addEventListener('keydown', (e) => {
-        if(e.key === 'Escape' && mobileMenu.classList.contains('open')) closeMenu();
+        a.addEventListener('click', () => closeMenu(), { passive:true });
       });
 
       // ===== Consent-gated Ads =====
@@ -858,13 +967,8 @@
 
       function showBanner(){ banner.style.display = "block"; }
       function hideBanner(){ banner.style.display = "none"; }
-
-      function getConsent(){
-        try { return localStorage.getItem(CONSENT_KEY); } catch(e){ return null; }
-      }
-      function setConsent(v){
-        try { localStorage.setItem(CONSENT_KEY, v); } catch(e){}
-      }
+      function getConsent(){ try { return localStorage.getItem(CONSENT_KEY); } catch(e){ return null; } }
+      function setConsent(v){ try { localStorage.setItem(CONSENT_KEY, v); } catch(e){} }
 
       const consent = getConsent();
       if (consent === "1") { hideBanner(); loadGoogleAdsOnce(); }
@@ -874,7 +978,7 @@
       btnAccept.addEventListener('click', () => { setConsent("1"); hideBanner(); loadGoogleAdsOnce(); });
       btnReject.addEventListener('click', () => { setConsent("0"); hideBanner(); });
 
-      // ===== Utils =====
+      // ===== Original Rechner-Logik (wie bei dir) =====
       const CURRENCY_SYMBOL = '€';
       const parse = v => (v === '' || v == null) ? NaN : Number(String(v).replace(',', '.'));
       const fmt = n => (Number.isFinite(n) ? Number.parseFloat(n.toFixed(2)).toFixed(2) : '0.00');
@@ -1023,14 +1127,13 @@
         });
       });
 
-      // ===== Map =====
+      // Map
       const map = L.map('map', { attributionControl:true }).setView([51.1657, 10.4515], 5);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom:19,
         attribution:'&copy; OpenStreetMap-Mitwirkende'
       }).addTo(map);
 
-      // robust invalidate (fix mobile header/menu layout changes)
       function safeInvalidate(){ try { map.invalidateSize(); } catch(e){} }
       setTimeout(safeInvalidate, 150);
       setTimeout(safeInvalidate, 650);
@@ -1053,7 +1156,6 @@
         return m;
       }
 
-      // ===== API (Proxy) endpoints =====
       async function geocode(q){
         const url = '/api/geocode?q=' + encodeURIComponent(q);
         const res = await fetchWithTimeout(url, 12000);
@@ -1064,7 +1166,7 @@
       }
 
       async function reverseCountryCode(lat, lon){
-        const url = `/api/reverse?format=json&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`;
+        const url = `/api/reverse?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`;
         const res = await fetchWithTimeout(url, 12000);
         if(!res.ok) return null;
         const j = await res.json();
@@ -1091,7 +1193,7 @@
         return distKm;
       }
 
-      // ===== Maut / Vignette =====
+      // Maut / Vignette
       const tollPer100km = {
         DE:0, AT:6, CH:4, FR:10, IT:9, ES:10, NL:0, BE:0,
         PL:6, CZ:4, SK:4, HU:5, SI:5, HR:5, RO:3, BG:3,
@@ -1206,7 +1308,7 @@
           renderTollBreakdown();
 
           tollInfoEl.textContent = `Strecke: ${fmtL(routeKm)} km.`;
-          setTimeout(() => safeInvalidate(), 120);
+          setTimeout(safeInvalidate, 120);
 
         }catch(e){
           tollInfoEl.textContent = 'Fehler bei Routing/Geocoding. Bitte Verbindung prüfen oder anderen Ort versuchen.';
@@ -1233,7 +1335,7 @@
         lastVignetteTotal = 0;
         renderTollBreakdown();
 
-        setTimeout(() => safeInvalidate(), 120);
+        setTimeout(safeInvalidate, 120);
       });
 
       document.getElementById('km-inc').addEventListener('click', ()=>{ const cur = parse(kmEl.value)||0; kmEl.value = Math.round((cur+1)*10)/10; });
@@ -1334,7 +1436,7 @@
         clearMarkers();
         clearRoute();
         map.setView([51.1657, 10.4515],5);
-        setTimeout(() => safeInvalidate(), 120);
+        setTimeout(safeInvalidate, 120);
       });
 
       renderTollBreakdown();
