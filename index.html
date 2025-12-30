@@ -52,7 +52,6 @@
     *{box-sizing:border-box;}
 
     :root{
-      --bg1:#0f172 giving a random - fix variable? let's keep correct */
       --bg1:#0f172a;
       --bg2:#e9eef5;
       --card:#ffffff;
@@ -64,21 +63,21 @@
       --maxw:1400px;
     }
 
-    html, body { width:100%; }
+    /* ✅ Hintergrund wie vorher (stabil, ohne "body::before") */
+    html{
+      min-height:100%;
+      background: linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 100%);
+      background-repeat:no-repeat;
+      background-attachment:fixed;
+    }
     body{
       margin:0;
+      width:100%;
       font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
       color:var(--text);
       min-height:100vh;
-      background: transparent;
-      position: relative;
-    }
-    body::before{
-      content:"";
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      background: linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 100%);
+      background:transparent;
+      position:relative;
     }
 
     /* Header */
@@ -327,7 +326,6 @@
     .thinbox .line:last-child{border-bottom:0}
     .mono{font-variant-numeric:tabular-nums;}
 
-    /* Cross-border selection */
     .price-mode{
       margin-top:10px;
       padding:10px;
@@ -347,7 +345,7 @@
 
     .country-badge{margin-top:8px; min-height:18px; font-size:.85rem; color:var(--muted);}
 
-    /* ✅ MAP: groß erzwingen wie EN */
+    /* ✅ MAP: groß erzwingen (und garantiert am Ende nicht überschrieben) */
     #map{
       width:100% !important;
       height:520px !important;
@@ -880,7 +878,6 @@
       }
 
       async function applyDetectedPrices(){
-        // Wenn price-Datei fehlt: Hinweis
         if(!countryPrices){
           badgeEl.innerHTML = '<span class="error">Preisdatei nicht geladen: prices/country-prices.js</span>';
         }
@@ -932,7 +929,6 @@
       document.querySelectorAll('input[name="priceMode"]').forEach(r => {
         r.addEventListener('change', async () => {
           if(!userEditedPrice && startCC && destCC) await applyDetectedPrices();
-          // Maut-Breakdown neu anzeigen (Mode beeinflusst Preise nicht, aber Anzeige bleibt)
           renderTollBreakdown();
         });
       });
@@ -1001,10 +997,10 @@
         US:3, CA:2, GB:0, AU:5, RU:1
       };
 
-      // ✅ Vignetten (Fixbetrag) – grobe Näherung (1x pro Land, wenn Land vorkommt)
+      // ✅ Vignetten (Fixbetrag) – grobe Näherung
       const vignetteFlat = {
-        AT: 11.50, // 10 Tage PKW (grob)
-        CH: 40.00, // Jahresvignette (grob)
+        AT: 11.50,
+        CH: 40.00,
         CZ: 12.00,
         SK: 12.00,
         HU: 16.00,
@@ -1024,7 +1020,6 @@
       }
 
       function renderTollBreakdown(){
-        // Wenn keine Route: reset Anzeige
         if(!routeKm || !startCC){
           tollTotalEl.textContent = '—';
           vignetteTotalEl.textContent = '—';
@@ -1035,7 +1030,6 @@
 
         const isCross = (startCC && destCC && startCC !== destCC);
 
-        // Strecke je Land: stabiler Split ohne API-Spam
         const parts = [];
         if(!isCross){
           parts.push({ cc: startCC, km: routeKm });
@@ -1047,8 +1041,6 @@
 
         let tollSum = 0;
         let vignetteSum = 0;
-
-        // Vignette nur 1x je Land
         const seen = new Set();
 
         const lines = parts.map(p => {
@@ -1075,7 +1067,7 @@
         tollBreakdownEl.innerHTML =
           lines.join('<br>') +
           (vignetteSum > 0 ? `<br><br><span class="small">Vignetten (fix, je Land einmal): ${fmtMoney(vignetteSum)}</span>` : '') +
-          `<br><span class="small">Hinweis: Länder-Split ist eine schnelle Schätzung (bei Länderwechsel 50/50). Exakte Segmentierung wäre deutlich aufwendiger.</span>`;
+          `<br><span class="small">Hinweis: Länder-Split ist eine schnelle Schätzung (bei Länderwechsel 50/50).</span>`;
       }
 
       document.getElementById('btn-geocode').addEventListener('click', async () => {
@@ -1102,7 +1094,6 @@
           startCoord = { lat: a.lat, lon: a.lon };
           destCoord  = { lat: b.lat, lon: b.lon };
 
-          // Länder erkennen (hier ist RU-Fix: wir zeigen CC immer an)
           startCC = await reverseCountryCode(a.lat, a.lon);
           destCC  = await reverseCountryCode(b.lat, b.lon);
 
@@ -1113,7 +1104,6 @@
             `Erkannt: <b>Start</b> ${startName} (${startCC||'—'}), <b>Ziel</b> ${destName} (${destCC||'—'})` +
             (!countryPrices ? `<br><span class="error">⚠ Preisdatei fehlt: prices/country-prices.js</span>` : '');
 
-          // Cross-border UI
           if(startCC && destCC && startCC !== destCC) priceModeWrap.style.display = 'block';
           else priceModeWrap.style.display = 'none';
 
@@ -1121,17 +1111,12 @@
           addMarker(a.lat,a.lon,'Start: ' + a.name);
           addMarker(b.lat,b.lon,'Ziel: ' + b.name);
 
-          // OSRM Distanz + Route zeichnen
           routeKm = await getRouteOSRM(a.lat, a.lon, b.lat, b.lon);
           kmEl.value = Math.round(routeKm*10)/10;
 
-          // Preise setzen
           await applyDetectedPrices();
-
-          // Maut/Vignette-Block aktualisieren
           renderTollBreakdown();
 
-          // Kurzer Text rechts unter Map
           const isCross = (startCC && destCC && startCC !== destCC);
           const mode = isCross ? getMode() : 'start';
           const modeText = isCross ? (mode === 'avg' ? 'Mittelwert' : (mode === 'start' ? 'Startland' : 'Zielland')) : 'Startland';
@@ -1161,7 +1146,6 @@
         tollInfoEl.textContent = '';
         tollInfoEl.classList.remove('error');
 
-        // Reset Maut-Block
         renderTollBreakdown();
 
         setTimeout(() => { try { map.invalidateSize(); } catch(e){} }, 80);
@@ -1197,7 +1181,6 @@
         const liters = (km * v) / 100;
         const costFuel = liters * p;
 
-        // Running costs (vereinfacht) + Maut/Vignette (letzte Schätzung)
         const runningPer100Base = estimateRunningPer100(v);
         const tollPer100 = (km > 0) ? ((lastTollTotal + lastVignetteTotal) / km * 100) : 0;
         const runningPer100Total = runningPer100Base + (tollPer100 || 0);
@@ -1234,12 +1217,10 @@
         fuelPrices = { ...fallbackPrices };
         renderAvgPrices();
 
-        // Reset Maut state
         lastTollTotal = 0;
         lastVignetteTotal = 0;
         renderTollBreakdown();
 
-        // Map reset
         clearMarkers();
         clearRoute();
         map.setView([51.1657, 10.4515],5);
@@ -1265,9 +1246,8 @@
         })
       );
 
-      // Start: Maut-Block initial
       renderTollBreakdown();
-      setTimeout(() => { try { map.invalidateSize(); } catch(e){} }, 100);
+      setTimeout(() => { try { map.invalidateSize(); } catch(e){} }, 120);
     });
   </script>
 </body>
