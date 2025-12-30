@@ -346,14 +346,14 @@
     .country-badge{margin-top:8px; min-height:18px; font-size:.85rem; color:var(--muted);}
 
     /* ✅ MAP: groß erzwingen (und garantiert am Ende nicht überschrieben) */
-    #map{
-      width:100% !important;
-      height:520px !important;
-      min-height:320px !important;
-      border-radius:10px;
-      border:1px solid rgba(15,23,42,0.10);
-      background:#fff;
-    }
+   #map{
+  width:100%;
+  height:720px;        
+  min-height:320px;
+  border-radius:10px;
+  border:1px solid rgba(15,23,42,0.10);
+  background:#fff;
+}
     @media(max-width:980px){
       #map{height:260px !important;}
     }
@@ -940,6 +940,12 @@
         attribution:'&copy; OpenStreetMap-Mitwirkende'
       }).addTo(map);
 
+      // 🔧 Leaflet Resize-Fix (macht Desktop-Karte wieder richtig groß)
+setTimeout(() => { try { map.invalidateSize(); } catch(e){} }, 150);
+window.addEventListener('resize', () => {
+  setTimeout(() => { try { map.invalidateSize(); } catch(e){} }, 150);
+});
+
       let markers = [];
       let routeLayer = null;
 
@@ -1252,3 +1258,4 @@
   </script>
 </body>
 </html>
+
