@@ -24,7 +24,7 @@
   <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
-  <!-- Fonts -->
+  <!-- Header Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
@@ -47,12 +47,11 @@
   }
   </script>
 
-  <!-- ✅ dein ausgelagerter Style -->
+  <!-- ✅ globales Design -->
   <link rel="stylesheet" href="/assets/css/style.css" />
 </head>
 
 <body data-page="home">
-  <!-- ✅ Header überall gleich -->
   <div id="site-header"></div>
 
   <div class="page-container">
@@ -73,7 +72,8 @@
       <h2>Kostenloser Spritkosten-Rechner – Plane deine Fahrtkosten</h2>
       <p>
         Unser <strong>Spritkosten-Rechner</strong> hilft dir, die Gesamtkosten deiner Fahrt zu schätzen.
-        Gib Strecke, Verbrauch und Spritpreis ein – du erhältst eine Aufschlüsselung aus Spritkosten, laufenden Kosten und einer Maut-/Vignetten-Schätzung.
+        Gib Strecke, Verbrauch und Spritpreis ein – du erhältst eine Aufschlüsselung aus Spritkosten,
+        laufenden Kosten und einer Maut-/Vignetten-Schätzung.
       </p>
       <ul>
         <li><strong>Weltweit:</strong> Orte (Städte/Dörfer) per OpenStreetMap</li>
@@ -98,6 +98,7 @@
         </div>
 
         <div class="layout">
+          <!-- LEFT -->
           <div>
             <h2 style="margin:0 0 8px 0;font-size:1rem">Eingaben</h2>
 
@@ -136,8 +137,7 @@
                 </div>
               </div>
 
-              <!-- ✅ Satz entfernt wie gewünscht -->
-              <!-- <div class="small">Orte via Nominatim ...</div> -->
+              <!-- ✅ Satz entfernt wie du wolltest -->
             </div>
 
             <label for="fuel-type" style="margin-top:12px">Kraftstoff</label>
@@ -158,10 +158,7 @@
                   placeholder="z. B. 1,89" aria-label="Spritpreis pro Liter" />
                 <span id="price-info" class="hint"></span>
               </div>
-
-              <button id="btn-reset-price" class="btn secondary reset-price-btn">
-                Auf Standard zurücksetzen
-              </button>
+              <button id="btn-reset-price" class="btn secondary reset-price-btn">Auf Standard zurücksetzen</button>
             </div>
 
             <div class="price-table" aria-hidden="false">
@@ -200,23 +197,50 @@
               </div>
             </div>
 
-            <!-- Maut/Vignette -->
-            <div class="thinbox" aria-label="Maut und Vignetten Details">
+            <!-- ✅ Maut/CO2/Vergleich ist NICHT mehr links -->
+          </div>
+
+          <!-- RIGHT -->
+          <div class="map-col">
+            <h2 style="margin:0 0 8px 0;font-size:1rem">Karte & Strecke</h2>
+            <div id="map"></div>
+
+            <div style="margin-top:8px" class="small">
+              Klicke „Strecke berechnen“, um Start/Ziel zu finden. Die Strecke ist eine echte Straßenroute (OSRM).
+            </div>
+            <div id="toll-info" class="small" style="margin-top:6px;color:var(--muted)"></div>
+
+            <!-- ✅ Maut/Vignette unter Map -->
+            <div class="thinbox" aria-label="Maut und Vignetten Details" style="margin-top:10px">
               <div class="title">Maut & Vignette – Details</div>
               <div class="line"><div>Gesamt Maut</div><div class="mono" id="toll-total">—</div></div>
               <div class="line"><div>Gesamt Vignetten</div><div class="mono" id="vignette-total">—</div></div>
               <div class="line"><div>Summe Maut + Vignette</div><div class="mono" id="toll-vignette-sum">—</div></div>
               <div style="margin-top:8px" class="small" id="toll-breakdown"></div>
             </div>
-          </div>
 
-          <div class="map-col">
-            <h2 style="margin:0 0 8px 0;font-size:1rem">Karte & Strecke</h2>
-            <div id="map"></div>
-            <div style="margin-top:8px" class="small">
-              Klicke „Strecke berechnen“, um Start/Ziel zu finden. Die Strecke ist eine echte Straßenroute (OSRM).
+            <!-- ✅ CO2 unter Maut -->
+            <div class="thinbox" aria-label="CO2 Bilanz" style="margin-top:10px">
+              <div class="title">🌱 CO₂-Bilanz deiner Fahrt</div>
+              <div class="line"><div>Kraftstoff</div><div class="mono" id="co2-fuel">—</div></div>
+              <div class="line"><div>CO₂ gesamt</div><div class="mono" id="co2-total">—</div></div>
+              <div class="line"><div>CO₂ pro Person</div><div class="mono" id="co2-per-person">—</div></div>
+              <div class="small" style="margin-top:8px">
+                Näherung über Liter × CO₂-Faktor (Benzin/Diesel).
+              </div>
             </div>
-            <div id="toll-info" class="small" style="margin-top:6px;color:var(--muted)"></div>
+
+            <!-- ✅ Vergleich unter CO2 -->
+            <div class="thinbox" aria-label="Vergleich Verkehrsmittel" style="margin-top:10px">
+              <div class="title">🚆✈️ Vergleich: Auto vs. Bahn/Flug (Richtwerte)</div>
+              <div class="line"><div>Auto (Ø)</div><div class="mono" id="cmp-car">—</div></div>
+              <div class="line"><div>Bahn (Fernverkehr)</div><div class="mono" id="cmp-rail">—</div></div>
+              <div class="line"><div>Flug (Inland)</div><div class="mono" id="cmp-flight">—</div></div>
+              <div class="small" style="margin-top:8px">
+                Richtwerte auf Basis g CO₂e / Person-km (Deutschland, Bezugsjahr 2024).
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
@@ -249,79 +273,23 @@
       </div>
     </section>
 
-    <!-- Tips Block -->
-    <section class="card" aria-label="Tipps Sprit sparen">
-      <h2>Tipps: Sprit sparen & Reisekosten reduzieren</h2>
-      <p class="small" style="margin-top:0">
-        Kleine Änderungen senken die Kosten schnell: richtiger Reifendruck, gleichmäßige Geschwindigkeit
-        und realistische Verbrauchswerte. Wenn ihr zusammen fahrt, teilt die Kosten fair pro Person.
-      </p>
-      <ul style="margin:0;padding-left:18px;line-height:1.7">
-        <li><strong>Ruhig fahren:</strong> weniger stark beschleunigen und bremsen.</li>
-        <li><strong>Reifendruck prüfen:</strong> zu niedriger Druck erhöht den Verbrauch.</li>
-        <li><strong>Gewicht reduzieren:</strong> unnötige Ladung raus, Dachbox nur wenn nötig.</li>
-        <li><strong>Kosten teilen:</strong> „Personen“ nutzen für fairen Betrag pro Kopf.</li>
-      </ul>
-      <div style="margin-top:18px;display:flex;justify-content:center">
-        <a class="btn large" href="/ratgeber.html" style="max-width:320px">Zum Ratgeber</a>
-      </div>
-    </section>
-
-    <!-- FAQ -->
+    <!-- FAQ snippet -->
     <section class="card faq-section" aria-label="FAQ">
       <h2>Kurze FAQ</h2>
-
       <details class="faq-item">
         <summary>Wie berechne ich Spritkosten pro 100 km?</summary>
         <p>Der Rechner zeigt dir „€/100 km“ automatisch an. Grundlage ist: Gesamtkosten ÷ Strecke × 100.</p>
       </details>
-
       <details class="faq-item">
         <summary>Zählt Hin- und Rückfahrt oder nur eine Strecke?</summary>
         <p>Du kannst beides. Gib einfach die Kilometer ein, die du wirklich fährst (einfach oder hin & zurück).</p>
       </details>
-
-      <details class="faq-item">
-        <summary>Was ist in „laufenden Kosten“ enthalten?</summary>
-        <p>Eine grobe Schätzung (z. B. Wartung, Verschleiß, Reifen, Wertverlust) plus Maut/Vignette-Schätzung.</p>
-      </details>
-
       <details class="faq-item">
         <summary>Wie genau sind Maut/Vignetten?</summary>
         <p>Nur grob nach Ländern. Reale Kosten hängen von Route, Fahrzeugklasse und lokalen Regeln ab.</p>
       </details>
-
       <div style="margin-top:14px;display:flex;justify-content:center">
         <a class="btn large" href="/faq.html" style="max-width:360px">Mehr FAQ ansehen</a>
-      </div>
-    </section>
-
-    <!-- Countries -->
-    <section class="card countries-section" aria-label="Spritkosten-Rechner nach Land">
-      <h2>Spritkosten-Rechner nach Land</h2>
-      <p class="small" style="margin:0 0 10px 0">Funktioniert weltweit mit Länder-Erkennung. Beliebte Regionen:</p>
-
-      <div class="countries-grid">
-        <div class="country-card">
-          <h3>Deutschland</h3>
-          <p>Plane deine Fahrtkosten in Deutschland schnell und zuverlässig. Berechne Spritkosten, Maut, laufende Kosten und den fairen Preis pro Person.</p>
-        </div>
-        <div class="country-card">
-          <h3>Österreich</h3>
-          <p>Ideal für Alpen-, Autobahn- und Urlaubsfahrten. Der Rechner berücksichtigt typische Verbrauchswerte sowie eine Maut- und Vignetten-Schätzung.</p>
-        </div>
-        <div class="country-card">
-          <h3>Schweiz</h3>
-          <p>Perfekt für Strecken durch Städte, Alpenpässe und Autobahnen. Berechne Spritkosten, Gesamtkosten und Kosten pro Person inklusive Vignetten-Schätzung.</p>
-        </div>
-        <div class="country-card">
-          <h3>Europa</h3>
-          <p>Berechne deine Reisekosten für ganz Europa. Geeignet für grenzüberschreitende Fahrten mit grober Maut- und Verbrauchsschätzung.</p>
-        </div>
-        <div class="country-card">
-          <h3>Weltweit</h3>
-          <p>Nutze den Rechner weltweit für nahezu alle Länder, Städte und Regionen. Ideal für Roadtrips, Urlaubsreisen und internationale Fahrten.</p>
-        </div>
       </div>
     </section>
 
@@ -336,7 +304,6 @@
       <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>
 
-    <!-- ✅ Footer überall gleich -->
     <div id="site-footer"></div>
   </div>
 
@@ -346,7 +313,6 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const CURRENCY_SYMBOL = '€';
-      const TANKERKOENIG_API_KEY = "";
 
       const parse = v => (v === '' || v == null) ? NaN : Number(String(v).replace(',', '.'));
       const fmt = n => (Number.isFinite(n) ? Number.parseFloat(n.toFixed(2)).toFixed(2) : '0.00');
@@ -391,6 +357,14 @@
       const vignetteTotalEl = document.getElementById('vignette-total');
       const tollVignetteSumEl = document.getElementById('toll-vignette-sum');
       const tollBreakdownEl = document.getElementById('toll-breakdown');
+
+      // CO2 + Vergleich DOM
+      const co2FuelEl = document.getElementById('co2-fuel');
+      const co2TotalEl = document.getElementById('co2-total');
+      const co2PerPersonEl = document.getElementById('co2-per-person');
+      const cmpCarEl = document.getElementById('cmp-car');
+      const cmpRailEl = document.getElementById('cmp-rail');
+      const cmpFlightEl = document.getElementById('cmp-flight');
 
       // Preise aus externer Datei
       const countryPrices = window.COUNTRY_FUEL_PRICES_EUR || null;
@@ -558,6 +532,7 @@
         return distKm;
       }
 
+      // Maut/Vignette
       const tollPer100km = {
         DE:0, AT:6, CH:4, FR:10, IT:9, ES:10, NL:0, BE:0,
         PL:6, CZ:4, SK:4, HU:5, SI:5, HR:5, RO:3, BG:3,
@@ -663,8 +638,7 @@
           const startName = getCountryName(startCC);
           const destName  = getCountryName(destCC);
 
-          badgeEl.innerHTML =
-            `Erkannt: <b>Start</b> ${startName} (${startCC||'—'}), <b>Ziel</b> ${destName} (${destCC||'—'})`;
+          badgeEl.innerHTML = `Erkannt: <b>Start</b> ${startName} (${startCC||'—'}), <b>Ziel</b> ${destName} (${destCC||'—'})`;
 
           if(startCC && destCC && startCC !== destCC) priceModeWrap.style.display = 'block';
           else priceModeWrap.style.display = 'none';
@@ -725,6 +699,16 @@
         return Math.max(5, Math.min(30, Math.round(est * 10) / 10));
       }
 
+      function resetClimateBoxes(){
+        co2FuelEl.textContent = '—';
+        co2TotalEl.textContent = '—';
+        co2PerPersonEl.textContent = '—';
+        cmpCarEl.textContent = '—';
+        cmpRailEl.textContent = '—';
+        cmpFlightEl.textContent = '—';
+      }
+      resetClimateBoxes();
+
       document.getElementById('calc-fuel').addEventListener('click', () => {
         const km = parse(kmEl.value);
         const v  = parse(consumptionEl.value);
@@ -762,6 +746,29 @@
         costPersonEl.textContent = fmtMoney(perPerson);
         avg100El.textContent = fmtMoney(avgPer100) + ' /100km';
         runningEstEl.textContent = fmtMoney(runningPer100Total) + ' /100km';
+
+        // ✅ CO2 (UBA-Näherung)
+        const isDiesel = (fuelTypeEl.value === 'diesel');
+        const co2FactorKgPerL = isDiesel ? 2.65 : 2.33; // kg CO2 je Liter
+        const co2Kg = liters * co2FactorKgPerL;
+        const co2PerPersonKg = co2Kg / passengers;
+
+        co2FuelEl.textContent = isDiesel ? 'Diesel' : 'Benzin';
+        co2TotalEl.textContent = fmt(co2Kg).replace('.', ',') + ' kg';
+        co2PerPersonEl.textContent = fmt(co2PerPersonKg).replace('.', ',') + ' kg';
+
+        // ✅ Vergleich (UBA 2024, g CO2e / Person-km)
+        const gPerPkmCar = 164;
+        const gPerPkmRail = 26;
+        const gPerPkmFlight = 290;
+
+        const cmpCarKg = (km * passengers * gPerPkmCar) / 1_000_000;
+        const cmpRailKg = (km * passengers * gPerPkmRail) / 1_000_000;
+        const cmpFlightKg = (km * passengers * gPerPkmFlight) / 1_000_000;
+
+        cmpCarEl.textContent = fmt(cmpCarKg).replace('.', ',') + ' kg';
+        cmpRailEl.textContent = fmt(cmpRailKg).replace('.', ',') + ' kg';
+        cmpFlightEl.textContent = fmt(cmpFlightKg).replace('.', ',') + ' kg';
       });
 
       document.getElementById('reset-fuel').addEventListener('click', () => {
@@ -790,6 +797,8 @@
         clearRoute();
         map.setView([51.1657, 10.4515],5);
         setTimeout(() => { try { map.invalidateSize(); } catch(e){} }, 80);
+
+        resetClimateBoxes();
       });
 
       renderTollBreakdown();
@@ -797,7 +806,6 @@
     });
   </script>
 
-  <!-- ✅ loader zum Einladen von Header/Footer -->
   <script src="/assets/js/loader.js"></script>
 </body>
 </html>
