@@ -1,304 +1,131 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Spritkosten-Rechner – Benzin, Diesel & Reisekosten berechnen</title>
+<meta name="description" content="Kostenloser Spritkosten-Rechner mit Karte, Maut- & Gesamtkosten-Schätzung">
+<link rel="canonical" href="https://spritkosten-check.de/">
 
-  <title>Spritkosten-Rechner – Benzin, Diesel & Reisekosten berechnen</title>
-  <meta name="description" content="Kostenloser Spritkosten-Rechner für Fahrten & Roadtrips. Berechne Spritkosten, Gesamtkosten und Maut-Schätzung mit Karte und Distanzberechnung weltweit." />
-  <meta name="robots" content="index, follow" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4852698472752437" crossorigin="anonymous"></script>
 
-  <!-- ✅ DE ↔ EN Connection (SEO) -->
-  <link rel="canonical" href="https://spritkosten-check.de/" />
-  <link rel="alternate" hreflang="de" href="https://spritkosten-check.de/" />
-  <link rel="alternate" hreflang="en" href="https://petrolcostcalculator.com/" />
-  <link rel="alternate" hreflang="x-default" href="https://petrolcostcalculator.com/" />
+<style>
+*{box-sizing:border-box}
 
-  <!-- Icons -->
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
-  <link rel="icon" href="/favicon.ico">
+:root{
+--bg1:#0f172a;
+--bg2:#e9eef5;
+--card:#fff;
+--text:#0b1220;
+--muted:#4b5563;
+--accent:#0ea5a3;
+--accent-2:#4f46e5;
+--maxw:1400px;
+--button-h:48px;
+}
 
-  <!-- Leaflet -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+body{
+margin:0;
+font-family:system-ui;
+color:var(--text);
+background:linear-gradient(180deg,var(--bg1),var(--bg2));
+}
 
-  <!-- Header Font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+.site-header{
+position:sticky;top:0;background:#fff;border-bottom:1px solid #ddd;z-index:99;
+}
+.header-inner{
+max-width:none;padding:12px 18px;display:flex;justify-content:space-between;align-items:center;
+}
 
-  <!-- Google Ads (optional) -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4852698472752437"
-    crossorigin="anonymous"></script>
+.page-container{
+width:100%;
+max-width:min(1400px,94vw);
+margin:0 auto;
+padding:12px;
+display:flex;
+flex-direction:column;
+gap:16px;
+}
 
-  <!-- Schema -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "Spritkosten-Rechner",
-    "description": "Kostenloser Online-Rechner für Spritkosten, Kraftstoffpreise, Maut und Reisekosten",
-    "url": "https://spritkosten-check.de",
-    "applicationCategory": "UtilityApplication",
-    "operatingSystem": "Web",
-    "offers": {"@type":"Offer","price":"0","priceCurrency":"EUR"}
-  }
-  </script>
+.card{
+background:#fff;
+border-radius:14px;
+padding:16px;
+box-shadow:0 10px 25px rgba(0,0,0,.1);
+}
 
-  <style>
-    *{box-sizing:border-box;}
+.layout{
+display:grid;
+grid-template-columns:minmax(0,520px) 1fr;
+gap:16px;
+}
 
-    :root{
-      --bg1:#0f172a;
-      --bg2:#e9eef5;
-      --card:#ffffff;
-      --muted:#4b5563;
-      --text:#0b1220;
-      --accent:#0ea5a3;
-      --accent-2:#4f46e5;
-      --button-h:48px;
+@media(max-width:980px){
+.layout{grid-template-columns:1fr}
+}
 
-      /* ✅ FIX: Seite darf am Desktop breiter werden */
-      --maxw: 1400px;
-    }
+#map{height:420px;border-radius:12px}
 
-    html, body { width:100%; }
+.btn{
+background:linear-gradient(90deg,var(--accent),var(--accent-2));
+color:#fff;border:none;border-radius:10px;height:48px;font-weight:800;cursor:pointer;
+}
+.btn.secondary{background:#eef2ff;color:#4f46e5}
+input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #ccc}
+label{margin-top:8px;display:block;color:#555;font-weight:600}
+</style>
+</head>
 
-    body{
-      margin:0;
-      font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
-      color:var(--text);
-      min-height:100vh;
-      background: transparent;
-      position: relative;
-    }
-    body::before{
-      content:"";
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      background: linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 100%);
-    }
+<body>
 
-    /* ✅ Header immer klickbar */
-    .site-header{
-      position: sticky;
-      top:0;
-      z-index: 2147483647;
-      width:100%;
-      background:#fff;
-      border-bottom:1px solid rgba(15,23,42,0.06);
-    }
-    .header-inner{
-      width:100%;
-      max-width: none;
-      margin:0;
-      padding:10px 18px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      position: relative;
-      z-index: 2147483647;
-    }
+<header class="site-header">
+<div class="header-inner">
+<b>Spritkosten-Rechner</b>
+</div>
+</header>
 
-    .logo-title{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      text-decoration:none;
-      color:inherit;
-      flex:1 1 auto;
-      min-width:0;
-    }
-    .logo-title:hover{opacity:.88;}
-    .logo-title img{
-      height:54px;
-      width:auto;
-      display:block;
-    }
-    .site-title{
-      font-family:'Poppins', Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
-      font-weight:700;
-      font-size:18px;
-      white-space:nowrap;
-      letter-spacing:.2px;
-      max-width: 560px;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
+<div class="page-container">
 
-    .tabs{
-      display:flex;
-      gap:8px;
-      margin-left:auto;
-      flex:0 0 auto;
-      align-items:center;
-      position: relative;
-      z-index: 2147483647;
-    }
-    .tabs button{
-      background:transparent;
-      border:1px solid transparent;
-      color:var(--muted);
-      padding:.6rem 1rem;
-      border-radius:.6rem;
-      cursor:pointer;
-      font-weight:800;
-      font-size:.95rem;
-      height:var(--button-h);
-      white-space:nowrap;
-    }
-    .tabs button[aria-selected="true"]{
-      background:linear-gradient(90deg,var(--accent),var(--accent-2));
-      color:#fff;
-    }
+<div class="card">
+<h2>Spritkosten berechnen</h2>
+<div class="layout">
 
-    .lang-link{
-      font-weight:800;
-      text-decoration:none;
-      color:var(--accent-2);
-      border:1px solid rgba(79,70,229,0.15);
-      background:#eef2ff;
-      padding:.55rem .8rem;
-      border-radius:.6rem;
-      height:var(--button-h);
-      display:inline-flex;
-      align-items:center;
-      position: relative;
-      z-index: 2147483647;
-    }
+<div>
+<label>Strecke (km)</label>
+<input id="km" type="number">
+<label>Verbrauch (L/100km)</label>
+<input id="consumption" type="number" value="7.5">
+<label>Preis €/L</label>
+<input id="price" type="number" value="1.90">
+<button class="btn" onclick="calc()">Berechnen</button>
 
-    /* ✅ WICHTIG: Das war dein Engpass – jetzt responsiv breit */
-    .page-container{
-      width:100%;
-      max-width: min(var(--maxw), 94vw);
-      margin:0 auto;
-      padding: 0 12px;
+<p><b>Gesamt:</b> <span id="total">0 €</span></p>
+</div>
 
-      display:flex;
-      flex-direction:column;
-      gap:18px;
-    }
+<div>
+<div id="map"></div>
+</div>
 
-    /* Desktop etwas mehr Luft */
-    @media (min-width: 992px){
-      .page-container{
-        padding: 0 24px;
-      }
-    }
+</div>
+</div>
 
-    h1{margin:0;font-size:1.25rem}
-    h2{font-size:1.1rem;margin:16px 0 12px 0}
+</div>
 
-    .card{
-      background:var(--card);
-      border-radius:16px;
-      padding:16px;
-      box-shadow:0 12px 30px rgba(0,0,0,.08);
-      border:1px solid rgba(15,23,42,0.05);
-      width:100%;
-      overflow:hidden;
-    }
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+var map=L.map('map').setView([51,10],5);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-    .intro-section{ line-height:1.65; }
-    .intro-section p{margin:0 0 12px 0;}
-    .intro-section ul{margin:8px 0;padding-left:20px}
-    .intro-section li{margin:6px 0}
+function calc(){
+let km=+document.getElementById('km').value||0;
+let v=+document.getElementById('consumption').value||0;
+let p=+document.getElementById('price').value||0;
+let total=(km*v/100)*p;
+document.getElementById('total').innerText=total.toFixed(2)+" €";
+}
+</script>
 
-    /* ✅ Layout: Desktop bekommt mehr Platz, Map wird größer */
-    .layout{
-      display:grid;
-      grid-template-columns: minmax(0, 520px) minmax(0, 1fr);
-      gap:18px;
-      align-items:start;
-      width:100%;
-    }
-
-    label{
-      display:block;
-      margin:.5rem 0 .25rem 0;
-      font-size:.9rem;
-      color:var(--muted);
-      font-weight:600;
-    }
-    input[type="number"], input[type="text"], select{
-      width:100%;
-      padding:.6rem .75rem;
-      border-radius:8px;
-      border:1px solid rgba(15,23,42,0.10);
-      background:transparent;
-      color:var(--text);
-      outline:none;
-      font-size:1rem;
-      margin-top:.25rem;
-    }
-
-    .km-row{display:flex;gap:8px;align-items:center;flex-wrap:nowrap}
-    .km-row .km-input{flex:1;min-width:0}
-
-    .spinner{display:flex;flex-direction:column;gap:6px}
-    .spinner button{
-      width:44px;height:44px;border-radius:8px;border:none;
-      background:linear-gradient(90deg,var(--accent),var(--accent-2));
-      color:#fff;font-weight:900;font-size:18px;cursor:pointer;
-      display:inline-flex;align-items:center;justify-content:center
-    }
-
-    .big-action{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
-    .btn{
-      flex:1;
-      height:var(--button-h);
-      border-radius:10px;
-      border:none;
-      cursor:pointer;
-      font-weight:800;
-      background:linear-gradient(90deg,var(--accent),var(--accent-2));
-      color:#fff;
-      font-size:1rem;
-      min-width:140px
-    }
-    .btn.secondary{
-      background:#eef2ff;
-      color:var(--accent-2);
-      border:1px solid rgba(79,70,229,0.12)
-    }
-    .btn.large{font-size:1.05rem;padding:0 14px;height:54px}
-
-    .small{font-size:.9rem;color:var(--muted)}
-    .hint{font-size:.85rem;color:var(--accent);margin-top:4px;min-height:18px;display:block}
-    .hint.error{color:#e53e3e}
-    .error{color:#e53e3e}
-
-    .price-input-group{
-      display:grid;
-      grid-template-columns: 1fr auto;
-      gap:10px;
-      align-items:end;
-      margin-top:8px;
-    }
-    .reset-price-btn{
-      height:44px;
-      padding:0 14px;
-      white-space:nowrap;
-    }
-
-    .price-table{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
-    .price-card{
-      flex:1;min-width:140px;padding:8px;border-radius:8px;background:#fafafa;
-      border:1px solid rgba(15,23,42,0.05);text-align:center
-    }
-    .price-card strong{display:block;font-size:1.05rem;color:var(--accent-2);margin-top:6px}
-
-    .resultbox{
-      margin-top:12px;
-      padding:12px;
-      border-radius:8px;
-      background:linear-gradient(180deg,#ffffff,#fbfdff);
-      border:1px solid rgba(15,23,42,0.06)
-    }
-    .result-row{
-      display
+</body>
+</html>
