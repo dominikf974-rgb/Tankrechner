@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
   <title>Spritkosten-Rechner – Benzin, Diesel & Reisekosten berechnen</title>
-  <meta name="description" content="Kostenloser Spritkosten-Rechner für Fahrten & Roadtrips. Berechne Spritkosten, Gesamtkosten und Maut-Schätzung mit Karte und Distanzberechnung weltweit." />
+  <meta name="description" content="Kostenloser Spritkosten-Rechner für Fahrten & Roadtrips. Berechne Spritkosten, Gesamtkosten und Maut-/Vignetten-Schätzung mit Karte und Distanzberechnung weltweit." />
   <meta name="robots" content="index, follow" />
 
   <!-- ✅ DE ↔ EN Connection (SEO) -->
@@ -40,7 +40,7 @@
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": "Spritkosten-Rechner",
-    "description": "Kostenloser Online-Rechner für Spritkosten, Kraftstoffpreise, Maut und Reisekosten",
+    "description": "Kostenloser Online-Rechner für Spritkosten, Kraftstoffpreise, Maut/Vignetten und Reisekosten",
     "url": "https://spritkosten-check.de",
     "applicationCategory": "UtilityApplication",
     "operatingSystem": "Web",
@@ -52,6 +52,7 @@
     *{box-sizing:border-box;}
 
     :root{
+      --bg1:#0f172 giving a random - fix variable? let's keep correct */
       --bg1:#0f172a;
       --bg2:#e9eef5;
       --card:#ffffff;
@@ -304,27 +305,59 @@
     .result-key{color:var(--muted);font-size:.95rem}
     .result-val{font-weight:900;color:var(--accent-2)}
 
-    /* ✅ MAP: wie EN größer */
-    .layout > div:last-child{display:flex; flex-direction:column; min-height:0;}
+    /* Dünner Maut/Vignette-Block */
+    .thinbox{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:10px;
+      background:#ffffff;
+      border:1px solid rgba(15,23,42,0.08);
+    }
+    .thinbox .title{
+      font-weight:900;
+      color:var(--accent-2);
+      margin-bottom:6px;
+      font-size:.95rem;
+    }
+    .thinbox .line{
+      display:flex;justify-content:space-between;gap:10px;
+      padding:5px 0;border-bottom:1px dashed rgba(15,23,42,0.10);
+      font-size:.9rem;
+    }
+    .thinbox .line:last-child{border-bottom:0}
+    .mono{font-variant-numeric:tabular-nums;}
+
+    /* Cross-border selection */
+    .price-mode{
+      margin-top:10px;
+      padding:10px;
+      border:1px solid rgba(15,23,42,0.08);
+      border-radius:10px;
+      background:#fbfdff;
+      display:none;
+    }
+    .price-mode .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 10px;border:1px solid rgba(15,23,42,0.10);
+      border-radius:999px;background:#fff; cursor:pointer;
+      user-select:none;
+    }
+    .pill input{margin:0}
+
+    .country-badge{margin-top:8px; min-height:18px; font-size:.85rem; color:var(--muted);}
+
+    /* ✅ MAP: groß erzwingen wie EN */
     #map{
-      width:100%;
-      height:520px;          /* Desktop groß */
-      min-height:320px;
+      width:100% !important;
+      height:520px !important;
+      min-height:320px !important;
       border-radius:10px;
       border:1px solid rgba(15,23,42,0.10);
       background:#fff;
     }
     @media(max-width:980px){
-      #map{height:260px;}
-    }
-
-    .ad-block{ margin:0; }
-
-    /* SEO helper layout */
-    .two-col{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:12px;
+      #map{height:260px !important;}
     }
 
     .faq-item{margin:10px 0}
@@ -348,25 +381,13 @@
     .country-card h3{margin:0 0 8px 0;font-size:1rem;color:var(--accent-2)}
     .country-card p{margin:0 0 8px 0;font-size:.9rem}
 
-    /* Cross-border price mode UI */
-    .price-mode{
-      margin-top:10px;
-      padding:10px;
-      border:1px solid rgba(15,23,42,0.08);
-      border-radius:10px;
-      background:#fbfdff;
-      display:none;
-    }
-    .price-mode .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    .pill{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:8px 10px;border:1px solid rgba(15,23,42,0.10);
-      border-radius:999px;background:#fff; cursor:pointer;
-      user-select:none;
-    }
-    .pill input{margin:0}
+    .ad-block{ margin:0; }
 
-    .country-badge{margin-top:8px; min-height:18px; font-size:.85rem; color:var(--muted);}
+    .two-col{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
 
     @media(max-width:980px){
       .layout{grid-template-columns:1fr}
@@ -428,12 +449,12 @@
       <h2>Kostenloser Spritkosten-Rechner – Plane deine Fahrtkosten</h2>
       <p>
         Unser <strong>Spritkosten-Rechner</strong> hilft dir, die Gesamtkosten deiner Fahrt zu schätzen.
-        Gib Strecke, Verbrauch und Spritpreis ein – du erhältst eine Aufschlüsselung aus Spritkosten, laufenden Kosten und einer Maut-Schätzung.
+        Gib Strecke, Verbrauch und Spritpreis ein – du erhältst eine Aufschlüsselung aus Spritkosten, laufenden Kosten und einer Maut-/Vignetten-Schätzung.
       </p>
       <ul>
-        <li><strong>Funktioniert weltweit:</strong> Orte (Städte/Dörfer) per OpenStreetMap</li>
-        <li><strong>Strecke berechnen:</strong> echte Straßenroute (OSRM) + Karte</li>
-        <li><strong>Maut:</strong> einfache Schätzung nach Region</li>
+        <li><strong>Weltweit:</strong> Orte (Städte/Dörfer) per OpenStreetMap</li>
+        <li><strong>Strecke:</strong> echte Straßenroute (OSRM) + Karte</li>
+        <li><strong>Maut/Vignette:</strong> schnelle Schätzung nach Ländern</li>
         <li><strong>Kosten teilen:</strong> pro Person berechnen</li>
       </ul>
     </section>
@@ -468,9 +489,9 @@
 
             <div style="margin-top:12px">
               <label for="place-from">Oder: Start (Ort, Land)</label>
-              <input id="place-from" type="text" placeholder="z. B. Berlin, Deutschland" aria-label="Startort" />
+              <input id="place-from" type="text" placeholder="z. B. Moskau, Russland" aria-label="Startort" />
               <label for="place-to" style="margin-top:10px">Ziel (Ort, Land)</label>
-              <input id="place-to" type="text" placeholder="z. B. München, Deutschland" aria-label="Zielort" />
+              <input id="place-to" type="text" placeholder="z. B. Sankt Petersburg, Russland" aria-label="Zielort" />
 
               <div class="map-controls" style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
                 <button id="btn-geocode" class="btn secondary">Strecke berechnen</button>
@@ -479,7 +500,6 @@
 
               <div class="country-badge" id="country-badge"></div>
 
-              <!-- ✅ Auswahl bei Länderwechsel -->
               <div class="price-mode" id="price-mode">
                 <div class="small" style="margin-bottom:6px;">
                   Startland und Zielland sind unterschiedlich. Welcher Spritpreis soll gelten?
@@ -543,15 +563,24 @@
 
             <div class="resultbox" aria-live="polite" aria-label="Ergebnisse">
               <div class="result-row"><div class="result-key">Spritkosten</div><div class="result-val" id="cost-fuel">€0,00</div></div>
-              <div class="result-row"><div class="result-key">Laufende Kosten inkl. Maut (Schätzung)</div><div class="result-val" id="cost-running">€0,00</div></div>
+              <div class="result-row"><div class="result-key">Laufende Kosten inkl. Maut/Vignette (Schätzung)</div><div class="result-val" id="cost-running">€0,00</div></div>
               <div class="result-row"><div class="result-key">Gesamtkosten</div><div class="result-val" id="cost-total">€0,00</div></div>
               <div class="result-row"><div class="result-key">Pro Person</div><div class="result-val" id="cost-person">€0,00</div></div>
               <div class="result-row"><div class="result-key">Liter gesamt</div><div class="result-val" id="liters">0,00 L</div></div>
               <div class="result-row"><div class="result-key">Durchschnitt (€/100 km)</div><div class="result-val" id="avg100">€0,00 /100km</div></div>
-              <div class="result-row"><div class="result-key small">Schätzung laufende Kosten /100 km (inkl. Maut)</div><div class="result-val small" id="running-est">—</div></div>
+              <div class="result-row"><div class="result-key small">Schätzung laufende Kosten /100 km (inkl. Maut/Vignette)</div><div class="result-val small" id="running-est">—</div></div>
               <div style="margin-top:8px;color:var(--muted);font-size:.85rem">
-                Laufende Kosten enthalten: Wartung, Reifen, Wertverlust, Versicherung + Maut-Schätzung.
+                Laufende Kosten enthalten: Wartung, Reifen, Wertverlust, Versicherung + Maut/Vignette-Schätzung.
               </div>
+            </div>
+
+            <!-- ✅ Dünner Block: Maut/Vignette Details -->
+            <div class="thinbox" aria-label="Maut und Vignetten Details">
+              <div class="title">Maut & Vignette – Details</div>
+              <div class="line"><div>Gesamt Maut</div><div class="mono" id="toll-total">—</div></div>
+              <div class="line"><div>Gesamt Vignetten</div><div class="mono" id="vignette-total">—</div></div>
+              <div class="line"><div>Summe Maut + Vignette</div><div class="mono" id="toll-vignette-sum">—</div></div>
+              <div style="margin-top:8px" class="small" id="toll-breakdown"></div>
             </div>
           </div>
 
@@ -584,7 +613,7 @@
       </section>
     </main>
 
-    <!-- SEO Block 1 -->
+    <!-- SEO Block -->
     <section class="card" aria-label="Berechnung erklärt">
       <h2>So berechnest du Spritkosten & Kosten pro Person</h2>
       <p class="small" style="margin-top:0">
@@ -603,7 +632,7 @@
         <div class="card" style="box-shadow:none;border:1px solid rgba(15,23,42,0.06);background:#fbfdff">
           <h3 style="margin:0 0 8px 0;font-size:1rem;color:var(--accent-2)">Hinweise</h3>
           <ul style="margin:0;padding-left:18px;line-height:1.7">
-            <li>Maut ist nur eine grobe Schätzung.</li>
+            <li>Maut/Vignette sind Schätzwerte.</li>
             <li>„Laufende Kosten“ sind eine einfache Näherung.</li>
             <li>Für genaue Werte: echten Verbrauch + aktuellen Preis nutzen.</li>
           </ul>
@@ -611,7 +640,7 @@
       </div>
     </section>
 
-    <!-- ✅ NEU: Tips Block wie EN -->
+    <!-- Tips Block -->
     <section class="card" aria-label="Tipps Sprit sparen">
       <h2>Tipps: Sprit sparen & Reisekosten reduzieren</h2>
       <p class="small" style="margin-top:0">
@@ -630,15 +659,6 @@
       </div>
     </section>
 
-    <!-- Ratgeber -->
-    <section class="card" aria-label="Ratgeber">
-      <h2>Ratgeber: Sprit sparen & Reisekosten planen</h2>
-      <p class="small" style="margin-top:0">
-        Kurze Guides zu Verbrauch, Kosten pro 100 km, Mitfahrkosten fair teilen und typische Fehler vermeiden.
-      </p>
-      <a class="btn large" href="/ratgeber.html" style="max-width:320px">Zum Ratgeber</a>
-    </section>
-
     <!-- FAQ -->
     <section class="card faq-section" aria-label="FAQ">
       <h2>Kurze FAQ</h2>
@@ -655,12 +675,12 @@
 
       <details class="faq-item">
         <summary>Was ist in „laufenden Kosten“ enthalten?</summary>
-        <p>Eine grobe Schätzung (z. B. Wartung, Verschleiß, Reifen, Wertverlust) plus ggf. Maut-Schätzung.</p>
+        <p>Eine grobe Schätzung (z. B. Wartung, Verschleiß, Reifen, Wertverlust) plus Maut/Vignette-Schätzung.</p>
       </details>
 
       <details class="faq-item">
-        <summary>Wie genau ist die Maut-Schätzung?</summary>
-        <p>Nur grob nach Region. Reale Kosten hängen von Route, Fahrzeugklasse und lokalen Regeln ab.</p>
+        <summary>Wie genau sind Maut/Vignetten?</summary>
+        <p>Nur grob nach Ländern. Reale Kosten hängen von Route, Fahrzeugklasse und lokalen Regeln ab.</p>
       </details>
 
       <div style="margin-top:14px;display:flex;justify-content:center">
@@ -680,7 +700,7 @@
         </div>
         <div class="country-card">
           <h3>Österreich</h3>
-          <p>Für Autobahn & Reisen mit Maut-Schätzung.</p>
+          <p>Für Autobahn & Reisen mit Maut/Vignette-Schätzung.</p>
         </div>
         <div class="country-card">
           <h3>Schweiz</h3>
@@ -731,35 +751,16 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  <!-- ✅ EXTERN: Länderpreise (monatlich nur diese Datei tauschen!) -->
-  <script src="prices/prices/country-prices.js"></script>
-
-  <script>
-  // Sichtbarer Check ohne F12:
-  window.addEventListener("DOMContentLoaded", () => {
-    const ok = !!window.COUNTRY_FUEL_PRICES_EUR;
-    const ru = window.COUNTRY_FUEL_PRICES_EUR && window.COUNTRY_FUEL_PRICES_EUR.RU;
-    if(!ok){
-      alert("❌ country-prices.js wurde NICHT geladen!");
-    } else if(!ru){
-      alert("⚠️ country-prices.js geladen, aber RU fehlt/ist falsch (kein Eintrag COUNTRY_FUEL_PRICES_EUR.RU).");
-    } else {
-      // optional: nur zur Sicherheit einmal anzeigen
-      console.log("RU:", ru);
-    }
-  });
-</script>
+  <!-- ✅ Länderpreise (monatlich tauschen) -->
+  <script src="prices/country-prices.js"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const MAPBOX_API_KEY = ''; // optional (lassen wir leer)
       const CURRENCY_SYMBOL = '€';
 
-      // ✅ Tankerkoenig (nur Deutschland live) – Key hier eintragen.
-      // Wenn leer/ungültig: fällt automatisch auf statische DE-Preise aus country-prices.js zurück.
-      const TANKERKOENIG_API_KEY = ''; // <- hier deinen Key rein, wenn du willst
-
-      const TK_BASE = 'https://creativecommons.tankerkoenig.de';
+      // ✅ Optional: Tankerkoenig nur für DE (wenn du später willst, hier eintragen)
+      // Leer lassen = DE wird auch statisch aus country-prices.js genommen.
+      const TANKERKOENIG_API_KEY = "";
 
       const parse = v => (v === '' || v == null) ? NaN : Number(String(v).replace(',', '.'));
       const fmt = n => (Number.isFinite(n) ? Number.parseFloat(n.toFixed(2)).toFixed(2) : '0.00');
@@ -780,11 +781,11 @@
             s.setAttribute('aria-hidden', isActive ? 'false' : 'true');
           });
 
-          if (target === 'fuel') setTimeout(() => { try { map.invalidateSize(); } catch(e){} }, 60);
+          if (target === 'fuel') setTimeout(() => { try { map.invalidateSize(); } catch(e){} }, 80);
         });
       });
 
-      function fetchWithTimeout(url, ms=10000){
+      function fetchWithTimeout(url, ms=12000){
         const controller = new AbortController();
         const t = setTimeout(() => controller.abort(), ms);
         return fetch(url, { signal: controller.signal }).finally(() => clearTimeout(t));
@@ -811,23 +812,35 @@
 
       const tollInfoEl = document.getElementById('toll-info');
       const priceInfoEl = document.getElementById('price-info');
+
       const placeFromEl = document.getElementById('place-from');
       const placeToEl = document.getElementById('place-to');
 
       const badgeEl = document.getElementById('country-badge');
       const priceModeWrap = document.getElementById('price-mode');
 
+      const tollTotalEl = document.getElementById('toll-total');
+      const vignetteTotalEl = document.getElementById('vignette-total');
+      const tollVignetteSumEl = document.getElementById('toll-vignette-sum');
+      const tollBreakdownEl = document.getElementById('toll-breakdown');
+
       // ✅ Preise aus externer Datei
-      const countryPrices = (window.COUNTRY_FUEL_PRICES_EUR || {});
+      const countryPrices = window.COUNTRY_FUEL_PRICES_EUR || null;
       const priceStand = window.COUNTRY_FUEL_PRICES_STAND || '';
 
-      const fallbackPrices = { unleaded91:1.85, unleaded95:1.95, diesel:1.80, name:'Fallback' };
+      // Fallback bewusst NEUTRAL (damit Fehler auffällt)
+      const fallbackPrices = { unleaded91: 1.50, unleaded95: 1.60, diesel: 1.45, name:'Fallback' };
       let fuelPrices = { ...fallbackPrices };
       let userEditedPrice = false;
 
-      // State Start/Ziel Land
+      // Route state
       let startCC = null, destCC = null;
       let startCoord = null, destCoord = null;
+      let routeKm = 0;
+
+      // Maut state
+      let lastTollTotal = 0;
+      let lastVignetteTotal = 0;
 
       function renderAvgPrices(){
         avgUnleaded91El.textContent = fmtMoney(fuelPrices.unleaded91);
@@ -841,102 +854,19 @@
         return el ? el.value : 'avg';
       }
 
+      function getCountryName(cc){
+        if(!cc) return '—';
+        const e = countryPrices && countryPrices[cc];
+        return (e && e.name) ? e.name : cc;
+      }
+
       function pricesForCountryStatic(cc){
         const code = (cc || '').toUpperCase();
-        const entry = countryPrices[code];
+        const entry = countryPrices && countryPrices[code];
         if(entry && Number.isFinite(entry.unleaded91) && Number.isFinite(entry.unleaded95) && Number.isFinite(entry.diesel)){
-          return {
-            unleaded91: entry.unleaded91,
-            unleaded95: entry.unleaded95,
-            diesel: entry.diesel,
-            name: entry.name || code,
-            source: 'static'
-          };
+          return { ...entry, source: 'static' };
         }
         return { ...fallbackPrices, name: code || 'Fallback', source: 'fallback' };
-      }
-
-      function median(arr){
-        const a = arr.filter(v => Number.isFinite(v)).sort((x,y)=>x-y);
-        if(!a.length) return NaN;
-        const mid = Math.floor(a.length/2);
-        return a.length % 2 ? a[mid] : (a[mid-1]+a[mid])/2;
-      }
-
-      const tkCache = new Map();
-      const TK_CACHE_MS = 10 * 60 * 1000;
-
-      async function getDEPricesFromTankerkoenig(lat, lon){
-        if(!TANKERKOENIG_API_KEY) throw new Error('TK key missing');
-
-        const cacheKey = `de:${Math.round(lat*1000)/1000},${Math.round(lon*1000)/1000}`;
-        const cached = tkCache.get(cacheKey);
-        if(cached && (Date.now() - cached.ts) < TK_CACHE_MS) return cached.prices;
-
-        const rad = 8;
-        const listUrl =
-          `${TK_BASE}/json/list.php?lat=${encodeURIComponent(lat)}&lng=${encodeURIComponent(lon)}` +
-          `&rad=${rad}&sort=dist&type=all&apikey=${encodeURIComponent(TANKERKOENIG_API_KEY)}`;
-
-        const listRes = await fetchWithTimeout(listUrl, 9000);
-        if(!listRes.ok) throw new Error('TK list failed');
-        const listJson = await listRes.json();
-
-        const stations = Array.isArray(listJson?.stations) ? listJson.stations : [];
-        const ids = stations.map(s => s?.id).filter(Boolean).slice(0, 10);
-        if(!ids.length) throw new Error('No stations');
-
-        const pricesUrl =
-          `${TK_BASE}/json/prices.php?ids=${encodeURIComponent(ids.join(','))}` +
-          `&apikey=${encodeURIComponent(TANKERKOENIG_API_KEY)}`;
-
-        const pRes = await fetchWithTimeout(pricesUrl, 9000);
-        if(!pRes.ok) throw new Error('TK prices failed');
-        const pJson = await pRes.json();
-
-        const pricesObj = pJson?.prices || {};
-        const e10 = [], e5 = [], diesel = [];
-
-        ids.forEach(id => {
-          const pr = pricesObj[id];
-          if(!pr) return;
-          if(Number.isFinite(pr.e10)) e10.push(pr.e10);
-          if(Number.isFinite(pr.e5)) e5.push(pr.e5);
-          if(Number.isFinite(pr.diesel)) diesel.push(pr.diesel);
-        });
-
-        const mE10 = median(e10);
-        const mE5  = median(e5);
-        const mD   = median(diesel);
-
-        if(!Number.isFinite(mE10) && !Number.isFinite(mE5) && !Number.isFinite(mD)){
-          throw new Error('No usable prices');
-        }
-
-        const out = {
-          unleaded91: Number.isFinite(mE10) ? mE10 : (Number.isFinite(mE5) ? mE5 : fallbackPrices.unleaded91),
-          unleaded95: Number.isFinite(mE5)  ? mE5  : (Number.isFinite(mE10) ? mE10 : fallbackPrices.unleaded95),
-          diesel:     Number.isFinite(mD)   ? mD   : fallbackPrices.diesel,
-          name: 'Deutschland',
-          source: 'tankerkoenig'
-        };
-
-        tkCache.set(cacheKey, { ts: Date.now(), prices: out });
-        return out;
-      }
-
-      async function getCountryPrices(cc, coord){
-        const code = (cc || '').toUpperCase();
-        if(code === 'DE' && coord){
-          try{
-            return await getDEPricesFromTankerkoenig(coord.lat, coord.lon);
-          }catch(e){
-            // fallback
-            const st = pricesForCountryStatic('DE');
-            return { ...st, source: 'static(de-backup)' };
-          }
-        }
-        return pricesForCountryStatic(code);
       }
 
       function mixPrices(a, b){
@@ -949,12 +879,17 @@
         };
       }
 
-      async function applyDetectedPricesAsync(){
+      async function applyDetectedPrices(){
+        // Wenn price-Datei fehlt: Hinweis
+        if(!countryPrices){
+          badgeEl.innerHTML = '<span class="error">Preisdatei nicht geladen: prices/country-prices.js</span>';
+        }
+
         const isCross = (startCC && destCC && startCC !== destCC);
         const mode = isCross ? getMode() : 'start';
 
-        const startP = await getCountryPrices(startCC, startCoord);
-        const destP  = await getCountryPrices(destCC, destCoord);
+        const startP = pricesForCountryStatic(startCC);
+        const destP  = pricesForCountryStatic(destCC);
 
         let chosen, note;
         if(isCross){
@@ -971,9 +906,8 @@
 
         if(!userEditedPrice){
           priceEl.value = fuelPrices[fuelTypeEl.value] ?? '';
-          const standTxt = priceStand ? ` (Stand Länderpreise: ${priceStand})` : '';
-          const src = chosen.source === 'tankerkoenig' ? 'Tankerkoenig (DE)' : 'Länderpreise (statisch)';
-          priceInfoEl.textContent = `${note}. Quelle: ${src}${standTxt}. Du kannst den Preis ändern.`;
+          const standTxt = priceStand ? ` (Stand: ${priceStand})` : '';
+          priceInfoEl.textContent = `${note}. Quelle: Länderpreise (statisch)${standTxt}. Du kannst den Preis ändern.`;
           priceInfoEl.classList.remove('error');
         }
       }
@@ -992,14 +926,14 @@
 
       document.getElementById('btn-reset-price').addEventListener('click', async () => {
         userEditedPrice = false;
-        try{ await applyDetectedPricesAsync(); }catch(e){}
+        await applyDetectedPrices();
       });
 
       document.querySelectorAll('input[name="priceMode"]').forEach(r => {
         r.addEventListener('change', async () => {
-          if(!userEditedPrice && startCC && destCC && startCC !== destCC){
-            try{ await applyDetectedPricesAsync(); }catch(e){}
-          }
+          if(!userEditedPrice && startCC && destCC) await applyDetectedPrices();
+          // Maut-Breakdown neu anzeigen (Mode beeinflusst Preise nicht, aber Anzeige bleibt)
+          renderTollBreakdown();
         });
       });
 
@@ -1022,21 +956,8 @@
       }
 
       async function geocode(q){
-        if(MAPBOX_API_KEY){
-          try{
-            const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(q)}.json?access_token=${encodeURIComponent(MAPBOX_API_KEY)}&limit=1&language=de`;
-            const res = await fetchWithTimeout(url, 9000);
-            if(res.ok){
-              const data = await res.json();
-              if(data?.features?.length){
-                const f = data.features[0];
-                return { lat:f.center[1], lon:f.center[0], name:f.place_name };
-              }
-            }
-          }catch(e){}
-        }
         const url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(q);
-        const res = await fetchWithTimeout(url, 9000);
+        const res = await fetchWithTimeout(url, 12000);
         if(!res.ok) throw new Error('Geocoding fehlgeschlagen');
         const data = await res.json();
         if(data?.length) return { lat:+data[0].lat, lon:+data[0].lon, name:data[0].display_name };
@@ -1044,16 +965,11 @@
       }
 
       async function reverseCountryCode(lat, lon){
-        try{
-          const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`;
-          const res = await fetchWithTimeout(url, 9000);
-          if(!res.ok) return null;
-          const j = await res.json();
-          const cc = j?.address?.country_code ? String(j.address.country_code).toUpperCase() : null;
-          return cc;
-        }catch(e){
-          return null;
-        }
+        const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`;
+        const res = await fetchWithTimeout(url, 12000);
+        if(!res.ok) return null;
+        const j = await res.json();
+        return j?.address?.country_code ? String(j.address.country_code).toUpperCase() : null;
       }
 
       // ✅ OSRM Routing (echte Straßenroute)
@@ -1063,7 +979,7 @@
           `${encodeURIComponent(lon1)},${encodeURIComponent(lat1)};${encodeURIComponent(lon2)},${encodeURIComponent(lat2)}` +
           `?overview=full&geometries=geojson&alternatives=false&steps=false`;
 
-        const res = await fetchWithTimeout(url, 12000);
+        const res = await fetchWithTimeout(url, 15000);
         if(!res.ok) throw new Error('OSRM request failed');
         const j = await res.json();
         if(!j || j.code !== 'Ok' || !j.routes || !j.routes.length) throw new Error('OSRM no route');
@@ -1078,21 +994,89 @@
         return distKm;
       }
 
-      // Maut-Schätzung (EUR / 100 km)
+      // ✅ Maut (€/100 km) – grobe Länderwerte
       const tollPer100km = {
         DE:0, AT:6, CH:4, FR:10, IT:9, ES:10, NL:0, BE:0,
-        US:3, GB:0, AU:5, CA:2, RU:1
+        PL:6, CZ:4, SK:4, HU:5, SI:5, HR:5, RO:3, BG:3,
+        US:3, CA:2, GB:0, AU:5, RU:1
       };
 
-      async function estimateTollsSimple(ccA, ccB, distKm){
-        const a = tollPer100km[ccA] ?? 5;
-        const b = tollPer100km[ccB] ?? a;
-        const rate = (ccA === ccB) ? a : (a + b) / 2;
-        const total = (distKm / 100) * rate;
-        return { totalCost: Math.round(total*100)/100, ratePer100: Math.round(rate*100)/100 };
+      // ✅ Vignetten (Fixbetrag) – grobe Näherung (1x pro Land, wenn Land vorkommt)
+      const vignetteFlat = {
+        AT: 11.50, // 10 Tage PKW (grob)
+        CH: 40.00, // Jahresvignette (grob)
+        CZ: 12.00,
+        SK: 12.00,
+        HU: 16.00,
+        SI: 16.00,
+        RO: 3.50,
+        BG: 7.50
+      };
+
+      function estimateTollForCountry(cc, km){
+        const rate = (tollPer100km[cc] ?? 5);
+        return Math.round(((km / 100) * rate) * 100) / 100;
       }
 
-      let estimatedTollPer100 = 0;
+      function estimateVignetteForCountry(cc){
+        const v = vignetteFlat[cc];
+        return Number.isFinite(v) ? v : 0;
+      }
+
+      function renderTollBreakdown(){
+        // Wenn keine Route: reset Anzeige
+        if(!routeKm || !startCC){
+          tollTotalEl.textContent = '—';
+          vignetteTotalEl.textContent = '—';
+          tollVignetteSumEl.textContent = '—';
+          tollBreakdownEl.textContent = 'Gib Start/Ziel ein und berechne die Strecke.';
+          return;
+        }
+
+        const isCross = (startCC && destCC && startCC !== destCC);
+
+        // Strecke je Land: stabiler Split ohne API-Spam
+        const parts = [];
+        if(!isCross){
+          parts.push({ cc: startCC, km: routeKm });
+        } else {
+          const half = routeKm / 2;
+          parts.push({ cc: startCC, km: half });
+          parts.push({ cc: destCC, km: routeKm - half });
+        }
+
+        let tollSum = 0;
+        let vignetteSum = 0;
+
+        // Vignette nur 1x je Land
+        const seen = new Set();
+
+        const lines = parts.map(p => {
+          const name = getCountryName(p.cc);
+          const toll = estimateTollForCountry(p.cc, p.km);
+          tollSum += toll;
+
+          if(!seen.has(p.cc)){
+            vignetteSum += estimateVignetteForCountry(p.cc);
+            seen.add(p.cc);
+          }
+
+          const rate = (tollPer100km[p.cc] ?? 5);
+          return `• ${name} (${p.cc}): ${fmtL(p.km)} km × ${fmt(rate).replace('.', ',')} €/100 km ≈ <b>${fmtMoney(toll)}</b>`;
+        });
+
+        lastTollTotal = tollSum;
+        lastVignetteTotal = vignetteSum;
+
+        tollTotalEl.textContent = fmtMoney(tollSum);
+        vignetteTotalEl.textContent = fmtMoney(vignetteSum);
+        tollVignetteSumEl.textContent = fmtMoney(tollSum + vignetteSum);
+
+        tollBreakdownEl.innerHTML =
+          lines.join('<br>') +
+          (vignetteSum > 0 ? `<br><br><span class="small">Vignetten (fix, je Land einmal): ${fmtMoney(vignetteSum)}</span>` : '') +
+          `<br><span class="small">Hinweis: Länder-Split ist eine schnelle Schätzung (bei Länderwechsel 50/50). Exakte Segmentierung wäre deutlich aufwendiger.</span>`;
+      }
 
       document.getElementById('btn-geocode').addEventListener('click', async () => {
         const from = placeFromEl.value.trim();
@@ -1102,6 +1086,7 @@
           tollInfoEl.classList.add('error');
           return;
         }
+
         try{
           tollInfoEl.textContent = 'Route wird berechnet…';
           tollInfoEl.classList.remove('error');
@@ -1117,14 +1102,18 @@
           startCoord = { lat: a.lat, lon: a.lon };
           destCoord  = { lat: b.lat, lon: b.lon };
 
+          // Länder erkennen (hier ist RU-Fix: wir zeigen CC immer an)
           startCC = await reverseCountryCode(a.lat, a.lon);
           destCC  = await reverseCountryCode(b.lat, b.lon);
 
-          const startName = (countryPrices[startCC]?.name || (startCC || '—'));
-          const destName  = (countryPrices[destCC]?.name  || (destCC  || '—'));
-          badgeEl.textContent = `Erkannt: Startland ${startName} (${startCC||'—'}), Zielland ${destName} (${destCC||'—'})`;
+          const startName = getCountryName(startCC);
+          const destName  = getCountryName(destCC);
 
-          // UI für Länderwechsel
+          badgeEl.innerHTML =
+            `Erkannt: <b>Start</b> ${startName} (${startCC||'—'}), <b>Ziel</b> ${destName} (${destCC||'—'})` +
+            (!countryPrices ? `<br><span class="error">⚠ Preisdatei fehlt: prices/country-prices.js</span>` : '');
+
+          // Cross-border UI
           if(startCC && destCC && startCC !== destCC) priceModeWrap.style.display = 'block';
           else priceModeWrap.style.display = 'none';
 
@@ -1132,20 +1121,25 @@
           addMarker(a.lat,a.lon,'Start: ' + a.name);
           addMarker(b.lat,b.lon,'Ziel: ' + b.name);
 
-          // ✅ OSRM Distanz + Route zeichnen
-          const dist = await getRouteOSRM(a.lat, a.lon, b.lat, b.lon);
-          kmEl.value = Math.round(dist*10)/10;
+          // OSRM Distanz + Route zeichnen
+          routeKm = await getRouteOSRM(a.lat, a.lon, b.lat, b.lon);
+          kmEl.value = Math.round(routeKm*10)/10;
 
-          // Preise setzen (DE ggf. live)
-          await applyDetectedPricesAsync();
+          // Preise setzen
+          await applyDetectedPrices();
 
-          // Maut
-          const toll = await estimateTollsSimple(startCC || 'XX', destCC || startCC || 'XX', dist);
-          estimatedTollPer100 = +(toll.totalCost / dist * 100).toFixed(2);
-          tollInfoEl.textContent =
-            `Maut (Schätzung): ${fmtMoney(toll.totalCost)} gesamt — ca. ${fmtMoney(estimatedTollPer100)} /100 km`;
+          // Maut/Vignette-Block aktualisieren
+          renderTollBreakdown();
+
+          // Kurzer Text rechts unter Map
+          const isCross = (startCC && destCC && startCC !== destCC);
+          const mode = isCross ? getMode() : 'start';
+          const modeText = isCross ? (mode === 'avg' ? 'Mittelwert' : (mode === 'start' ? 'Startland' : 'Zielland')) : 'Startland';
+          tollInfoEl.textContent = `Strecke (OSRM): ${fmtL(routeKm)} km. Spritpreis-Modus: ${modeText}.`;
+
+          setTimeout(() => { try { map.invalidateSize(); } catch(e){} }, 80);
         }catch(e){
-          tollInfoEl.textContent = 'Fehler bei Routing/Geocoding/Preisen. Bitte Verbindung prüfen oder anderen Ort versuchen.';
+          tollInfoEl.textContent = 'Fehler bei Routing/Geocoding. Bitte Verbindung prüfen oder anderen Ort versuchen.';
           tollInfoEl.classList.add('error');
         }
       });
@@ -1154,17 +1148,23 @@
         clearMarkers();
         clearRoute();
         map.setView([51.1657, 10.4515], 5);
+
         placeFromEl.value = '';
         placeToEl.value = '';
         badgeEl.textContent = '';
         priceModeWrap.style.display = 'none';
 
+        startCC = null; destCC = null;
+        startCoord = null; destCoord = null;
+        routeKm = 0;
+
         tollInfoEl.textContent = '';
         tollInfoEl.classList.remove('error');
-        estimatedTollPer100 = 0;
 
-        startCC = null; destCC = null; startCoord = null; destCoord = null;
-        setTimeout(() => { try { map.invalidateSize(); } catch(e){} }, 60);
+        // Reset Maut-Block
+        renderTollBreakdown();
+
+        setTimeout(() => { try { map.invalidateSize(); } catch(e){} }, 80);
       });
 
       document.getElementById('km-inc').addEventListener('click', ()=>{ const cur = parse(kmEl.value)||0; kmEl.value = Math.round((cur+1)*10)/10; });
@@ -1197,8 +1197,10 @@
         const liters = (km * v) / 100;
         const costFuel = liters * p;
 
+        // Running costs (vereinfacht) + Maut/Vignette (letzte Schätzung)
         const runningPer100Base = estimateRunningPer100(v);
-        const runningPer100Total = runningPer100Base + (estimatedTollPer100 || 0);
+        const tollPer100 = (km > 0) ? ((lastTollTotal + lastVignetteTotal) / km * 100) : 0;
+        const runningPer100Total = runningPer100Base + (tollPer100 || 0);
 
         const costRunning = (km * runningPer100Total) / 100;
         const total = costFuel + costRunning;
@@ -1228,22 +1230,20 @@
         avg100El.textContent='€0,00 /100km';
         runningEstEl.textContent='—';
 
-        tollInfoEl.textContent='';
-        tollInfoEl.classList.remove('error');
-        estimatedTollPer100 = 0;
-
-        priceInfoEl.textContent='';
-        priceInfoEl.classList.remove('error');
         userEditedPrice = false;
+        fuelPrices = { ...fallbackPrices };
+        renderAvgPrices();
 
-        badgeEl.textContent = '';
-        priceModeWrap.style.display = 'none';
-        startCC = null; destCC = null; startCoord = null; destCoord = null;
+        // Reset Maut state
+        lastTollTotal = 0;
+        lastVignetteTotal = 0;
+        renderTollBreakdown();
 
+        // Map reset
         clearMarkers();
         clearRoute();
         map.setView([51.1657, 10.4515],5);
-        setTimeout(() => { try { map.invalidateSize(); } catch(e){} }, 60);
+        setTimeout(() => { try { map.invalidateSize(); } catch(e){} }, 80);
       });
 
       // Rechner
@@ -1265,12 +1265,10 @@
         })
       );
 
-      // initial map size safety
-      setTimeout(() => { try { map.invalidateSize(); } catch(e){} }, 80);
+      // Start: Maut-Block initial
+      renderTollBreakdown();
+      setTimeout(() => { try { map.invalidateSize(); } catch(e){} }, 100);
     });
   </script>
 </body>
 </html>
-
-
-
