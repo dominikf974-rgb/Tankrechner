@@ -33,7 +33,7 @@
   </script>
 
   <style>
-    *{box-sizing:border-box;}
+    *{box-sizing:border-box; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;}
     :root{
       --bg1:#0f172a;
       --bg2:#e9eef5;
@@ -42,9 +42,10 @@
       --text:#0b1220;
       --accent:#0ea5a3;
       --accent-2:#4f46e5;
-      --button-h:48px;
+      --button-h:44px;
       --maxw:1400px;
     }
+
     html, body{ overflow-x:hidden; }
     html{
       min-height:100%;
@@ -55,52 +56,41 @@
     body{
       margin:0;
       width:100%;
-      font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
       color:var(--text);
       min-height:100vh;
       background:transparent;
     }
 
-    /* Fix Mobile „verzogen“ */
-    body.menu-open{
-      position:fixed;
+    /* Header (schmal + NICHT sticky) */
+    .site-header{
+      position:static;
       width:100%;
-      left:0; right:0;
-      overflow:hidden;
+      background:#fff;
+      border-bottom:1px solid rgba(15,23,42,0.06);
     }
-
-  /* Header */
-.site-header{
-  position: static;          /* NICHT sticky, NICHT fixed */
-  width:100%;
-  background:#fff;
-  border-bottom:1px solid rgba(15,23,42,0.06);
-}
     .header-inner{
       width:100%;
-      margin:0;
-      padding:10px 18px;
+      max-width:min(var(--maxw), 94vw);
+      margin:0 auto;
+      padding:6px 12px;              /* slim */
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:12px;
-      position:relative;
-      z-index:2147483647;
-      flex-wrap:nowrap;
+      gap:10px;
     }
     .logo-title{
       display:flex;
       align-items:center;
-      gap:12px;
+      gap:10px;
       text-decoration:none;
       color:inherit;
-      flex:1 1 auto;
       min-width:0;
+      flex:1 1 auto;
     }
-    .logo-title img{ height:54px; width:auto; display:block; }
+    .logo-title img{ height:34px; width:auto; display:block; }
     .site-title{
       font-weight:900;
-      font-size:18px;
+      font-size:15px;
       white-space:nowrap;
       letter-spacing:.2px;
       max-width:560px;
@@ -113,45 +103,42 @@
       gap:8px;
       align-items:center;
       flex:0 0 auto;
-      position:relative;
-      z-index:2147483647;
     }
     .tabs a.navbtn{
-      background:transparent;
-      border:1px solid transparent;
-      color:var(--muted);
-      padding:.6rem 1rem;
-      border-radius:.6rem;
-      cursor:pointer;
-      font-weight:900;
-      font-size:.95rem;
       height:var(--button-h);
-      white-space:nowrap;
+      padding:0 12px;
+      border-radius:10px;
       text-decoration:none;
+      font-weight:900;
+      color:var(--muted);
+      border:1px solid transparent;
       display:inline-flex;
       align-items:center;
       justify-content:center;
+      white-space:nowrap;
       touch-action:manipulation;
     }
+    .tabs a.navbtn:hover{ background:rgba(79,70,229,0.08); color:var(--accent-2); }
     .tabs a.navbtn.active{
       background:linear-gradient(90deg,var(--accent),var(--accent-2));
       color:#fff;
     }
 
     .lang-link{
-      font-weight:900;
+      height:var(--button-h);
+      padding:0 12px;
+      border-radius:10px;
       text-decoration:none;
+      font-weight:900;
       color:var(--accent-2);
       border:1px solid rgba(79,70,229,0.15);
       background:#eef2ff;
-      padding:.55rem .8rem;
-      border-radius:.6rem;
-      height:var(--button-h);
       display:inline-flex;
       align-items:center;
       touch-action:manipulation;
     }
 
+    /* Mobile */
     .header-actions{ display:none; align-items:center; gap:8px; flex:0 0 auto; }
     .hamburger{
       width:44px;height:44px;
@@ -181,21 +168,27 @@
     .hamburger span::before{ top:-6px; }
     .hamburger span::after{ top:6px; }
 
+    /* Mobile menu (kein body-fix -> kein “verzogen”) */
     .mobile-menu{
       background:#fff;
       border-bottom:1px solid rgba(15,23,42,0.06);
-      padding:10px 12px 14px 12px;
+      padding:0 12px;
       overflow:hidden;
       max-height:0;
       opacity:0;
       transform: translateY(-6px);
       transition: max-height .22s ease, opacity .18s ease, transform .18s ease;
     }
-    .mobile-menu.open{ max-height:260px; opacity:1; transform: translateY(0); }
+    .mobile-menu.open{
+      max-height:260px;
+      opacity:1;
+      transform: translateY(0);
+      padding:10px 12px 14px 12px;
+    }
     .mobile-menu .grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
     .mobile-menu a{
       height:46px;
-      border-radius:10px;
+      border-radius:12px;
       border:1px solid rgba(15,23,42,0.10);
       background:#fff;
       font-weight:900;
@@ -215,12 +208,10 @@
       background:linear-gradient(90deg,var(--accent),var(--accent-2));
     }
 
-    /* Mobile earlier */
     @media(max-width:1200px){
       .tabs{display:none;}
       .header-actions{display:flex;}
-      .header-inner{padding:10px 12px;}
-      .site-title{max-width:180px;}
+      .site-title{max-width:220px;}
     }
     @media(max-width:420px){ .site-title{display:none;} }
 
@@ -229,13 +220,13 @@
       width:100%;
       max-width: min(var(--maxw), 94vw);
       margin:0 auto;
-      padding: 24px 12px 0 12px;
+      padding: 18px 12px 0 12px;
       display:flex;
       flex-direction:column;
       gap:18px;
     }
     @media (min-width: 992px){
-      .page-container{ padding-left:24px; padding-right:24px; padding-top:24px; }
+      .page-container{ padding-left:24px; padding-right:24px; padding-top:18px; }
     }
 
     .card{
@@ -251,14 +242,19 @@
     .small{font-size:.9rem;color:var(--muted)}
     .faq-item{margin:10px 0}
     .faq-item summary{
-      cursor:pointer;font-weight:900;color:var(--accent-2);
-      padding:10px;border-radius:8px;background:rgba(79,70,229,0.06)
+      cursor:pointer;
+      font-weight:900;
+      color:var(--accent-2);
+      padding:10px;
+      border-radius:10px;
+      background:rgba(79,70,229,0.06)
     }
     .faq-item summary:hover{background:rgba(79,70,229,0.12)}
     .faq-item p{margin:10px 0 0 0;line-height:1.6}
 
+    /* Footer */
     footer, footer *{ color:#000 !important; opacity:1 !important; }
-    footer{ padding:18px 0 30px 0; }
+    footer{ padding:18px 0 10px 0; }
     footer a{ text-decoration:none; }
     footer a:hover{ text-decoration:underline; }
 
@@ -317,7 +313,7 @@
         <a class="navbtn" href="/">Spritkosten</a>
         <a class="navbtn" href="/taschenrechner.html">Taschenrechner</a>
         <a class="navbtn" href="/ratgeber.html">Ratgeber</a>
-        <a class="navbtn" href="/faq.html">FAQ</a>
+        <a class="navbtn active" href="/faq.html">FAQ</a>
         <a class="lang-link" href="https://petrolcostcalculator.com/" hreflang="en" lang="en" title="English">EN</a>
       </nav>
 
@@ -334,7 +330,7 @@
         <a href="/">Spritkosten</a>
         <a href="/taschenrechner.html">Taschenrechner</a>
         <a href="/ratgeber.html">Ratgeber</a>
-        <a href="/faq.html">FAQ</a>
+        <a class="active" href="/faq.html">FAQ</a>
       </div>
     </div>
   </header>
@@ -465,19 +461,20 @@
       <span style="opacity:.75;margin-left:10px">|</span>
       <a href="/faq.html">FAQ</a> <span style="opacity:.75">|</span>
       <a href="/impressum.html">Impressum</a> <span style="opacity:.75">|</span>
-      <a href="/contact.html">Contact</a> <span style="opacity:.75">|</span>
+      <a href="/contact.html">Kontakt</a> <span style="opacity:.75">|</span>
       <a href="/datenschutz.html">Datenschutz</a> <span style="opacity:.75">|</span>
       <a href="/ratgeber.html">Ratgeber</a>
     </footer>
-    <div class="small" style="text-align:center;opacity:.45;margin:8px 0 8px 0">
-  <a href="https://spritkosten-check.de">🇩🇪 Spritkosten-Rechner Deutschland</a>
-  &nbsp; | &nbsp;
-  <a href="https://petrolcostcalculator.com">🇬🇧 Petrol Cost Calculator Worldwide</a>
-</div>
 
-<div style="text-align:center;margin-bottom:22px;font-size:12px;opacity:.55">
-  Verifiziert · 2026
-</div>
+    <div class="small" style="text-align:center;opacity:.45;margin:8px 0 8px 0">
+      <a href="https://spritkosten-check.de">🇩🇪 Spritkosten-Rechner Deutschland</a>
+      &nbsp; | &nbsp;
+      <a href="https://petrolcostcalculator.com">🇬🇧 Petrol Cost Calculator Worldwide</a>
+    </div>
+
+    <div style="text-align:center;margin-bottom:22px;font-size:12px;opacity:.55">
+      Verifiziert · 2026
+    </div>
 
   </div>
 
@@ -496,52 +493,24 @@
   </div>
 
   <script>
-    // Active Nav
-    (function(){
-      const path = (location.pathname || "/").toLowerCase();
-      function clearActive(){
-        document.querySelectorAll('.tabs a.navbtn, .mobile-menu a').forEach(a => a.classList.remove('active'));
-      }
-      function activate(href){
-        const d = document.querySelector(`.tabs a[href="${href}"]`);
-        const m = document.querySelector(`.mobile-menu a[href="${href}"]`);
-        if (d) d.classList.add('active');
-        if (m) m.classList.add('active');
-      }
-      clearActive();
-      if (path.includes("taschenrechner")) activate("/taschenrechner.html");
-      else if (path.includes("ratgeber")) activate("/ratgeber.html");
-      else if (path.includes("faq")) activate("/faq.html");
-      else activate("/");
-    })();
-
-    // Hamburger Fix (kein „verzogen“)
+    // Hamburger (stabil, ohne body-fix)
     (function(){
       const burger = document.getElementById('hamburger');
       const mobileMenu = document.getElementById('mobile-menu');
-      let scrollYBeforeMenu = 0;
 
       function openMenu(){
-        scrollYBeforeMenu = window.scrollY || 0;
-        document.body.classList.add('menu-open');
-        document.body.style.top = `-${scrollYBeforeMenu}px`;
         mobileMenu.classList.add('open');
         burger.setAttribute('aria-expanded','true');
       }
       function closeMenu(){
         mobileMenu.classList.remove('open');
         burger.setAttribute('aria-expanded','false');
-        document.body.classList.remove('menu-open');
-        const top = document.body.style.top;
-        document.body.style.top = '';
-        window.scrollTo(0, top ? Math.abs(parseInt(top,10)) : scrollYBeforeMenu);
       }
       function toggleMenu(){
         mobileMenu.classList.contains('open') ? closeMenu() : openMenu();
       }
 
       burger.addEventListener('click', (e) => { e.stopPropagation(); toggleMenu(); });
-      mobileMenu.addEventListener('click', (e) => e.stopPropagation());
       document.addEventListener('click', () => { if(mobileMenu.classList.contains('open')) closeMenu(); });
       document.addEventListener('keydown', (e) => { if(e.key === 'Escape' && mobileMenu.classList.contains('open')) closeMenu(); });
       mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => closeMenu(), { passive:true }));
