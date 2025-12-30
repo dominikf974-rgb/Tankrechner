@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  <title>Taschenrechner – Schnell rechnen (Plus, Minus, Mal, Geteilt)</title>
+  <meta name="description" content="Einfacher Taschenrechner im gleichen Design: Plus, Minus, Mal, Geteilt – direkt im Browser." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://spritkosten-check.de/taschenrechner.html" />
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="icon" href="/favicon.ico">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/assets/css/style.css" />
+</head>
+
+<body data-page="calc">
+  <div id="site-header"></div>
+
+  <div class="page-container">
+    <section class="card">
+      <h2>Taschenrechner</h2>
+      <p class="small" style="margin-top:0">Für schnelle Überschläge (z. B. Kosten teilen, Liter umrechnen, etc.).</p>
+
+      <label for="num1">Zahl 1</label>
+      <input id="num1" type="number" inputmode="decimal" placeholder="Zahl 1" />
+
+      <label for="num2">Zahl 2</label>
+      <input id="num2" type="number" inputmode="decimal" placeholder="Zahl 2" />
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;max-width:260px">
+        <button data-op="+" class="btn" style="height:44px;font-size:1.1rem">+</button>
+        <button data-op="-" class="btn" style="height:44px;font-size:1.1rem">−</button>
+        <button data-op="*" class="btn" style="height:44px;font-size:1.1rem">×</button>
+        <button data-op="/" class="btn" style="height:44px;font-size:1.1rem">÷</button>
+      </div>
+
+      <div class="resultbox" style="margin-top:12px">
+        <div class="result-row">
+          <div class="result-key">Ergebnis</div>
+          <div class="result-val" id="result">–</div>
+        </div>
+        <div class="small" style="margin-top:8px">
+          Tipp: Dezimal-Komma geht auch (z. B. 12,5).
+        </div>
+      </div>
+
+      <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+        <a class="btn secondary" href="/">Zum Spritkosten-Rechner</a>
+        <a class="btn secondary" href="/faq.html">FAQ</a>
+      </div>
+    </section>
+
+    <div id="site-footer"></div>
+
+    <div class="small" style="text-align:center;opacity:.35;margin:14px 0 22px 0">
+      Dominik Fisher
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const num1 = document.getElementById('num1');
+      const num2 = document.getElementById('num2');
+      const result = document.getElementById('result');
+
+      const parse = v => (v === '' || v == null) ? NaN : Number(String(v).replace(',', '.'));
+      const fmt = n => (Number.isFinite(n) ? Number.parseFloat(n.toFixed(6)).toString() : '–');
+
+      document.querySelectorAll('[data-op]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const a = parse(num1.value);
+          const b = parse(num2.value);
+          if (Number.isNaN(a) || Number.isNaN(b)) { result.textContent = '–'; return; }
+
+          let res;
+          switch (btn.dataset.op) {
+            case '+': res = a + b; break;
+            case '-': res = a - b; break;
+            case '*': res = a * b; break;
+            case '/': res = (b === 0 ? '∞' : a / b); break;
+          }
+          result.textContent = (typeof res === 'number') ? fmt(res).replace('.', ',') : res;
+        });
+      });
+    });
+  </script>
+
+  <script src="/assets/js/loader.js"></script>
+</body>
+</html>
