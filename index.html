@@ -735,6 +735,22 @@
   <script src="prices/prices/country-prices.js"></script>
 
   <script>
+  // Sichtbarer Check ohne F12:
+  window.addEventListener("DOMContentLoaded", () => {
+    const ok = !!window.COUNTRY_FUEL_PRICES_EUR;
+    const ru = window.COUNTRY_FUEL_PRICES_EUR && window.COUNTRY_FUEL_PRICES_EUR.RU;
+    if(!ok){
+      alert("❌ country-prices.js wurde NICHT geladen!");
+    } else if(!ru){
+      alert("⚠️ country-prices.js geladen, aber RU fehlt/ist falsch (kein Eintrag COUNTRY_FUEL_PRICES_EUR.RU).");
+    } else {
+      // optional: nur zur Sicherheit einmal anzeigen
+      console.log("RU:", ru);
+    }
+  });
+</script>
+
+  <script>
     document.addEventListener('DOMContentLoaded', () => {
       const MAPBOX_API_KEY = ''; // optional (lassen wir leer)
       const CURRENCY_SYMBOL = '€';
@@ -1255,5 +1271,6 @@
   </script>
 </body>
 </html>
+
 
 
