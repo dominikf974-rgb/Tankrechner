@@ -24,7 +24,7 @@
   <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
-  <!-- Header Font -->
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
@@ -47,12 +47,448 @@
   }
   </script>
 
-  <!-- ✅ globales Design -->
-  <link rel="stylesheet" href="/assets/css/style.css" />
+  <style>
+    *{box-sizing:border-box;}
+    :root{
+      --bg1:#0f172a;
+      --bg2:#e9eef5;
+      --card:#ffffff;
+      --muted:#4b5563;
+      --text:#0b1220;
+      --accent:#0ea5a3;
+      --accent-2:#4f46e5;
+      --button-h:48px;
+      --maxw:1400px;
+    }
+
+    html{
+      min-height:100%;
+      background: linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 100%);
+      background-repeat:no-repeat;
+      background-attachment:fixed;
+    }
+    body{
+      margin:0;
+      width:100%;
+      font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+      color:var(--text);
+      min-height:100vh;
+      background:transparent;
+    }
+
+    /* Header */
+    .site-header{
+      position: sticky;
+      top:0;
+      z-index: 2147483647;
+      width:100%;
+      background:#fff;
+      border-bottom:1px solid rgba(15,23,42,0.06);
+    }
+    .header-inner{
+      width:100%;
+      margin:0;
+      padding:10px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      position:relative;
+      z-index:2147483647;
+    }
+    .logo-title{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      text-decoration:none;
+      color:inherit;
+      flex:1 1 auto;
+      min-width:0;
+    }
+    .logo-title:hover{opacity:.88;}
+    .logo-title img{ height:54px; width:auto; display:block; }
+    .site-title{
+      font-family:'Poppins', Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+      font-weight:700;
+      font-size:18px;
+      white-space:nowrap;
+      letter-spacing:.2px;
+      max-width:560px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .tabs{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex:0 0 auto;
+      position:relative;
+      z-index:2147483647;
+    }
+    .tabs button, .tabs a.navbtn{
+      background:transparent;
+      border:1px solid transparent;
+      color:var(--muted);
+      padding:.6rem 1rem;
+      border-radius:.6rem;
+      cursor:pointer;
+      font-weight:800;
+      font-size:.95rem;
+      height:var(--button-h);
+      white-space:nowrap;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .tabs button[aria-selected="true"], .tabs a.navbtn.active{
+      background:linear-gradient(90deg,var(--accent),var(--accent-2));
+      color:#fff;
+    }
+
+    .lang-link{
+      font-weight:800;
+      text-decoration:none;
+      color:var(--accent-2);
+      border:1px solid rgba(79,70,229,0.15);
+      background:#eef2ff;
+      padding:.55rem .8rem;
+      border-radius:.6rem;
+      height:var(--button-h);
+      display:inline-flex;
+      align-items:center;
+    }
+
+    /* Hamburger (Mobile) */
+    .header-actions{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex:0 0 auto;
+    }
+    .hamburger{
+      display:none;
+      width:44px;height:44px;
+      border-radius:10px;
+      border:1px solid rgba(15,23,42,0.10);
+      background:#fff;
+      cursor:pointer;
+      align-items:center;
+      justify-content:center;
+    }
+    .hamburger span{
+      display:block;
+      width:20px;height:2px;
+      background:rgba(15,23,42,0.65);
+      position:relative;
+    }
+    .hamburger span::before,
+    .hamburger span::after{
+      content:"";
+      position:absolute;
+      left:0;
+      width:20px;height:2px;
+      background:rgba(15,23,42,0.65);
+    }
+    .hamburger span::before{ top:-6px; }
+    .hamburger span::after{ top:6px; }
+
+    /* Mobile Menu Drawer */
+    .mobile-menu{
+      display:none;
+      background:#fff;
+      border-bottom:1px solid rgba(15,23,42,0.06);
+      padding:10px 12px 14px 12px;
+    }
+    .mobile-menu.open{ display:block; }
+    .mobile-menu .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+    .mobile-menu a, .mobile-menu button{
+      height:46px;
+      border-radius:10px;
+      border:1px solid rgba(15,23,42,0.10);
+      background:#fff;
+      font-weight:900;
+      color:var(--muted);
+      cursor:pointer;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:0 10px;
+      white-space:nowrap;
+    }
+    .mobile-menu a.active, .mobile-menu button.active{
+      border:0;
+      color:#fff;
+      background:linear-gradient(90deg,var(--accent),var(--accent-2));
+    }
+
+    /* Container */
+    .page-container{
+      width:100%;
+      max-width: min(var(--maxw), 94vw);
+      margin:0 auto;
+      padding: 24px 12px 0 12px;
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+    }
+    @media (min-width: 992px){
+      .page-container{ padding-left:24px; padding-right:24px; padding-top:24px; }
+    }
+
+    h2{font-size:1.1rem;margin:16px 0 12px 0}
+    .card{
+      background:var(--card);
+      border-radius:16px;
+      padding:16px;
+      box-shadow:0 12px 30px rgba(0,0,0,.08);
+      border:1px solid rgba(15,23,42,0.05);
+      width:100%;
+      overflow:hidden;
+    }
+
+    .intro-section{ line-height:1.65; }
+    .intro-section p{margin:0 0 12px 0;}
+    .intro-section ul{margin:8px 0;padding-left:20px}
+    .intro-section li{margin:6px 0}
+
+    /* Layout */
+    .layout{
+      display:grid;
+      grid-template-columns:minmax(0,420px) minmax(0,1fr);
+      gap:16px;
+      align-items:start;
+      width:100%;
+    }
+
+    label{
+      display:block;
+      margin:.5rem 0 .25rem 0;
+      font-size:.9rem;
+      color:var(--muted);
+      font-weight:600;
+    }
+    input[type="number"], input[type="text"], select{
+      width:100%;
+      padding:.6rem .75rem;
+      border-radius:8px;
+      border:1px solid rgba(15,23,42,0.10);
+      background:transparent;
+      color:var(--text);
+      outline:none;
+      font-size:1rem;
+      margin-top:.25rem;
+    }
+
+    .km-row{display:flex;gap:8px;align-items:center;flex-wrap:nowrap}
+    .km-row .km-input{flex:1;min-width:0}
+    .spinner{display:flex;flex-direction:column;gap:6px}
+    .spinner button{
+      width:44px;height:44px;border-radius:8px;border:none;
+      background:linear-gradient(90deg,var(--accent),var(--accent-2));
+      color:#fff;font-weight:900;font-size:18px;cursor:pointer;
+      display:inline-flex;align-items:center;justify-content:center
+    }
+
+    .big-action{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+    .btn{
+      flex:1;
+      height:var(--button-h);
+      border-radius:10px;
+      border:none;
+      cursor:pointer;
+      font-weight:800;
+      background:linear-gradient(90deg,var(--accent),var(--accent-2));
+      color:#fff;
+      font-size:1rem;
+      min-width:140px;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:0 14px;
+    }
+    .btn.secondary{
+      background:#eef2ff;
+      color:var(--accent-2);
+      border:1px solid rgba(79,70,229,0.12)
+    }
+    .btn.large{font-size:1.05rem;padding:0 14px;height:54px}
+
+    .small{font-size:.9rem;color:var(--muted)}
+    .hint{font-size:.85rem;color:var(--accent);margin-top:4px;min-height:18px;display:block}
+    .hint.error{color:#e53e3e}
+    .error{color:#e53e3e}
+
+    .price-input-group{
+      display:grid;
+      grid-template-columns: 1fr auto;
+      gap:10px;
+      align-items:end;
+      margin-top:8px;
+    }
+    .reset-price-btn{ height:44px; padding:0 14px; white-space:nowrap; }
+
+    .price-table{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+    .price-card{
+      flex:1;min-width:140px;padding:8px;border-radius:8px;background:#fafafa;
+      border:1px solid rgba(15,23,42,0.05);text-align:center
+    }
+    .price-card strong{display:block;font-size:1.05rem;color:var(--accent-2);margin-top:6px}
+
+    .resultbox{
+      margin-top:12px;
+      padding:12px;
+      border-radius:8px;
+      background:linear-gradient(180deg,#ffffff,#fbfdff);
+      border:1px solid rgba(15,23,42,0.06)
+    }
+    .result-row{
+      display:flex;justify-content:space-between;align-items:center;
+      padding:6px 0;border-bottom:1px dashed rgba(15,23,42,0.10);gap:8px
+    }
+    .result-row:last-child{border-bottom:0}
+    .result-key{color:var(--muted);font-size:.95rem}
+    .result-val{font-weight:900;color:var(--accent-2)}
+
+    .thinbox{
+      padding:14px 12px;
+      border-radius:10px;
+      background:#ffffff;
+      border:1px solid rgba(15,23,42,0.10);
+    }
+    .thinbox .title{
+      font-weight:900;
+      color:var(--accent-2);
+      margin-bottom:8px;
+      font-size:.98rem;
+    }
+    .thinbox .line{
+      display:flex;justify-content:space-between;gap:10px;
+      padding:6px 0;border-bottom:1px dashed rgba(15,23,42,0.10);
+      font-size:.92rem;
+    }
+    .thinbox .line:last-child{border-bottom:0}
+    .mono{font-variant-numeric:tabular-nums;}
+
+    .price-mode{
+      margin-top:10px;
+      padding:10px;
+      border:1px solid rgba(15,23,42,0.08);
+      border-radius:10px;
+      background:#fbfdff;
+      display:none;
+    }
+    .price-mode .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 10px;border:1px solid rgba(15,23,42,0.10);
+      border-radius:999px;background:#fff; cursor:pointer;
+      user-select:none;
+    }
+    .pill input{margin:0}
+    .country-badge{margin-top:8px; min-height:18px; font-size:.85rem; color:var(--muted);}
+
+    .map-col{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      height:100%;
+    }
+
+    /* Map */
+    #map{
+      width:100%;
+      height:520px;
+      min-height:320px;
+      border-radius:10px;
+      border:1px solid rgba(15,23,42,0.10);
+      background:#fff;
+    }
+
+    /* Mobile adjustments */
+    @media(max-width:980px){
+      .layout{grid-template-columns:1fr}
+      #map{height:260px !important;}
+      .spinner button{width:38px;height:38px}
+    }
+
+    /* Mobile header switch */
+    @media(max-width:820px){
+      .tabs{display:none;}
+      .hamburger{display:inline-flex;}
+      .header-inner{padding:10px 12px;}
+      .site-title{max-width:180px;}
+    }
+
+    @media(max-width:720px){
+      .site-title{max-width:140px;}
+      .big-action{flex-direction:column}
+      .btn{width:100%}
+      .price-input-group{ grid-template-columns: 1fr; }
+      .reset-price-btn{ width:100%; }
+    }
+    @media(max-width:420px){
+      .site-title{display:none;}
+    }
+
+    .ad-block{ margin:0; }
+
+    footer, footer *{ color:#000 !important; opacity:1 !important; }
+    footer{ padding:18px 0 30px 0; }
+    footer a{ text-decoration:none; }
+    footer a:hover{ text-decoration:underline; }
+  </style>
 </head>
 
-<body data-page="home">
-  <div id="site-header"></div>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/" class="logo-title">
+        <img src="/logo.png" alt="Spritkosten-Check Logo">
+        <span class="site-title">Spritkosten-Rechner – Benzin & Reisekosten berechnen</span>
+      </a>
+
+      <!-- Desktop Tabs -->
+      <nav class="tabs" role="tablist" aria-label="Hauptnavigation">
+        <button role="tab" data-target="fuel" aria-selected="true">Spritkosten</button>
+        <button role="tab" data-target="calc" aria-selected="false">Rechner</button>
+        <a class="navbtn" href="/faq.html">FAQ</a>
+        <a class="navbtn" href="/ratgeber.html">Ratgeber</a>
+        <a class="navbtn" href="/contact.html">Kontakt</a>
+        <a class="lang-link" href="https://petrolcostcalculator.com/" hreflang="en" lang="en" title="English">EN</a>
+      </nav>
+
+      <!-- Mobile Actions: Hamburger + EN -->
+      <div class="header-actions">
+        <a class="lang-link" href="https://petrolcostcalculator.com/" hreflang="en" lang="en" title="English">EN</a>
+        <button class="hamburger" id="hamburger" aria-label="Menü öffnen" aria-expanded="false">
+          <span></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobile-menu" aria-label="Mobiles Menü">
+      <div class="grid">
+        <button class="active" data-tab="fuel" id="m-fuel">Spritkosten</button>
+        <button data-tab="calc" id="m-calc">Rechner</button>
+        <a href="/faq.html">FAQ</a>
+        <a href="/ratgeber.html">Ratgeber</a>
+        <a href="/contact.html">Kontakt</a>
+        <a href="/impressum.html">Impressum</a>
+      </div>
+      <div class="small" style="margin-top:10px;opacity:.85">
+        Hinweis: Auf Handy ist das Menü oben rechts. EN bleibt immer sichtbar.
+      </div>
+    </div>
+  </header>
 
   <div class="page-container">
 
@@ -72,11 +508,10 @@
       <h2>Kostenloser Spritkosten-Rechner – Plane deine Fahrtkosten</h2>
       <p>
         Unser <strong>Spritkosten-Rechner</strong> hilft dir, die Gesamtkosten deiner Fahrt zu schätzen.
-        Gib Strecke, Verbrauch und Spritpreis ein – du erhältst eine Aufschlüsselung aus Spritkosten,
-        laufenden Kosten und einer Maut-/Vignetten-Schätzung.
+        Gib Strecke, Verbrauch und Spritpreis ein – du erhältst eine Aufschlüsselung aus Spritkosten, laufenden Kosten und einer Maut-/Vignetten-Schätzung.
       </p>
       <ul>
-        <li><strong>Weltweit:</strong> Orte (Städte/Dörfer) per OpenStreetMap</li>
+        <li><strong>Weltweit:</strong> Orte per OpenStreetMap</li>
         <li><strong>Strecke:</strong> echte Straßenroute (OSRM) + Karte</li>
         <li><strong>Maut/Vignette:</strong> schnelle Schätzung nach Ländern</li>
         <li><strong>Kosten teilen:</strong> pro Person berechnen</li>
@@ -84,6 +519,8 @@
     </section>
 
     <main aria-label="Hauptinhalt">
+
+      <!-- Spritkosten -->
       <section id="fuel" class="card" aria-hidden="false">
 
         <!-- Ad: Middle -->
@@ -98,6 +535,7 @@
         </div>
 
         <div class="layout">
+
           <!-- LEFT -->
           <div>
             <h2 style="margin:0 0 8px 0;font-size:1rem">Eingaben</h2>
@@ -119,7 +557,7 @@
               <label for="place-to" style="margin-top:10px">Ziel (Ort, Land)</label>
               <input id="place-to" type="text" placeholder="z. B. Sankt Petersburg, Russland" aria-label="Zielort" />
 
-              <div class="map-controls" style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+              <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
                 <button id="btn-geocode" class="btn secondary">Strecke berechnen</button>
                 <button id="btn-clearmap" class="btn secondary">Karte zurücksetzen</button>
               </div>
@@ -136,8 +574,6 @@
                   <label class="pill"><input type="radio" name="priceMode" value="dest"> Zielland</label>
                 </div>
               </div>
-
-              <!-- ✅ Satz entfernt wie du wolltest -->
             </div>
 
             <label for="fuel-type" style="margin-top:12px">Kraftstoff</label>
@@ -158,7 +594,10 @@
                   placeholder="z. B. 1,89" aria-label="Spritpreis pro Liter" />
                 <span id="price-info" class="hint"></span>
               </div>
-              <button id="btn-reset-price" class="btn secondary reset-price-btn">Auf Standard zurücksetzen</button>
+
+              <button id="btn-reset-price" class="btn secondary reset-price-btn">
+                Auf Standard zurücksetzen
+              </button>
             </div>
 
             <div class="price-table" aria-hidden="false">
@@ -196,129 +635,79 @@
                 Laufende Kosten enthalten: Wartung, Reifen, Wertverlust, Versicherung + Maut/Vignette-Schätzung.
               </div>
             </div>
-
-            <!-- ✅ Maut/CO2/Vergleich ist NICHT mehr links -->
           </div>
 
           <!-- RIGHT -->
           <div class="map-col">
             <h2 style="margin:0 0 8px 0;font-size:1rem">Karte & Strecke</h2>
+
             <div id="map"></div>
+            <div id="toll-info" class="small" style="color:var(--muted)"></div>
 
-            <div style="margin-top:8px" class="small">
-              Klicke „Strecke berechnen“, um Start/Ziel zu finden. Die Strecke ist eine echte Straßenroute (OSRM).
-            </div>
-            <div id="toll-info" class="small" style="margin-top:6px;color:var(--muted)"></div>
-
-            <!-- ✅ Maut/Vignette unter Map -->
-            <div class="thinbox" aria-label="Maut und Vignetten Details" style="margin-top:10px">
+            <div class="thinbox" aria-label="Maut und Vignetten Details" style="padding:16px 12px">
               <div class="title">Maut & Vignette – Details</div>
               <div class="line"><div>Gesamt Maut</div><div class="mono" id="toll-total">—</div></div>
               <div class="line"><div>Gesamt Vignetten</div><div class="mono" id="vignette-total">—</div></div>
               <div class="line"><div>Summe Maut + Vignette</div><div class="mono" id="toll-vignette-sum">—</div></div>
-              <div style="margin-top:8px" class="small" id="toll-breakdown"></div>
+              <div style="margin-top:10px" class="small" id="toll-breakdown"></div>
             </div>
 
-            <!-- ✅ CO2 unter Maut -->
-         <div class="thinbox">
-         <div class="title">🌱 CO₂-Bilanz</div>
-         <div class="line"><div>Gesamt</div><div class="mono" id="co2-total">—</div></div>
-         <div class="line"><div>Pro Person</div><div class="mono" id="co2-per-person">—</div></div>
-         <div class="small" style="margin-top:6px">
-         Näherung basierend auf deinem Verbrauch (kg CO₂).
-        </div>
-        </div>
+            <div class="thinbox" aria-label="CO2 Bilanz">
+              <div class="title">🌱 CO₂-Bilanz</div>
+              <div class="line"><div>CO₂ gesamt</div><div class="mono" id="co2-total">—</div></div>
+              <div class="line"><div>CO₂ pro Person</div><div class="mono" id="co2-per-person">—</div></div>
+              <div class="small" style="margin-top:8px">Näherung auf Basis deines Verbrauchs (kg CO₂).</div>
+            </div>
 
-
-            <!-- ✅ Vergleich unter CO2 -->
-        <div class="thinbox">
-        <div class="title">🚗🚆✈️ Vergleich</div>
-        <div class="line"><div>Auto</div><div class="mono" id="cmp-car">—</div></div>
-        <div class="line"><div>Bahn</div><div class="mono" id="cmp-rail">—</div></div>
-        <div class="line"><div>Flug</div><div class="mono" id="cmp-flight">—</div></div>
-        <div class="small" style="margin-top:6px">
-        Richtwerte in kg CO₂ (für alle Personen).
-       </div>
-       </div>
-
-
-  <div style="margin-top:10px">
-    <div class="line"><div>Auto (statistischer Ø)</div><div class="mono" id="cmp-car">—</div></div>
-    <div class="line"><div>Bahn (Fernverkehr Ø)</div><div class="mono" id="cmp-rail">—</div></div>
-    <div class="line"><div>Flug (Kurzstrecke Ø)</div><div class="mono" id="cmp-flight">—</div></div>
-  </div>
-
-  <div class="small" style="margin-top:10px;line-height:1.7">
-    <b>Hinweis:</b> Dein CO₂-Wert oben basiert auf deinem Verbrauch (Liter). Der Vergleich hier basiert auf Durchschnittswerten.
-    Beide können voneinander abweichen – das ist normal.
-  </div>
-  </div>
-
-
+            <div class="thinbox" aria-label="Vergleich Verkehrsmittel">
+              <div class="title">🚗🚆✈️ Vergleich (Richtwerte)</div>
+              <div class="line"><div>Auto</div><div class="mono" id="cmp-car">—</div></div>
+              <div class="line"><div>Bahn</div><div class="mono" id="cmp-rail">—</div></div>
+              <div class="line"><div>Flug</div><div class="mono" id="cmp-flight">—</div></div>
+              <div class="small" style="margin-top:8px">Werte in kg CO₂ für die Strecke (Richtwerte).</div>
+            </div>
           </div>
+
         </div>
+      </section>
+
+      <!-- Rechner -->
+      <section id="calc" class="card" aria-hidden="true" style="display:none">
+        <h2>Rechner</h2>
+        <label for="num1">Zahl 1</label>
+        <input id="num1" type="number" inputmode="decimal" placeholder="Zahl 1" />
+        <label for="num2">Zahl 2</label>
+        <input id="num2" type="number" inputmode="decimal" placeholder="Zahl 2" />
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;max-width:240px">
+          <button data-op="+" class="btn" style="height:44px;font-size:1.1rem">+</button>
+          <button data-op="-" class="btn" style="height:44px;font-size:1.1rem">−</button>
+          <button data-op="*" class="btn" style="height:44px;font-size:1.1rem">×</button>
+          <button data-op="/" class="btn" style="height:44px;font-size:1.1rem">÷</button>
+        </div>
+
+        <p style="margin-top:12px" class="small">Ergebnis: <strong id="result">–</strong></p>
       </section>
     </main>
 
-    <!-- SEO Block -->
-    <section class="card" aria-label="Berechnung erklärt">
-      <h2>So berechnest du Spritkosten & Kosten pro Person</h2>
-      <p class="small" style="margin-top:0">
-        Für schnelle Überschläge reichen Strecke (km), Verbrauch (L/100 km) und Spritpreis (€/L).
-        Der Rechner zeigt dir zusätzlich Durchschnittskosten pro 100 km und die Aufteilung pro Person.
-      </p>
-      <div class="two-col">
-        <div class="card" style="box-shadow:none;border:1px solid rgba(15,23,42,0.06);background:#fbfdff">
-          <h3 style="margin:0 0 8px 0;font-size:1rem;color:var(--accent-2)">Kurzformeln</h3>
-          <ul style="margin:0;padding-left:18px;line-height:1.7">
-            <li><strong>Liter</strong> = km × Verbrauch ÷ 100</li>
-            <li><strong>Spritkosten</strong> = Liter × Preis</li>
-            <li><strong>pro Person</strong> = Gesamtkosten ÷ Personen</li>
-          </ul>
-        </div>
-        <div class="card" style="box-shadow:none;border:1px solid rgba(15,23,42,0.06);background:#fbfdff">
-          <h3 style="margin:0 0 8px 0;font-size:1rem;color:var(--accent-2)">Hinweise</h3>
-          <ul style="margin:0;padding-left:18px;line-height:1.7">
-            <li>Maut/Vignette sind Schätzwerte.</li>
-            <li>„Laufende Kosten“ sind eine einfache Näherung.</li>
-            <li>Für genaue Werte: echten Verbrauch + aktuellen Preis nutzen.</li>
-          </ul>
-        </div>
+    <!-- Footer -->
+    <footer class="small">
+      Kostenloser Spritkosten-Rechner für Deutschland, Europa und weltweit.
+      <span style="opacity:.75;margin-left:10px">|</span>
+      <a href="/faq.html">FAQ</a> <span style="opacity:.75">|</span>
+      <a href="/impressum.html">Impressum</a> <span style="opacity:.75">|</span>
+      <a href="/datenschutz.html">Datenschutz</a> <span style="opacity:.75">|</span>
+      <a href="/ratgeber.html">Ratgeber</a> <span style="opacity:.75">|</span>
+      <a href="/contact.html">Kontakt</a>
+
+      <div style="text-align:center;opacity:.8;margin-top:14px">
+        Deutsch:
+        <a href="https://spritkosten-check.de/" hreflang="de" lang="de">Spritkosten-Check.de</a>
+        &nbsp;&nbsp;|&nbsp;&nbsp;
+        Englisch:
+        <a href="https://petrolcostcalculator.com/" hreflang="en" lang="en">PetrolCostCalculator.com</a>
       </div>
-    </section>
-
-    <!-- FAQ snippet -->
-    <section class="card faq-section" aria-label="FAQ">
-      <h2>Kurze FAQ</h2>
-      <details class="faq-item">
-        <summary>Wie berechne ich Spritkosten pro 100 km?</summary>
-        <p>Der Rechner zeigt dir „€/100 km“ automatisch an. Grundlage ist: Gesamtkosten ÷ Strecke × 100.</p>
-      </details>
-      <details class="faq-item">
-        <summary>Zählt Hin- und Rückfahrt oder nur eine Strecke?</summary>
-        <p>Du kannst beides. Gib einfach die Kilometer ein, die du wirklich fährst (einfach oder hin & zurück).</p>
-      </details>
-      <details class="faq-item">
-        <summary>Wie genau sind Maut/Vignetten?</summary>
-        <p>Nur grob nach Ländern. Reale Kosten hängen von Route, Fahrzeugklasse und lokalen Regeln ab.</p>
-      </details>
-      <div style="margin-top:14px;display:flex;justify-content:center">
-        <a class="btn large" href="/faq.html" style="max-width:360px">Mehr FAQ ansehen</a>
-      </div>
-    </section>
-
-    <!-- Ad: Bottom -->
-    <div class="ad-block">
-      <ins class="adsbygoogle"
-        style="display:block"
-        data-ad-client="ca-pub-4852698472752437"
-        data-ad-slot="3048839661"
-        data-ad-format="auto"
-        data-full-width-responsive="true"></ins>
-      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-    </div>
-
-    <div id="site-footer"></div>
+    </footer>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -326,12 +715,55 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const CURRENCY_SYMBOL = '€';
+      // ===== Mobile Hamburger =====
+      const burger = document.getElementById('hamburger');
+      const mobileMenu = document.getElementById('mobile-menu');
 
+      function closeMenu(){
+        mobileMenu.classList.remove('open');
+        burger.setAttribute('aria-expanded','false');
+      }
+      function toggleMenu(){
+        const open = mobileMenu.classList.toggle('open');
+        burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      }
+      burger.addEventListener('click', toggleMenu);
+
+      // Close menu when clicking outside
+      document.addEventListener('click', (e) => {
+        if(!mobileMenu.classList.contains('open')) return;
+        const within = mobileMenu.contains(e.target) || burger.contains(e.target);
+        if(!within) closeMenu();
+      });
+
+      const CURRENCY_SYMBOL = '€';
       const parse = v => (v === '' || v == null) ? NaN : Number(String(v).replace(',', '.'));
       const fmt = n => (Number.isFinite(n) ? Number.parseFloat(n.toFixed(2)).toFixed(2) : '0.00');
       const fmtMoney = n => CURRENCY_SYMBOL + fmt(n).replace('.', ',');
       const fmtL = n => fmt(n).replace('.', ',');
+
+      // Tabs
+      const tabButtons = document.querySelectorAll('.tabs [role="tab"]');
+      function showTab(target){
+        document.querySelectorAll('main > section').forEach(s => {
+          const isActive = (s.id === target);
+          s.style.display = isActive ? '' : 'none';
+          s.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+        });
+        tabButtons.forEach(b => b.setAttribute('aria-selected', b.dataset.target === target ? 'true' : 'false'));
+        document.getElementById('m-fuel').classList.toggle('active', target === 'fuel');
+        document.getElementById('m-calc').classList.toggle('active', target === 'calc');
+
+        if (target === 'fuel') setTimeout(() => { try { map.invalidateSize(); } catch(e){} }, 80);
+      }
+
+      tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => showTab(btn.dataset.target));
+      });
+
+      // Mobile menu tab buttons
+      document.getElementById('m-fuel').addEventListener('click', () => { showTab('fuel'); closeMenu(); });
+      document.getElementById('m-calc').addEventListener('click', () => { showTab('calc'); closeMenu(); });
 
       function fetchWithTimeout(url, ms=12000){
         const controller = new AbortController();
@@ -372,27 +804,21 @@
       const tollVignetteSumEl = document.getElementById('toll-vignette-sum');
       const tollBreakdownEl = document.getElementById('toll-breakdown');
 
-      // CO2 + Vergleich DOM
-      const co2FuelEl = document.getElementById('co2-fuel');
       const co2TotalEl = document.getElementById('co2-total');
       const co2PerPersonEl = document.getElementById('co2-per-person');
       const cmpCarEl = document.getElementById('cmp-car');
       const cmpRailEl = document.getElementById('cmp-rail');
       const cmpFlightEl = document.getElementById('cmp-flight');
 
-      // Preise aus externer Datei
+      // Preise
       const countryPrices = window.COUNTRY_FUEL_PRICES_EUR || null;
       const priceStand = window.COUNTRY_FUEL_PRICES_STAND || '';
-
       const fallbackPrices = { unleaded91: 1.50, unleaded95: 1.60, diesel: 1.45, name:'Fallback' };
       let fuelPrices = { ...fallbackPrices };
       let userEditedPrice = false;
 
-      // Route state
       let startCC = null, destCC = null;
       let routeKm = 0;
-
-      // Maut state
       let lastTollTotal = 0;
       let lastVignetteTotal = 0;
 
@@ -418,9 +844,9 @@
         const code = (cc || '').toUpperCase();
         const entry = countryPrices && countryPrices[code];
         if(entry && Number.isFinite(entry.unleaded91) && Number.isFinite(entry.unleaded95) && Number.isFinite(entry.diesel)){
-          return { ...entry, source: 'static' };
+          return { ...entry };
         }
-        return { ...fallbackPrices, name: code || 'Fallback', source: 'fallback' };
+        return { ...fallbackPrices, name: code || 'Fallback' };
       }
 
       function mixPrices(a, b){
@@ -428,8 +854,7 @@
           unleaded91: (a.unleaded91 + b.unleaded91) / 2,
           unleaded95: (a.unleaded95 + b.unleaded95) / 2,
           diesel:     (a.diesel + b.diesel) / 2,
-          name: `${a.name} / ${b.name}`,
-          source: 'avg'
+          name: `${a.name} / ${b.name}`
         };
       }
 
@@ -542,33 +967,23 @@
         clearRoute();
         routeLayer = L.geoJSON(r.geometry, { style: { weight: 5, opacity: 0.9 } }).addTo(map);
         map.fitBounds(routeLayer.getBounds(), { padding:[60,60] });
-
         return distKm;
       }
 
-      // Maut/Vignette
+      // Maut / Vignette
       const tollPer100km = {
         DE:0, AT:6, CH:4, FR:10, IT:9, ES:10, NL:0, BE:0,
         PL:6, CZ:4, SK:4, HU:5, SI:5, HR:5, RO:3, BG:3,
         US:3, CA:2, GB:0, AU:5, RU:1
       };
-
       const vignetteFlat = {
-        AT: 11.50,
-        CH: 40.00,
-        CZ: 12.00,
-        SK: 12.00,
-        HU: 16.00,
-        SI: 16.00,
-        RO: 3.50,
-        BG: 7.50
+        AT: 11.50, CH: 40.00, CZ: 12.00, SK: 12.00, HU: 16.00, SI: 16.00, RO: 3.50, BG: 7.50
       };
 
       function estimateTollForCountry(cc, km){
         const rate = (tollPer100km[cc] ?? 5);
         return Math.round(((km / 100) * rate) * 100) / 100;
       }
-
       function estimateVignetteForCountry(cc){
         const v = vignetteFlat[cc];
         return Number.isFinite(v) ? v : 0;
@@ -584,7 +999,6 @@
         }
 
         const isCross = (startCC && destCC && startCC !== destCC);
-
         const parts = [];
         if(!isCross){
           parts.push({ cc: startCC, km: routeKm });
@@ -628,6 +1042,7 @@
       document.getElementById('btn-geocode').addEventListener('click', async () => {
         const from = placeFromEl.value.trim();
         const to = placeToEl.value.trim();
+
         if(!from || !to){
           tollInfoEl.textContent = 'Bitte Start und Ziel eingeben.';
           tollInfoEl.classList.add('error');
@@ -652,7 +1067,8 @@
           const startName = getCountryName(startCC);
           const destName  = getCountryName(destCC);
 
-          badgeEl.innerHTML = `Erkannt: <b>Start</b> ${startName} (${startCC||'—'}), <b>Ziel</b> ${destName} (${destCC||'—'})`;
+          badgeEl.innerHTML = `Erkannt: <b>Start</b> ${startName} (${startCC||'—'}), <b>Ziel</b> ${destName} (${destCC||'—'})` +
+                              (!countryPrices ? `<br><span class="error">⚠ Preisdatei fehlt: prices/country-prices.js</span>` : '');
 
           if(startCC && destCC && startCC !== destCC) priceModeWrap.style.display = 'block';
           else priceModeWrap.style.display = 'none';
@@ -667,12 +1083,9 @@
           await applyDetectedPrices();
           renderTollBreakdown();
 
-          const isCross = (startCC && destCC && startCC !== destCC);
-          const mode = isCross ? getMode() : 'start';
-          const modeText = isCross ? (mode === 'avg' ? 'Mittelwert' : (mode === 'start' ? 'Startland' : 'Zielland')) : 'Startland';
-          tollInfoEl.textContent = `Strecke (OSRM): ${fmtL(routeKm)} km. Spritpreis-Modus: ${modeText}.`;
-
+          tollInfoEl.textContent = `Strecke (OSRM): ${fmtL(routeKm)} km.`;
           setTimeout(() => { try { map.invalidateSize(); } catch(e){} }, 80);
+
         }catch(e){
           tollInfoEl.textContent = 'Fehler bei Routing/Geocoding. Bitte Verbindung prüfen oder anderen Ort versuchen.';
           tollInfoEl.classList.add('error');
@@ -680,8 +1093,7 @@
       });
 
       document.getElementById('btn-clearmap').addEventListener('click', () => {
-        clearMarkers();
-        clearRoute();
+        clearMarkers(); clearRoute();
         map.setView([51.1657, 10.4515], 5);
 
         placeFromEl.value = '';
@@ -695,33 +1107,21 @@
         tollInfoEl.textContent = '';
         tollInfoEl.classList.remove('error');
 
+        lastTollTotal = 0;
+        lastVignetteTotal = 0;
         renderTollBreakdown();
 
         setTimeout(() => { try { map.invalidateSize(); } catch(e){} }, 80);
       });
 
-      document.getElementById('km-inc').addEventListener('click', ()=>{
-        const cur = parse(kmEl.value)||0; kmEl.value = Math.round((cur+1)*10)/10;
-      });
-      document.getElementById('km-dec').addEventListener('click', ()=>{
-        const cur = parse(kmEl.value)||0; kmEl.value = Math.max(0, Math.round((cur-1)*10)/10);
-      });
+      document.getElementById('km-inc').addEventListener('click', ()=>{ const cur = parse(kmEl.value)||0; kmEl.value = Math.round((cur+1)*10)/10; });
+      document.getElementById('km-dec').addEventListener('click', ()=>{ const cur = parse(kmEl.value)||0; kmEl.value = Math.max(0, Math.round((cur-1)*10)/10); });
 
       function estimateRunningPer100(consumptionL100){
         if(!Number.isFinite(consumptionL100) || consumptionL100 <= 0) return 12.0;
         const est = 1.2 * consumptionL100 + 3.5;
         return Math.max(5, Math.min(30, Math.round(est * 10) / 10));
       }
-
-      function resetClimateBoxes(){
-        co2FuelEl.textContent = '—';
-        co2TotalEl.textContent = '—';
-        co2PerPersonEl.textContent = '—';
-        cmpCarEl.textContent = '—';
-        cmpRailEl.textContent = '—';
-        cmpFlightEl.textContent = '—';
-      }
-      resetClimateBoxes();
 
       document.getElementById('calc-fuel').addEventListener('click', () => {
         const km = parse(kmEl.value);
@@ -732,7 +1132,6 @@
         if(!Number.isFinite(p)){
           p = (fuelPrices[fuelTypeEl.value] ?? NaN);
         }
-
         if(Number.isNaN(km) || km <= 0 || Number.isNaN(v) || Number.isNaN(p)){
           priceInfoEl.textContent = 'Bitte Strecke, Verbrauch und Preis korrekt eingeben.';
           priceInfoEl.classList.add('error');
@@ -761,17 +1160,16 @@
         avg100El.textContent = fmtMoney(avgPer100) + ' /100km';
         runningEstEl.textContent = fmtMoney(runningPer100Total) + ' /100km';
 
-        // ✅ CO2 (UBA-Näherung)
+        // CO2 (kg)
         const isDiesel = (fuelTypeEl.value === 'diesel');
-        const co2FactorKgPerL = isDiesel ? 2.65 : 2.33; // kg CO2 je Liter
+        const co2FactorKgPerL = isDiesel ? 2.65 : 2.33;
         const co2Kg = liters * co2FactorKgPerL;
         const co2PerPersonKg = co2Kg / passengers;
 
-        co2FuelEl.textContent = isDiesel ? 'Diesel' : 'Benzin';
         co2TotalEl.textContent = fmt(co2Kg).replace('.', ',') + ' kg';
         co2PerPersonEl.textContent = fmt(co2PerPersonKg).replace('.', ',') + ' kg';
 
-        // ✅ Vergleich (UBA 2024, g CO2e / Person-km)
+        // Vergleich (FIX: /1000)
         const gPerPkmCar = 164;
         const gPerPkmRail = 26;
         const gPerPkmFlight = 290;
@@ -807,23 +1205,39 @@
         lastVignetteTotal = 0;
         renderTollBreakdown();
 
-        clearMarkers();
-        clearRoute();
+        clearMarkers(); clearRoute();
         map.setView([51.1657, 10.4515],5);
         setTimeout(() => { try { map.invalidateSize(); } catch(e){} }, 80);
 
-        resetClimateBoxes();
+        co2TotalEl.textContent = '—';
+        co2PerPersonEl.textContent = '—';
+        cmpCarEl.textContent = '—';
+        cmpRailEl.textContent = '—';
+        cmpFlightEl.textContent = '—';
       });
+
+      // Taschenrechner
+      const num1 = document.getElementById('num1');
+      const num2 = document.getElementById('num2');
+      const result = document.getElementById('result');
+      document.querySelectorAll('[data-op]').forEach(btn =>
+        btn.addEventListener('click', () => {
+          const a = parse(num1.value), b = parse(num2.value);
+          if(Number.isNaN(a) || Number.isNaN(b)){ result.textContent = '–'; return; }
+          let res;
+          switch(btn.dataset.op){
+            case '+': res = a + b; break;
+            case '-': res = a - b; break;
+            case '*': res = a * b; break;
+            case '/': res = (b === 0 ? '∞' : a / b); break;
+          }
+          result.textContent = (typeof res === 'number') ? fmt(res).replace('.', ',') : res;
+        })
+      );
 
       renderTollBreakdown();
       setTimeout(() => { try { map.invalidateSize(); } catch(e){} }, 120);
     });
   </script>
-
-  <script src="/assets/js/loader.js"></script>
 </body>
 </html>
-
-
-
-
