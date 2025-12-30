@@ -63,7 +63,6 @@
       --maxw:1400px;
     }
 
-    /* ✅ Hintergrund wie vorher (stabil, ohne "body::before") */
     html{
       min-height:100%;
       background: linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 100%);
@@ -345,10 +344,10 @@
 
     .country-badge{margin-top:8px; min-height:18px; font-size:.85rem; color:var(--muted);}
 
-    /* ✅ MAP: groß erzwingen */
+    /* ✅ MAP: etwas kleiner (Desktop) */
     #map{
       width:100%;
-      height:720px;
+      height:560px;
       min-height:320px;
       border-radius:10px;
       border:1px solid rgba(15,23,42,0.10);
@@ -411,18 +410,10 @@
     footer a{ text-decoration:none; }
     footer a:hover{ text-decoration:underline; }
 
-    /* ✅ Desktop: rechte Spalte als Flex, Map füllt Resthöhe */
     .map-col{
       display:flex;
       flex-direction:column;
       height:100%;
-    }
-    @media (min-width: 981px){
-      #map{
-        flex:1;
-        height:auto !important;
-        min-height:520px;
-      }
     }
 
     /* ✅ CO2 & Vergleich – passend zum Design */
@@ -550,6 +541,7 @@
         </div>
 
         <div class="layout">
+          <!-- ✅ Linke Spalte: nur Eingaben + Ergebnis -->
           <div>
             <h2 style="margin:0 0 8px 0;font-size:1rem">Eingaben</h2>
 
@@ -587,7 +579,8 @@
                 </div>
               </div>
 
-            
+              <!-- ✅ Satz entfernt: "Orte via Nominatim..." -->
+            </div>
 
             <label for="fuel-type" style="margin-top:12px">Kraftstoff</label>
             <select id="fuel-type" aria-label="Kraftstoff">
@@ -648,8 +641,19 @@
                 Laufende Kosten enthalten: Wartung, Reifen, Wertverlust, Versicherung + Maut/Vignette-Schätzung.
               </div>
             </div>
+          </div>
 
-            <!-- ✅ Dünner Block: Maut/Vignette Details -->
+          <!-- ✅ Rechte Spalte: Map + darunter Maut/Vignette + CO2/Vergleich -->
+          <div class="map-col">
+            <h2 style="margin:0 0 8px 0;font-size:1rem">Karte & Strecke</h2>
+            <div id="map"></div>
+
+            <div style="margin-top:8px" class="small">
+              Klicke „Strecke berechnen“, um Start/Ziel zu finden. Die Strecke ist eine echte Straßenroute (OSRM).
+            </div>
+            <div id="toll-info" class="small" style="margin-top:6px;color:var(--muted)"></div>
+
+            <!-- ✅ Dünner Block: Maut/Vignette Details (unter Map) -->
             <div class="thinbox" aria-label="Maut und Vignetten Details">
               <div class="title">Maut & Vignette – Details</div>
               <div class="line"><div>Gesamt Maut</div><div class="mono" id="toll-total">—</div></div>
@@ -658,7 +662,7 @@
               <div style="margin-top:8px" class="small" id="toll-breakdown"></div>
             </div>
 
-            <!-- ✅ CO₂-Bilanz & Vergleich (SEO + Nutzerwert) -->
+            <!-- ✅ CO₂-Bilanz & Vergleich (unter Map) -->
             <div class="co2box" aria-label="CO2 Bilanz und Vergleich">
               <div class="title">🌱 CO₂-Bilanz deiner Fahrt</div>
 
@@ -695,15 +699,6 @@
                 CO₂-Werte sind Schätzungen und hängen u. a. von Fahrzeug, Fahrstil, Beladung und Streckenprofil ab.
               </div>
             </div>
-          </div>
-
-          <div class="map-col">
-            <h2 style="margin:0 0 8px 0;font-size:1rem">Karte & Strecke</h2>
-            <div id="map"></div>
-            <div style="margin-top:8px" class="small">
-              Klicke „Strecke berechnen“, um Start/Ziel zu finden. Die Strecke ist eine echte Straßenroute (OSRM).
-            </div>
-            <div id="toll-info" class="small" style="margin-top:6px;color:var(--muted)"></div>
           </div>
         </div>
       </section>
@@ -894,8 +889,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       const CURRENCY_SYMBOL = '€';
 
-      // ✅ Optional: Tankerkoenig nur für DE (wenn du später willst, hier eintragen)
-      // Leer lassen = DE wird auch statisch aus country-prices.js genommen.
+      // Optional: Tankerkoenig nur für DE (wenn du später willst, hier eintragen)
       const TANKERKOENIG_API_KEY = "";
 
       const parse = v => (v === '' || v == null) ? NaN : Number(String(v).replace(',', '.'));
@@ -961,7 +955,7 @@
       const tollVignetteSumEl = document.getElementById('toll-vignette-sum');
       const tollBreakdownEl = document.getElementById('toll-breakdown');
 
-      // ✅ CO2 DOM
+      // CO2 DOM
       const co2LitersEl = document.getElementById('co2-liters');
       const co2TotalEl = document.getElementById('co2-total');
       const co2PerPersonEl = document.getElementById('co2-per-person');
@@ -970,19 +964,17 @@
       const cmpRailEl = document.getElementById('cmp-rail');
       const cmpFlightEl = document.getElementById('cmp-flight');
 
-      // ✅ Emissionsfaktoren (grobe Näherung, Tank-to-Wheel)
-      // Benzin ~2.31 kg CO2/L, Diesel ~2.65 kg CO2/L (grobe Richtwerte)
+      // Emissionsfaktoren (grobe Näherung, Tank-to-Wheel)
       const CO2_PER_LITER = {
         unleaded91: 2.31,
         unleaded95: 2.31,
         diesel: 2.65
       };
 
-      // ✅ Vergleichswerte (g CO2 pro Person-km, grob)
-      // Du kannst diese später anpassen oder landesspezifisch machen.
+      // Vergleichswerte (g CO2 pro Person-km, grob)
       const COMPARE_G_PER_PKM = {
-        rail: 41,     // Bahn
-        flight: 255   // Flug
+        rail: 41,
+        flight: 255
       };
 
       function resetCO2UI(){
@@ -996,11 +988,10 @@
       }
       resetCO2UI();
 
-      // ✅ Preise aus externer Datei
+      // Preise aus externer Datei
       const countryPrices = window.COUNTRY_FUEL_PRICES_EUR || null;
       const priceStand = window.COUNTRY_FUEL_PRICES_STAND || '';
 
-      // Fallback bewusst NEUTRAL (damit Fehler auffällt)
       const fallbackPrices = { unleaded91: 1.50, unleaded95: 1.60, diesel: 1.45, name:'Fallback' };
       let fuelPrices = { ...fallbackPrices };
       let userEditedPrice = false;
@@ -1114,7 +1105,6 @@
         attribution:'&copy; OpenStreetMap-Mitwirkende'
       }).addTo(map);
 
-      // 🔧 Leaflet Resize-Fix
       setTimeout(() => { try { map.invalidateSize(); } catch(e){} }, 150);
       window.addEventListener('resize', () => {
         setTimeout(() => { try { map.invalidateSize(); } catch(e){} }, 150);
@@ -1148,7 +1138,7 @@
         return j?.address?.country_code ? String(j.address.country_code).toUpperCase() : null;
       }
 
-      // ✅ OSRM Routing (echte Straßenroute)
+      // OSRM Routing
       async function getRouteOSRM(lat1, lon1, lat2, lon2){
         const url =
           `https://router.project-osrm.org/route/v1/driving/` +
@@ -1170,14 +1160,14 @@
         return distKm;
       }
 
-      // ✅ Maut (€/100 km) – grobe Länderwerte
+      // Maut (€/100 km) – grobe Länderwerte
       const tollPer100km = {
         DE:0, AT:6, CH:4, FR:10, IT:9, ES:10, NL:0, BE:0,
         PL:6, CZ:4, SK:4, HU:5, SI:5, HR:5, RO:3, BG:3,
         US:3, CA:2, GB:0, AU:5, RU:1
       };
 
-      // ✅ Vignetten (Fixbetrag) – grobe Näherung
+      // Vignetten (Fixbetrag) – grobe Näherung
       const vignetteFlat = {
         AT: 11.50,
         CH: 40.00,
@@ -1248,6 +1238,28 @@
           lines.join('<br>') +
           (vignetteSum > 0 ? `<br><br><span class="small">Vignetten (fix, je Land einmal): ${fmtMoney(vignetteSum)}</span>` : '') +
           `<br><span class="small">Hinweis: Länder-Split ist eine schnelle Schätzung (bei Länderwechsel 50/50).</span>`;
+      }
+
+      function updateCO2AndCompare({ km, liters, passengers, fuelKey }){
+        if(!Number.isFinite(km) || km <= 0 || !Number.isFinite(liters) || liters < 0) return;
+
+        const factor = CO2_PER_LITER[fuelKey] ?? 2.31;
+        const co2Total = liters * factor; // kg
+        const co2PerPerson = co2Total / Math.max(1, passengers);
+        const co2Per100 = (co2Total / km) * 100;
+
+        co2LitersEl.textContent = fmtL(liters) + ' L';
+        co2TotalEl.textContent = fmtKg(co2Total);
+        co2PerPersonEl.textContent = fmtKg(co2PerPerson);
+        co2Per100El.textContent = fmtKg(co2Per100);
+
+        const carPerPerson = co2PerPerson;
+        const railPerPerson = (km * COMPARE_G_PER_PKM.rail) / 1000;     // kg
+        const flightPerPerson = (km * COMPARE_G_PER_PKM.flight) / 1000; // kg
+
+        cmpCarEl.textContent = fmtKg(carPerPerson) + ' / Person';
+        cmpRailEl.textContent = fmtKg(railPerPerson) + ' / Person';
+        cmpFlightEl.textContent = fmtKg(flightPerPerson) + ' / Person';
       }
 
       document.getElementById('btn-geocode').addEventListener('click', async () => {
@@ -1339,29 +1351,6 @@
         return Math.max(5, Math.min(30, Math.round(est * 10) / 10));
       }
 
-      function updateCO2AndCompare({ km, liters, passengers, fuelKey }){
-        if(!Number.isFinite(km) || km <= 0 || !Number.isFinite(liters) || liters < 0) return;
-
-        const factor = CO2_PER_LITER[fuelKey] ?? 2.31;
-        const co2Total = liters * factor; // kg
-        const co2PerPerson = co2Total / Math.max(1, passengers);
-        const co2Per100 = (co2Total / km) * 100;
-
-        co2LitersEl.textContent = fmtL(liters) + ' L';
-        co2TotalEl.textContent = fmtKg(co2Total);
-        co2PerPersonEl.textContent = fmtKg(co2PerPerson);
-        co2Per100El.textContent = fmtKg(co2Per100);
-
-        // Vergleich: pro Person
-        const carPerPerson = co2PerPerson;
-        const railPerPerson = (km * COMPARE_G_PER_PKM.rail) / 1000;     // kg
-        const flightPerPerson = (km * COMPARE_G_PER_PKM.flight) / 1000; // kg
-
-        cmpCarEl.textContent = fmtKg(carPerPerson) + ' / Person';
-        cmpRailEl.textContent = fmtKg(railPerPerson) + ' / Person';
-        cmpFlightEl.textContent = fmtKg(flightPerPerson) + ' / Person';
-      }
-
       document.getElementById('calc-fuel').addEventListener('click', () => {
         const km = parse(kmEl.value);
         const v  = parse(consumptionEl.value);
@@ -1400,7 +1389,6 @@
         avg100El.textContent = fmtMoney(avgPer100) + ' /100km';
         runningEstEl.textContent = fmtMoney(runningPer100Total) + ' /100km';
 
-        // ✅ CO₂ + Vergleich aktualisieren
         updateCO2AndCompare({ km, liters, passengers, fuelKey: fuelTypeEl.value });
       });
 
@@ -1431,7 +1419,6 @@
         map.setView([51.1657, 10.4515],5);
         setTimeout(() => { try { map.invalidateSize(); } catch(e){} }, 80);
 
-        // ✅ CO₂ reset
         resetCO2UI();
       });
 
@@ -1460,4 +1447,3 @@
   </script>
 </body>
 </html>
-
