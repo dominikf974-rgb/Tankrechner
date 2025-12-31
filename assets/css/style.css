@@ -26,31 +26,52 @@ body{
   background:transparent;
 }
 
-/* Header (NICHT sticky/fixed – normaler Flow) */
+/* =========================
+   HEADER: 100% KEIN STICKY
+   ========================= */
+
+/* Kill sticky/fixed on any likely header/nav element */
 header,
-.site-header{
-  position: static !important;     /* absolut kein sticky/fixed */
+.site-header,
+#site-header,
+#masthead,
+.navbar,
+.navbar-sticky,
+.header,
+.topbar{
+  position: static !important;
+  inset: auto !important;         /* top/right/bottom/left reset */
   top: auto !important;
-  left: auto !important;
   right: auto !important;
   bottom: auto !important;
+  left: auto !important;
   transform: none !important;
   z-index: auto !important;
+}
+
+/* If frameworks/classes add sticky/fixed, neutralize them */
+.sticky,
+.is-sticky,
+.sticky-top,
+.fixed,
+.fixed-top,
+.header-fixed,
+.navbar-fixed{
+  position: static !important;
+  inset: auto !important;
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+  transform: none !important;
+  z-index: auto !important;
+}
+
+/* Your actual header styling (still normal flow) */
+.site-header{
   width:100%;
   background:#fff;
   border-bottom:1px solid rgba(15,23,42,0.06);
-}
-
-/* Optional: falls irgendeine Klasse "sticky/fixed" draufkommt */
-header.sticky,
-header.is-sticky,
-header.fixed,
-.site-header.sticky,
-.site-header.is-sticky,
-.site-header.fixed{
-  position: static !important;
-  top: auto !important;
-  z-index: auto !important;
 }
 
 /* Header content */
@@ -127,7 +148,9 @@ header.fixed,
   background:#eef2ff;
 }
 
-/* Container / Cards */
+/* =========================
+   Container / Cards
+   ========================= */
 .page-container{
   width:100%;
   max-width: min(var(--maxw), 94vw);
