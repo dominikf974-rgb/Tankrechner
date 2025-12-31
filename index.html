@@ -481,12 +481,31 @@
         const e = countryPrices && countryPrices[cc];
         return (e && e.name) ? e.name : cc;
       }
-      function pricesForCountryStatic(cc){
-        const code = (cc || '').toUpperCase();
-        const entry = countryPrices && countryPrices[code];
-        if(entry && Number.isFinite(entry.unleaded91) && Number.isFinite(entry.unleaded95) && Number.isFinite(entry.diesel)){
-          return { ...entry };
-        }
+     async function pricesForCountryStatic(cc, lat=null, lon=null){
+  cc = (cc || "").toUpperCase();
+
+  if(cc === "DE" && lat && lon){
+    try{
+      const r = await fetch(`${API_BASE}/api/tank?lat=${lat}&lon=${lon}&rad=6&type=all`);
+      const j = await r.json();
+      if(j && j.ok && j.stations?.length){
+        let e10=null, e5=null, diesel=null;
+        j.stations.forEach(s=>{
+          if(typeof s.e10==="number") e10 = e10==null?s.e10:Math.min(e10,s.e10);
+          if(typeof s.e5==="number")  e5  = e5 ==null?s.e5 :Math.min(e5 ,s.e5 );
+          if(typeof s.diesel==="number") diesel = diesel==null?s.diesel:Math.min(diesel,s.diesel);
+        });
+        return {unleaded91:e10, unleaded95:e5, diesel, name:"Deutschland (Live)"};
+      }
+    }catch(e){}
+  }
+
+  const e = COUNTRY_FUEL_PRICES_EUR?.[cc];
+  if(e) return {...e};
+
+  return {unleaded91:1.5, unleaded95:1.6, diesel:1.45, name:"Fallback"};
+}
+
         return { ...fallbackPrices, name: code || 'Fallback' };
       }
       function mixPrices(a, b){
@@ -502,8 +521,9 @@
         const isCross = (startCC && destCC && startCC !== destCC);
         const mode = isCross ? getMode() : 'start';
 
-        const startP = pricesForCountryStatic(startCC);
-        const destP  = pricesForCountryStatic(destCC);
+        const startP = await pricesForCountryStatic(startCC, a.lat, a.lon);
+        const destP  = await pricesForCountryStatic(destCC, b.lat, b.lon);
+
 
         let chosen, note;
         if(isCross){
@@ -871,3 +891,4 @@
   <script src="/assets/js/loader.js?v=2026-01"></script>
 </body>
 </html>
+
