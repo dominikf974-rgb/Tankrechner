@@ -33,8 +33,8 @@
     Verifiziert 2026
   </div>
 
-  <!-- Cookie Banner (global, für alle Seiten) -->
-  <div class="cookie-banner" id="cookieBanner" role="dialog" aria-label="Cookie Hinweis" style="display:none">
+  <!-- Cookie Banner (NEW 2026 - NIEMALS inline display:none!) -->
+  <div id="cookieBanner" class="is-hidden" role="dialog" aria-label="Cookie Hinweis">
     <div class="row">
       <div class="txt">
         Wir verwenden Cookies für Werbung (Google AdSense). Du kannst ablehnen oder zustimmen.
@@ -61,12 +61,9 @@
 
     function showBanner(){
       banner.classList.remove("is-hidden");
-      banner.style.display = "block";
     }
     function hideBanner(){
       banner.classList.add("is-hidden");
-      // Notbremse falls CSS nicht greift
-      banner.style.display = "none";
     }
 
     // Ads laden genau einmal. Bei Ablehnen: non-personalized
@@ -103,7 +100,7 @@
       loadGoogleAdsOnce({ npa: false });
     } else if (consent === "0") {
       hideBanner();
-      loadGoogleAdsOnce({ npa: true });   // trotzdem Ads, aber ohne Personalisierung
+      loadGoogleAdsOnce({ npa: true });
     } else {
       // noch keine Entscheidung: Banner zeigen, keine Ads laden
       showBanner();
