@@ -32,67 +32,95 @@
     </svg>
     Verifiziert 2026
   </div>
-<div class="cookie-banner" id="cookieBanner" role="dialog" aria-label="Cookie Hinweis" style="display:none">
-  <div class="row">
-    <div class="txt">
-      Wir verwenden Cookies für Werbung (Google AdSense). Du kannst ablehnen oder zustimmen.
-      Mehr Infos in der <a href="/datenschutz.html">Datenschutzerklärung</a>.
-    </div>
-    <div class="actions">
-      <button class="reject" id="cookieReject" type="button">Ablehnen</button>
-      <button class="accept" id="cookieAccept" type="button">Akzeptieren</button>
+
+  <!-- Cookie Banner (global, für alle Seiten) -->
+  <div class="cookie-banner" id="cookieBanner" role="dialog" aria-label="Cookie Hinweis" style="display:none">
+    <div class="row">
+      <div class="txt">
+        Wir verwenden Cookies für Werbung (Google AdSense). Du kannst ablehnen oder zustimmen.
+        Mehr Infos in der <a href="/datenschutz.html">Datenschutzerklärung</a>.
+      </div>
+      <div class="actions">
+        <button class="reject" id="cookieReject" type="button">Ablehnen</button>
+        <button class="accept" id="cookieAccept" type="button">Akzeptieren</button>
+      </div>
     </div>
   </div>
-</div>
 
   <script>
-(() => {
-  const CONSENT_KEY = "consent_marketing";
-  const banner = document.getElementById('cookieBanner');
-  const btnAccept = document.getElementById('cookieAccept');
-  const btnReject = document.getElementById('cookieReject');
+  (() => {
+    const CONSENT_KEY = "consent_marketing";
+    const banner = document.getElementById("cookieBanner");
+    const btnAccept = document.getElementById("cookieAccept");
+    const btnReject = document.getElementById("cookieReject");
 
-  if(!banner || !btnAccept || !btnReject) return;
+    if (!banner || !btnAccept || !btnReject) return;
 
-  function getConsent(){ try { return localStorage.getItem(CONSENT_KEY); } catch(e){ return null; } }
-  function setConsent(v){ try { localStorage.setItem(CONSENT_KEY, v); } catch(e){} }
+    function getConsent(){ try { return localStorage.getItem(CONSENT_KEY); } catch(e){ return null; } }
+    function setConsent(v){ try { localStorage.setItem(CONSENT_KEY, v); } catch(e){} }
 
-  function showBanner(){
-    banner.classList.remove("is-hidden");
-    banner.style.display = "block";
-  }
-  function hideBanner(){
-    banner.classList.add("is-hidden");
-  }
+    function showBanner(){
+      banner.classList.remove("is-hidden");
+      banner.style.display = "block";
+    }
+    function hideBanner(){
+      banner.classList.add("is-hidden");
+      // Notbremse falls CSS nicht greift
+      banner.style.display = "none";
+    }
 
-  // Ads nur nach Consent
-  function loadGoogleAdsOnce(){
-    if (window.__adsLoaded) return;
-    window.__adsLoaded = true;
+    // Ads laden genau einmal. Bei Ablehnen: non-personalized
+    function loadGoogleAdsOnce({ npa } = { npa: false }){
+      if (window.__adsLoaded) return;
+      window.__adsLoaded = true;
 
-    const s = document.createElement('script');
-    s.async = true;
-    s.crossOrigin = "anonymous";
-    s.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4852698472752437";
-    document.head.appendChild(s);
+      // Non-personalized Ads Flag vor dem Laden setzen
+      if (npa) {
+        window.adsbygoogle = window.adsbygoogle || [];
+        window.adsbygoogle.requestNonPersonalizedAds = 1;
+      }
 
-    s.onload = function(){
-      try {
-        document.querySelectorAll('ins.adsbygoogle').forEach(() => {
-          try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e){}
-        });
-      } catch(e){}
-    };
-  }
+      const s = document.createElement("script");
+      s.async = true;
+      s.crossOrigin = "anonymous";
+      s.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4852698472752437";
+      document.head.appendChild(s);
 
-  const consent = getConsent();
-  if (consent === "1") { hideBanner(); loadGoogleAdsOnce(); }
-  else if (consent === "0") { hideBanner(); }
-  else { showBanner(); }
+      s.onload = function(){
+        try {
+          document.querySelectorAll("ins.adsbygoogle").forEach(() => {
+            try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e){}
+          });
+        } catch(e){}
+      };
+    }
 
-  btnAccept.addEventListener('click', () => { setConsent("1"); hideBanner(); loadGoogleAdsOnce(); });
-  btnReject.addEventListener('click', () => { setConsent("0"); hideBanner(); });
-})();
-</script>
+    const consent = getConsent();
+
+    // Wenn schon entschieden:
+    if (consent === "1") {
+      hideBanner();
+      loadGoogleAdsOnce({ npa: false });
+    } else if (consent === "0") {
+      hideBanner();
+      loadGoogleAdsOnce({ npa: true });   // trotzdem Ads, aber ohne Personalisierung
+    } else {
+      // noch keine Entscheidung: Banner zeigen, keine Ads laden
+      showBanner();
+    }
+
+    btnAccept.addEventListener("click", () => {
+      setConsent("1");
+      hideBanner();
+      loadGoogleAdsOnce({ npa: false });
+    });
+
+    btnReject.addEventListener("click", () => {
+      setConsent("0");
+      hideBanner();
+      loadGoogleAdsOnce({ npa: true });
+    });
+  })();
+  </script>
 
 </footer>
