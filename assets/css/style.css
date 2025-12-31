@@ -657,3 +657,40 @@ header.site-header,
 header{
   z-index: auto !important;
 }
+
+/* ===== ULTIMATIVE NOTBREMSE: Header MUSS scrollen (nie sticky/fixed) ===== */
+#site-header,
+#site-header header,
+#site-header .site-header,
+.site-header,
+header.site-header,
+header,
+.header-inner,
+.tabs{
+  position: relative !important;   /* relative scrollt immer mit */
+  top: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+  right: auto !important;
+  inset: auto !important;
+  transform: none !important;
+  z-index: auto !important;
+}
+
+/* Falls ein Script 'sticky' Klassen vergibt */
+#site-header .sticky,
+#site-header .is-sticky,
+#site-header .sticky-top,
+#site-header .fixed,
+#site-header .fixed-top{
+  position: relative !important;
+  top: auto !important;
+}
+
+/* Falls irgendwo "position:sticky" direkt auf dem Header hängt */
+#site-header [style*="position:sticky"],
+#site-header [style*="position: fixed"],
+#site-header [style*="position:fixed"]{
+  position: relative !important;
+  top: auto !important;
+}
