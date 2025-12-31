@@ -427,6 +427,7 @@ footer a:hover{ text-decoration:underline; }
   line-height:1.5
 }
 #consentBanner .actions{display:flex;gap:10px;flex-wrap:wrap}
+
 /* ================================
    FIXES: Index Layout / Abstände
    ================================ */
@@ -501,6 +502,7 @@ footer a:hover{ text-decoration:underline; }
     margin-top:0;
   }
 }
+
 /* ===== ABSOLUTE NOTBREMSE: HEADER DARF NIEMALS STICKY SEIN ===== */
 .site-header,
 header.site-header,
@@ -513,8 +515,8 @@ header{
   transform: none !important;
   z-index: auto !important;
 }
-/* ===== PREMIUM COUNTRY CARDS ===== */
 
+/* ===== PREMIUM COUNTRY CARDS ===== */
 .country-card{
   background:linear-gradient(180deg,#ffffff,#f8fbff);
   border-radius:16px;
@@ -539,38 +541,51 @@ header{
   margin-bottom:0;
 }
 
-/* ===== Cookie Banner (Site-Look, etwas dicker) ===== */
+/* ======================================================
+   FINAL: Cookie Banner (Site-Look, PREMIUM, fetter + hide)
+   ====================================================== */
+
 #cookieBanner{
   position: fixed !important;
   left: 0;
   right: 0;
   bottom: 14px;
-  z-index: 99999;
-  background: transparent;           /* kein schwarzer Overlay */
-  padding: 0 12px;
-  pointer-events: none;              /* nur Innenbox klickbar */
+  z-index: 2147483647;
+  background: transparent;
+  padding: 0 14px;
+  pointer-events: none;
+}
+
+/* Notbremse: verschwindet IMMER nach Klick */
+#cookieBanner.is-hidden{
+  display:none !important;
 }
 
 #cookieBanner .row{
   pointer-events: auto;
-  max-width: 1100px;
+  max-width: 1120px;
   margin: 0 auto;
-  background: rgba(255,255,255,0.96); /* leicht “soft”, aber im Site-Look */
-  border: 1px solid rgba(15,23,42,0.10);
-  border-radius: 14px;
-  padding: 18px 16px;               /* dicker */
+  background: rgba(255,255,255,0.98);
+  border: 1px solid rgba(15,23,42,0.12);
+  border-radius: 16px;
+
+  /* fetter */
+  padding: 24px 22px;
+
   display: flex;
-  gap: 14px;
+  gap: 16px;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 12px 30px rgba(15,23,42,0.18);
-  backdrop-filter: blur(6px);
+
+  /* deutlich hochwertiger Schatten */
+  box-shadow: 0 24px 60px rgba(15,23,42,0.28), 0 8px 20px rgba(15,23,42,0.18);
+  backdrop-filter: blur(8px);
 }
 
 #cookieBanner .txt{
-  color: inherit;                    /* übernimmt deine Site-Farbe */
-  font-size: 14px;
-  line-height: 1.35;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.45;
 }
 
 #cookieBanner .actions{
@@ -580,37 +595,44 @@ header{
   align-items: center;
 }
 
-/* Akzeptieren: nutzt deinen türkisen Button-Look */
+/* Akzeptieren: exakt wie .btn (Gradient deiner Website) */
 #cookieBanner .actions button.accept{
-  background: var(--accent, #00b894);
+  background: linear-gradient(90deg,var(--accent),var(--accent-2));
   color: #fff;
   border: 0;
   border-radius: 12px;
-  padding: 12px 18px;
-  font-weight: 700;
+  padding: 14px 22px;
+  font-weight: 900;
   cursor: pointer;
+  min-height: 46px;
 }
 
 /* Ablehnen: neutral / ohne Farbe */
 #cookieBanner .actions button.reject{
   background: transparent;
-  color: inherit;
+  color: var(--text);
   border: 1px solid rgba(15,23,42,0.18);
   border-radius: 12px;
-  padding: 12px 16px;
-  font-weight: 600;
+  padding: 14px 20px;
+  font-weight: 800;
   cursor: pointer;
+  min-height: 46px;
 }
 
-/* Mobile: untereinander, damit nichts gequetscht ist */
+#cookieBanner .actions button.reject:hover{
+  background: rgba(15,23,42,0.04);
+}
+
 @media (max-width: 720px){
   #cookieBanner{
     bottom: 10px;
+    padding: 0 10px;
   }
   #cookieBanner .row{
     flex-direction: column;
     align-items: flex-start;
-    padding: 16px 14px;
+    padding: 18px 14px;
+    gap: 12px;
   }
   #cookieBanner .actions{
     width: 100%;
