@@ -10,9 +10,6 @@
   <meta name="robots" content="index, follow" />
 
   <link rel="canonical" href="https://spritkosten-check.de/faq.html" />
-  <link rel="alternate" hreflang="de" href="https://spritkosten-check.de/faq.html" />
-  <link rel="alternate" hreflang="en" href="https://petrolcostcalculator.com/" />
-  <link rel="alternate" hreflang="x-default" href="https://petrolcostcalculator.com/" />
 
   <!-- Icons -->
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -21,8 +18,8 @@
   <link rel="manifest" href="/site.webmanifest">
   <link rel="icon" href="/favicon.ico">
 
-  <!-- GLOBAL CSS (für ALLE Seiten gleich) -->
-  <link rel="stylesheet" href="/assets/style.css?v=2026-01" />
+  <!-- ✅ RICHTIGER PFAD -->
+  <link rel="stylesheet" href="/assets/css/style.css?v=2026-01" />
 </head>
 
 <body data-page="faq">
@@ -30,13 +27,9 @@
   <div id="site-header"></div>
 
   <div class="page-container">
-
     <section class="card intro-section" aria-label="FAQ Einleitung">
       <h2>FAQ – Häufige Fragen</h2>
-      <p>
-        Hier findest du die wichtigsten Antworten rund um Spritkosten, Verbrauch, Kosten pro Person
-        sowie Maut- und Vignetten-Schätzung.
-      </p>
+      <p>Antworten rund um Spritkosten, Verbrauch, Kosten pro Person, Maut & Vignette.</p>
     </section>
 
     <main aria-label="FAQ Inhalt">
@@ -44,61 +37,39 @@
 
         <details class="faq-item">
           <summary>Wie berechne ich Spritkosten?</summary>
-          <p>
-            <strong>Spritkosten</strong> = (Strecke in km × Verbrauch in L/100 km ÷ 100) × Preis pro Liter.
-          </p>
+          <p><strong>Spritkosten</strong> = (km × Verbrauch ÷ 100) × Preis pro Liter.</p>
         </details>
 
         <details class="faq-item">
           <summary>Wie berechne ich Kosten pro Person?</summary>
-          <p>
-            <strong>Pro Person</strong> = Gesamtkosten ÷ Anzahl Personen (inkl. Fahrer).
-          </p>
+          <p><strong>Pro Person</strong> = Gesamtkosten ÷ Anzahl Personen (inkl. Fahrer).</p>
         </details>
 
         <details class="faq-item">
           <summary>Zählt Hin- und Rückfahrt oder nur eine Strecke?</summary>
-          <p>
-            Beides geht: Gib die Strecke ein, die du wirklich fährst (einfach oder hin &amp; zurück).
-          </p>
+          <p>Gib die Kilometer ein, die du wirklich fährst (einfach oder hin &amp; zurück).</p>
         </details>
 
         <details class="faq-item">
-          <summary>Warum weicht der Verbrauch vom Bordcomputer ab?</summary>
-          <p>
-            Verbrauch hängt von Fahrstil, Geschwindigkeit, Beladung, Wetter und Streckenprofil ab.
-            Für realistische Ergebnisse nutze deinen Durchschnittsverbrauch.
-          </p>
-        </details>
-
-        <details class="faq-item">
-          <summary>Wie genau sind Maut/Vignette?</summary>
-          <p>
-            Das ist eine grobe Schätzung. Reale Kosten hängen von Route, Fahrzeugklasse und lokalen Regeln ab.
-          </p>
+          <summary>Wie genau sind Maut/Vignetten?</summary>
+          <p>Das ist eine grobe Schätzung. Reale Kosten hängen von Route, Fahrzeugklasse und Regeln ab.</p>
         </details>
 
       </section>
 
       <section class="card" aria-label="Weiter">
-        <h2>Weiter</h2>
-        <p class="small" style="margin-top:0">
-          Du kannst direkt den Rechner nutzen oder im Ratgeber weiterlesen.
-        </p>
-
-        <div class="big-action" style="margin-top:12px">
+        <div class="big-action">
           <a class="btn large" href="/">Zum Spritkosten-Rechner</a>
           <a class="btn secondary large" href="/ratgeber.html">Zum Ratgeber</a>
         </div>
       </section>
     </main>
-
   </div>
 
   <!-- Footer kommt aus /assets/partials/footer.html -->
   <div id="site-footer"></div>
 
-  <!-- Lädt Header/Footer + setzt active Tab anhand data-page -->
+  <!-- loader.js laden (Pfad bitte prüfen: liegt der auch unter /assets/ ? ) -->
   <script src="/assets/loader.js?v=2026-01"></script>
 </body>
 </html>
