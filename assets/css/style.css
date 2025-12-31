@@ -36,7 +36,6 @@ body{
    HEADER (normal flow, niemals sticky/fixed)
    ========================================================= */
 
-/* FINAL KILL (nur Wrapper + Header selbst, NICHT alles mit *) */
 #site-header,
 #site-header header.site-header,
 header.site-header{
@@ -50,7 +49,6 @@ header.site-header{
   z-index: auto !important;
 }
 
-/* Optik Header */
 .site-header{
   width:100%;
   background:#fff;
@@ -162,7 +160,6 @@ header.site-header{
 .intro-section ul{margin:8px 0;padding-left:20px}
 .intro-section li{margin:6px 0}
 
-/* Layout */
 .layout{
   display:grid;
   grid-template-columns:minmax(0,420px) minmax(0,1fr);
@@ -209,7 +206,6 @@ input[type="number"], input[type="text"], select{
   display:inline-flex;align-items:center;justify-content:center
 }
 
-/* Buttons */
 .btn{
   height:var(--button-h);
   border-radius:10px;
@@ -242,7 +238,6 @@ input[type="number"], input[type="text"], select{
   flex-wrap:wrap
 }
 
-/* Helper text */
 .small{font-size:.9rem;color:var(--muted)}
 .hint{font-size:.85rem;color:var(--accent);margin-top:4px;min-height:18px;display:block}
 .hint.error{color:#e53e3e}
@@ -281,7 +276,6 @@ input[type="number"], input[type="text"], select{
 }
 .price-card strong{display:block;font-size:1.05rem;color:var(--accent-2);margin-top:6px}
 
-/* Results */
 .resultbox{
   margin-top:12px;
   padding:12px;
@@ -301,7 +295,6 @@ input[type="number"], input[type="text"], select{
 .result-key{color:var(--muted);font-size:.95rem}
 .result-val{font-weight:900;color:var(--accent-2)}
 
-/* Thin box */
 .thinbox{
   margin-top:10px;
   padding:12px 12px;
@@ -328,7 +321,6 @@ input[type="number"], input[type="text"], select{
 .mono{font-variant-numeric:tabular-nums;}
 #toll-info{ margin:0 !important; }
 
-/* Price mode */
 .price-mode{
   margin-top:10px;
   padding:10px;
@@ -347,7 +339,7 @@ input[type="number"], input[type="text"], select{
 .country-badge{margin-top:8px; min-height:18px; font-size:.85rem; color:var(--muted);}
 
 /* =========================================================
-   Map (stabil)
+   Map
    ========================================================= */
 
 .map-col{
@@ -392,15 +384,13 @@ input[type="number"], input[type="text"], select{
 .faq-item summary:hover{background:rgba(79,70,229,0.12)}
 .faq-item p{margin:10px 0 0 0;line-height:1.6}
 
-/* Ads */
 .ad-block{ margin:0; }
 
-/* Two col */
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media(max-width:980px){ .two-col{grid-template-columns:1fr} }
 
 /* =========================================================
-   Country cards (Premium)
+   Country cards
    ========================================================= */
 
 .countries-grid{
@@ -415,7 +405,6 @@ input[type="number"], input[type="text"], select{
   flex-direction:column;
   justify-content:flex-start;
   min-height:140px;
-
   background:linear-gradient(180deg,#ffffff,#f8fbff);
   border-radius:16px;
   padding:16px 14px;
@@ -444,7 +433,6 @@ footer, footer *{
   opacity:1 !important;
 }
 
-/* CookieBanner darf NICHT vom Footer überschrieben werden */
 footer #cookieBanner,
 footer #cookieBanner *{
   color: unset !important;
@@ -452,10 +440,7 @@ footer #cookieBanner *{
 }
 
 /* =========================================================
-   Cookie Banner (ONLY SYSTEM)
-   - full width (wie Header)
-   - dark grey
-   - 2 Buttons nebeneinander
+   Cookie Banner (NEW 2026)
    ========================================================= */
 
 #cookieBanner{
@@ -464,28 +449,24 @@ footer #cookieBanner *{
   right: 0;
   bottom: 0;
   z-index: 2147483647;
-  padding: 12px 14px;
+  padding: 16px;
 }
 
 #cookieBanner.is-hidden{ display:none !important; }
 
 #cookieBanner .row{
   width: 100%;
-  max-width: min(var(--maxw), 94vw);
-  margin: 0 auto;
-
-  background: rgba(28,28,28,0.96);
-  border: 1px solid rgba(255,255,255,0.14);
+  margin: 0;
+  background: rgba(20, 20, 25, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 14px;
-
-  padding: 18px 18px;
-
+  padding: 70px 24px;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap: 16px;
-
-  box-shadow: 0 22px 70px rgba(0,0,0,0.45);
+  gap: 20px;
+  box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
 }
 
 #cookieBanner .txt{
@@ -504,7 +485,7 @@ footer #cookieBanner *{
 
 #cookieBanner .actions{
   display:flex;
-  gap: 12px;
+  gap: 14px;
   flex: 0 0 auto;
   align-items:center;
 }
@@ -517,21 +498,37 @@ footer #cookieBanner *{
   font-size: 15px;
   cursor: pointer;
   white-space: nowrap;
+  transition: all 0.2s ease;
 }
 
 #cookieBanner button.accept{
-  background: var(--accent);
-  color: #062524;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  color: #fff;
   border: 0;
 }
 
-#cookieBanner button.reject{
-  background: transparent;
-  color: rgba(255,255,255,0.78);
-  border: 1px solid rgba(255,255,255,0.22);
+#cookieBanner button.accept:hover{
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.5);
+  opacity: 0.9;
 }
 
-/* Mobile */
+#cookieBanner button.reject{
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+#cookieBanner button.reject:hover{
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+/* =========================================================
+   Mobile
+   ========================================================= */
+
 @media (max-width: 720px){
   .big-action{flex-direction:column}
   .btn{width:100%}
@@ -542,6 +539,7 @@ footer #cookieBanner *{
   #cookieBanner .row{
     flex-direction: column;
     align-items: stretch;
+    padding: 24px 16px;
   }
   #cookieBanner .actions{
     width: 100%;
