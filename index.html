@@ -21,23 +21,11 @@
   <link rel="manifest" href="/site.webmanifest">
   <link rel="icon" href="/favicon.ico">
 
-  <!-- ✅ Global CSS (dein echtes Style) -->
+  <!-- ✅ Global CSS -->
   <link rel="stylesheet" href="/assets/css/style.css?v=2026-01" />
 
   <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-
-  <!-- ✅ FIX: Header darf NICHT sticky/fixed sein (Override ohne style.css zu ändern) -->
-  <style>
-    /* versucht alle gängigen Sticky/Fixed-Header-Varianten zu neutralisieren */
-    #site-header, header, .header, .site-header {
-      position: static !important;
-      top: auto !important;
-      left: auto !important;
-      right: auto !important;
-      transform: none !important;
-    }
-  </style>
 
   <!-- Schema -->
   <script type="application/ld+json">
@@ -60,7 +48,7 @@
 
   <div class="page-container">
 
-    <!-- Ad: Top (erst nach Consent geladen) -->
+    <!-- Ad: Top (Ads werden über Footer-Cookie-Script nach Consent geladen) -->
     <div class="ad-block">
       <ins class="adsbygoogle"
         style="display:block"
@@ -228,7 +216,10 @@
               <div class="line"><div>Auto</div><div class="mono" id="cmp-car">—</div></div>
               <div class="line"><div>Bahn</div><div class="mono" id="cmp-rail">—</div></div>
               <div class="line"><div>Flug</div><div class="mono" id="cmp-flight">—</div></div>
-              <div class="small" style="margin-top:8px">Werte in kg CO₂ für die Strecke (Richtwerte).</div>
+              <div class="small" style="margin-top:8px">
+                Werte in kg CO₂ für die Strecke (Richtwerte).<br>
+                Bahn &amp; Flug: <b>pro Sitzplatz</b>. Auto: <b>pro Fahrzeug</b>.
+              </div>
             </div>
           </div>
 
@@ -352,66 +343,15 @@
   <!-- ✅ Footer wird geladen -->
   <div id="site-footer"></div>
 
-  <!-- Cookie Banner (bleibt wie bei dir) -->
-  <div class="cookie-banner" id="cookieBanner" role="dialog" aria-label="Cookie Hinweis">
-    <div class="row">
-      <div class="txt">
-        Wir verwenden Cookies für Werbung (Google AdSense). Du kannst ablehnen oder zustimmen.
-        Mehr Infos in der <a href="/datenschutz.html">Datenschutzerklärung</a>.
-      </div>
-      <div class="actions">
-        <button class="reject" id="cookieReject" type="button">Ablehnen</button>
-        <button class="accept" id="cookieAccept" type="button">Akzeptieren</button>
-      </div>
-    </div>
-  </div>
-
+  <!-- Leaflet + Prices -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="prices/country-prices.js"></script>
 
-  <!-- ✅ Dein kompletter Rechner-JS bleibt erhalten (nur Bugfix + DE live) -->
+  <!-- ✅ Rechner + Map Script -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       // ===== Proxy Base (DEIN WORKER) =====
       const API_BASE = "https://soft-pine-874.dominikf974.workers.dev";
-
-      // ===== Consent-gated Ads =====
-      const CONSENT_KEY = "consent_marketing";
-      const banner = document.getElementById('cookieBanner');
-      const btnAccept = document.getElementById('cookieAccept');
-      const btnReject = document.getElementById('cookieReject');
-
-      function loadGoogleAdsOnce(){
-        if (window.__adsLoaded) return;
-        window.__adsLoaded = true;
-
-        const s = document.createElement('script');
-        s.async = true;
-        s.crossOrigin = "anonymous";
-        s.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4852698472752437";
-        document.head.appendChild(s);
-
-        s.onload = function(){
-          try {
-            document.querySelectorAll('ins.adsbygoogle').forEach(() => {
-              try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e){}
-            });
-          } catch(e){}
-        };
-      }
-
-      function showBanner(){ banner.style.display = "block"; }
-      function hideBanner(){ banner.style.display = "none"; }
-      function getConsent(){ try { return localStorage.getItem(CONSENT_KEY); } catch(e){ return null; } }
-      function setConsent(v){ try { localStorage.setItem(CONSENT_KEY, v); } catch(e){} }
-
-      const consent = getConsent();
-      if (consent === "1") { hideBanner(); loadGoogleAdsOnce(); }
-      else if (consent === "0") { hideBanner(); }
-      else { showBanner(); }
-
-      btnAccept.addEventListener('click', () => { setConsent("1"); hideBanner(); loadGoogleAdsOnce(); });
-      btnReject.addEventListener('click', () => { setConsent("0"); hideBanner(); });
 
       // ===== Utils =====
       const CURRENCY_SYMBOL = '€';
@@ -473,9 +413,6 @@
       let userEditedPrice = false;
 
       let startCC = null, destCC = null;
-      let startLat = null, startLon = null;
-      let destLat  = null, destLon  = null;
-
       let routeKm = 0;
       let lastTollTotal = 0;
       let lastVignetteTotal = 0;
@@ -491,51 +428,48 @@
         const el = document.querySelector('input[name="priceMode"]:checked');
         return el ? el.value : 'avg';
       }
+
       function getCountryName(cc){
         if(!cc) return '—';
         const e = countryPrices && countryPrices[cc];
         return (e && e.name) ? e.name : cc;
       }
 
-      // ✅ FIX: saubere Funktion (keine kaputten Klammern, kein "code" undefined)
-      async function pricesForCountryStatic(cc, lat = null, lon = null) {
+      // DE: live via Tankerkönig, sonst: statisch aus country-prices.js
+      async function pricesForCountryStatic(cc, lat=null, lon=null){
         cc = (cc || "").toUpperCase();
 
-        // DE live über Tankerkönig, wenn Koordinaten vorhanden
-        if (cc === "DE" && lat != null && lon != null) {
-          try {
-            const r = await fetchWithTimeout(
-              `${API_BASE}/api/tank?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&rad=6&type=all`,
-              12000
-            );
-            if (r.ok) {
+        // Live nur für Deutschland (wenn Koordinaten vorhanden)
+        if(cc === "DE" && lat != null && lon != null){
+          try{
+            const r = await fetchWithTimeout(`${API_BASE}/api/tank?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&rad=6&type=all`, 12000);
+            if(r.ok){
               const j = await r.json();
-              if (j && j.ok && Array.isArray(j.stations) && j.stations.length) {
-                let e10 = null, e5 = null, diesel = null;
+              if(j && j.ok && Array.isArray(j.stations) && j.stations.length){
+                let e10=null, e5=null, diesel=null;
+                j.stations.forEach(s=>{
+                  if(typeof s.e10==="number")   e10   = (e10==null)   ? s.e10   : Math.min(e10, s.e10);
+                  if(typeof s.e5==="number")    e5    = (e5==null)    ? s.e5    : Math.min(e5, s.e5);
+                  if(typeof s.diesel==="number")diesel= (diesel==null)? s.diesel: Math.min(diesel, s.diesel);
+                });
 
-                for (const s of j.stations) {
-                  if (typeof s.e10 === "number") e10 = (e10 == null) ? s.e10 : Math.min(e10, s.e10);
-                  if (typeof s.e5 === "number")  e5  = (e5  == null) ? s.e5  : Math.min(e5,  s.e5);
-                  if (typeof s.diesel === "number") diesel = (diesel == null) ? s.diesel : Math.min(diesel, s.diesel);
-                }
-
-                const st = countryPrices?.["DE"];
+                // Falls ein Wert fehlt, fallback auf statisch
+                const stat = (countryPrices && countryPrices[cc]) ? countryPrices[cc] : fallbackPrices;
                 return {
-                  unleaded91: Number.isFinite(e10) ? e10 : (st?.unleaded91 ?? fallbackPrices.unleaded91),
-                  unleaded95: Number.isFinite(e5)  ? e5  : (st?.unleaded95 ?? fallbackPrices.unleaded95),
-                  diesel:     Number.isFinite(diesel) ? diesel : (st?.diesel ?? fallbackPrices.diesel),
+                  unleaded91: (e10   != null ? e10   : stat.unleaded91),
+                  unleaded95: (e5    != null ? e5    : stat.unleaded95),
+                  diesel:     (diesel!= null ? diesel: stat.diesel),
                   name: "Deutschland (Live)"
                 };
               }
             }
-          } catch (e) {}
+          }catch(e){}
         }
 
-        // Statische Weltpreise (bleiben erhalten)
-        const e = countryPrices?.[cc];
-        if (e) return { ...e };
+        const e = countryPrices && countryPrices[cc];
+        if(e) return { ...e };
 
-        return { ...fallbackPrices, name: cc || "Fallback" };
+        return { ...fallbackPrices };
       }
 
       function mixPrices(a, b){
@@ -547,13 +481,12 @@
         };
       }
 
-      async function applyDetectedPrices(){
+      async function applyDetectedPrices(latA=null, lonA=null, latB=null, lonB=null){
         const isCross = (startCC && destCC && startCC !== destCC);
         const mode = isCross ? getMode() : 'start';
 
-        // ✅ FIX: await + Koordinaten für DE-live
-        const startP = await pricesForCountryStatic(startCC, startLat, startLon);
-        const destP  = await pricesForCountryStatic(destCC,  destLat,  destLon);
+        const startP = await pricesForCountryStatic(startCC, latA, lonA);
+        const destP  = await pricesForCountryStatic(destCC,  latB, lonB);
 
         let chosen, note;
         if(isCross){
@@ -571,9 +504,10 @@
         if(!userEditedPrice){
           priceEl.value = fuelPrices[fuelTypeEl.value] ?? '';
           const standTxt = priceStand ? ` (Stand: ${priceStand})` : '';
-          const isLive = (startCC === "DE" && chosen.name && chosen.name.includes("Live"));
-          const sourceTxt = isLive ? "Deutschland (Live Tankerkönig)" : "Länderpreise (statisch)";
-          priceInfoEl.textContent = `${note}. Quelle: ${sourceTxt}${standTxt}. Du kannst den Preis ändern.`;
+          const sourceTxt = (startCC === "DE" && chosen.name.includes("Live"))
+            ? "Quelle: Tankerkönig (Live, DE) – sonst Länderpreise (statisch)"
+            : "Quelle: Länderpreise (statisch)";
+          priceInfoEl.textContent = `${note}. ${sourceTxt}${standTxt}. Du kannst den Preis ändern.`;
           priceInfoEl.classList.remove('error');
         }
       }
@@ -602,7 +536,7 @@
         });
       });
 
-      // Map
+      // ===== Map (Leaflet) =====
       const map = L.map('map', { attributionControl:true }).setView([51.1657, 10.4515], 5);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom:19,
@@ -760,10 +694,6 @@
             return;
           }
 
-          // ✅ Koordinaten speichern (für DE live)
-          startLat = a.lat; startLon = a.lon;
-          destLat  = b.lat; destLon  = b.lon;
-
           startCC = await reverseCountryCode(a.lat, a.lon);
           destCC  = await reverseCountryCode(b.lat, b.lon);
 
@@ -784,7 +714,9 @@
           routeKm = await getRouteOSRM(a.lat, a.lon, b.lat, b.lon);
           kmEl.value = Math.round(routeKm*10)/10;
 
-          await applyDetectedPrices();
+          // Preise anwenden: Live DE nur wenn DE erkannt und coords da
+          await applyDetectedPrices(a.lat, a.lon, b.lat, b.lon);
+
           renderTollBreakdown();
 
           tollInfoEl.textContent = `Strecke: ${fmtL(routeKm)} km.`;
@@ -806,8 +738,6 @@
         priceModeWrap.style.display = 'none';
 
         startCC = null; destCC = null;
-        startLat = startLon = destLat = destLon = null;
-
         routeKm = 0;
 
         tollInfoEl.textContent = '';
@@ -866,6 +796,7 @@
         avg100El.textContent = fmtMoney(avgPer100) + ' /100km';
         runningEstEl.textContent = fmtMoney(runningPer100Total) + ' /100km';
 
+        // CO2
         const isDiesel = (fuelTypeEl.value === 'diesel');
         const co2FactorKgPerL = isDiesel ? 2.65 : 2.33;
         const co2Kg = liters * co2FactorKgPerL;
@@ -874,25 +805,16 @@
         co2TotalEl.textContent = fmt(co2Kg).replace('.', ',') + ' kg';
         co2PerPersonEl.textContent = fmt(co2PerPersonKg).replace('.', ',') + ' kg';
 
-        const gPerPkmCar = 164;
+        // Vergleich (Richtwerte)
+        // Auto = pro Fahrzeug (nicht * passengers)
+        // Bahn/Flug = pro Sitzplatz (also * passengers)
+        const gPerKmCar = 164;
         const gPerPkmRail = 26;
         const gPerPkmFlight = 290;
 
-       // Vergleich (Richtwerte)
-// Auto = gesamt für die Fahrt (nicht * passengers)
-// Bahn/Flug = pro Person (also * passengers)
-const gPerKmCar = 164;      // g CO2 pro km (Auto gesamt)
-const gPerPkmRail = 26;     // g CO2 pro Person-km
-const gPerPkmFlight = 290;  // g CO2 pro Person-km
-
-const cmpCarKg = (km * gPerKmCar) / 1000;
-const cmpRailKg = (km * passengers * gPerPkmRail) / 1000;
-const cmpFlightKg = (km * passengers * gPerPkmFlight) / 1000;
-
-cmpCarEl.textContent = fmt(cmpCarKg).replace('.', ',') + ' kg';
-cmpRailEl.textContent = fmt(cmpRailKg).replace('.', ',') + ' kg';
-cmpFlightEl.textContent = fmt(cmpFlightKg).replace('.', ',') + ' kg';
-
+        const cmpCarKg = (km * gPerKmCar) / 1000;
+        const cmpRailKg = (km * passengers * gPerPkmRail) / 1000;
+        const cmpFlightKg = (km * passengers * gPerPkmFlight) / 1000;
 
         cmpCarEl.textContent = fmt(cmpCarKg).replace('.', ',') + ' kg';
         cmpRailEl.textContent = fmt(cmpRailKg).replace('.', ',') + ' kg';
@@ -941,4 +863,3 @@ cmpFlightEl.textContent = fmt(cmpFlightKg).replace('.', ',') + ' kg';
   <script src="/assets/js/loader.js?v=2026-01"></script>
 </body>
 </html>
-
