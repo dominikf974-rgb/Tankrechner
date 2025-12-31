@@ -641,3 +641,18 @@ header{
     width: 100%;
   }
 }
+/* FORCE Cookie Banner (immer sichtbar fett + starker Schatten) */
+#cookieBanner.is-hidden{ display:none !important; }
+
+#cookieBanner .row{
+  padding: 26px 24px !important;
+  border-radius: 18px !important;
+  background: #fff !important;
+  border: 1px solid rgba(15,23,42,0.14) !important;
+  box-shadow: 0 28px 70px rgba(15,23,42,0.30), 0 10px 24px rgba(15,23,42,0.18) !important;
+}
+
+#cookieBanner .txt{ font-size: 15.5px !important; line-height: 1.5 !important; }
+#cookieBanner .actions button.accept{ padding: 15px 24px !important; font-weight: 900 !important; }
+#cookieBanner .actions button.reject{ padding: 15px 22px !important; font-weight: 800 !important; }
+
