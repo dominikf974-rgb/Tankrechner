@@ -694,3 +694,22 @@ header,
   position: relative !important;
   top: auto !important;
 }
+
+/* ===== FINAL: Header darf niemals sticky/fixed sein ===== */
+#site-header,
+#site-header *{
+  position: static !important;
+  top: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+  right: auto !important;
+  inset: auto !important;
+  transform: none !important;
+}
+
+/* Header wieder normal layouten (nur Optik, kein sticky) */
+#site-header .header-inner,
+#site-header .tabs{
+  position: relative !important;
+}
+
