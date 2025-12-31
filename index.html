@@ -878,9 +878,21 @@
         const gPerPkmRail = 26;
         const gPerPkmFlight = 290;
 
-        const cmpCarKg = (km * passengers * gPerPkmCar) / 1000;
-        const cmpRailKg = (km * passengers * gPerPkmRail) / 1000;
-        const cmpFlightKg = (km * passengers * gPerPkmFlight) / 1000;
+       // Vergleich (Richtwerte)
+// Auto = gesamt für die Fahrt (nicht * passengers)
+// Bahn/Flug = pro Person (also * passengers)
+const gPerKmCar = 164;      // g CO2 pro km (Auto gesamt)
+const gPerPkmRail = 26;     // g CO2 pro Person-km
+const gPerPkmFlight = 290;  // g CO2 pro Person-km
+
+const cmpCarKg = (km * gPerKmCar) / 1000;
+const cmpRailKg = (km * passengers * gPerPkmRail) / 1000;
+const cmpFlightKg = (km * passengers * gPerPkmFlight) / 1000;
+
+cmpCarEl.textContent = fmt(cmpCarKg).replace('.', ',') + ' kg';
+cmpRailEl.textContent = fmt(cmpRailKg).replace('.', ',') + ' kg';
+cmpFlightEl.textContent = fmt(cmpFlightKg).replace('.', ',') + ' kg';
+
 
         cmpCarEl.textContent = fmt(cmpCarKg).replace('.', ',') + ' kg';
         cmpRailEl.textContent = fmt(cmpRailKg).replace('.', ',') + ' kg';
@@ -929,3 +941,4 @@
   <script src="/assets/js/loader.js?v=2026-01"></script>
 </body>
 </html>
+
