@@ -44,27 +44,24 @@
 
 <body data-page="home">
 
-  <div class="page-container">
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo-title">
+        <img src="/logo.png" alt="Spritkosten-Check Logo">
+        <span class="site-title">Spritkosten-Rechner – Benzin & Reisekosten berechnen</span>
+      </a>
 
-    <header class="site-header">
-      <div class="header-inner">
-        <a href="index.html" class="logo-title">
-          <img src="/logo.png" alt="Spritkosten-Check Logo">
-          <span class="site-title">Spritkosten-Rechner – Benzin & Reisekosten berechnen</span>
-        </a>
+      <nav class="tabs">
+        <a class="tablink" href="index.html">Spritkosten</a>
+        <a class="tablink" href="taschenrechner.html">Taschenrechner</a>
+        <a class="tablink" href="ratgeber.html">Ratgeber</a>
+        <a class="tablink" href="faq.html">FAQ</a>
+        <a class="lang-link" href="https://petrolcostcalculator.com/">EN</a>
+      </nav>
+    </div>
+  </header>
 
-        <nav class="tabs">
-          <a class="tablink" href="index.html" data-page="home">Spritkosten</a>
-          <a class="tablink" href="taschenrechner.html">Taschenrechner</a>
-          <a class="tablink" href="ratgeber.html">Ratgeber</a>
-          <a class="tablink" href="faq.html">FAQ</a>
-          <a class="lang-link" href="https://petrolcostcalculator.com/">EN</a>
-        </nav>
-      </div>
-    </header>
-
-
-  <div class="page-container">
+  <main class="page-container">
 
     <!-- Ad: Top (Ads werden über Footer-Cookie-Script nach Consent geladen) -->
     <div class="ad-block">
@@ -359,7 +356,7 @@
   </div>
 
   <!-- ✅ Footer wird geladen -->
-  <div id="site-footer"></div>
+  <div id="site-footer"></main>
 
   <!-- Leaflet + Prices -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -882,6 +879,7 @@
 <script src="/assets/js/cookies.js" defer></script>
 </body>
 </html>
+
 
 
 
