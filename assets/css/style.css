@@ -542,18 +542,18 @@ header{
 /* ===== FINAL COOKIE BANNER (2026 PREMIUM) ===== */
 #cookieBanner{
   position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  left: 16;
+  right: 16;
+  bottom: 16;
   z-index: 2147483647;
-  padding: 16px;
+  padding: 0px;
 }
 
 #cookieBanner.is-hidden{ display:none !important; }
 
 #cookieBanner .row{
   width: 100%;
-  max-width: min(var(--maxw), 94vw);
+  max-width: none;
   margin: 0 auto;
   background: rgba(20,20,25,0.90);
   border: 1px solid rgba(255,255,255,0.08);
@@ -613,5 +613,6 @@ header{
   #cookieBanner .actions{width:100%;}
   #cookieBanner button{width:100%;}
 }
+
 
 
