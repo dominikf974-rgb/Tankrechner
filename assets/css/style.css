@@ -559,7 +559,7 @@ header{
   border: 1px solid rgba(255,255,255,0.10);
   border-radius: 16px;
 
-  padding: 70px 26px;        /* schön fett */
+  padding: 100px 26px;        /* schön fett */
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -615,4 +615,5 @@ header{
   #cookieBanner .actions{width:100%;}
   #cookieBanner button{width:100%;}
 }
+
 
