@@ -5,7 +5,6 @@
       <p>Plane deine Fahrtkosten schnell: Strecke, Verbrauch, Preis, Maut/Vignette – alles auf einen Blick.</p>
       <p class="small">Kostenlos, ohne Anmeldung. Datenquellen: OpenStreetMap, Länderpreise (statisch) + Tankerkönig (live für DE).</p>
     </div>
-
     <div>
       <h4>Seiten</h4>
       <ul>
@@ -15,7 +14,6 @@
         <li><a href="datenschutz.html">Datenschutz</a></li>
       </ul>
     </div>
-
     <div>
       <h4>Kontakt</h4>
       <ul>
@@ -25,16 +23,16 @@
   </div>
 </footer>
 
-<!-- Cookie Banner (nur HTML, Logik in assets/js/cookies.js) -->
-<div class="cookie-banner is-hidden" id="cookie-banner" role="dialog" aria-live="polite" aria-label="Cookie-Hinweis">
-  <div class="cookie-text">
-    Wir nutzen Cookies für Grundfunktionen und um Anzeigen auszuliefern. Deine Zustimmung lädt das Anzeigenskript.
-    <div class="cookie-links">
-      <a href="datenschutz.html">Mehr erfahren</a> · <a href="impressum.html">Impressum</a>
+<!-- FINAL COOKIE BANNER -->
+<div id="cookieBanner" class="is-hidden" role="dialog">
+  <div class="row">
+    <div class="txt">
+      Wir nutzen Cookies für Werbung (Google AdSense). Du kannst ablehnen oder zustimmen. 
+      <a href="datenschutz.html">Mehr erfahren</a>.
     </div>
-  </div>
-  <div class="cookie-actions">
-    <button class="cookie-btn cookie-reject" id="cookie-reject" type="button">Nur notwendige</button>
-    <button class="cookie-btn cookie-accept" id="cookie-accept" type="button">Alle akzeptieren</button>
+    <div class="actions">
+      <button class="reject" id="cookieReject" type="button">Ablehnen</button>
+      <button class="accept" id="cookieAccept" type="button">Akzeptieren</button>
+    </div>
   </div>
 </div>
