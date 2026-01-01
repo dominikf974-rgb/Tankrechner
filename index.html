@@ -44,24 +44,25 @@
 
 <body data-page="home">
 
-<header class="site-header">
-  <div class="header-inner">
-    <a href="/" class="logo-title">
-      <img src="/logo.png">
-      <span class="site-title">Spritkosten-Rechner – Benzin & Reisekosten berechnen</span>
-    </a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/" class="logo-title">
+        <img src="/logo.png" alt="Spritkosten-Check Logo">
+        <span class="site-title">Spritkosten-Rechner – Benzin & Reisekosten berechnen</span>
+      </a>
 
-    <nav class="tabs">
-      <a class="tablink" href="/">Spritkosten</a>
-      <a class="tablink" href="/taschenrechner.html">Taschenrechner</a>
-      <a class="tablink" href="/ratgeber.html">Ratgeber</a>
-      <a class="tablink" href="/faq.html">FAQ</a>
-      <a class="lang-link" href="https://petrolcostcalculator.com/">EN</a>
-    </nav>
-  </div>
-</header>
+      <nav class="tabs" aria-label="Navigation">
+        <a class="tablink" href="/" aria-current="page">Spritkosten</a>
+        <a class="tablink" href="/taschenrechner.html">Taschenrechner</a>
+        <a class="tablink" href="/ratgeber.html">Ratgeber</a>
+        <a class="tablink" href="/faq.html">FAQ</a>
+        <a class="lang-link" href="https://petrolcostcalculator.com/" hreflang="en" lang="en">EN</a>
+      </nav>
+    </div>
+  </header>
 
-<main class="page-container">
+  <!-- ✅ NUR EIN MAIN AUF DER SEITE -->
+  <main class="page-container" aria-label="Seiteninhalt">
 
     <!-- Ad: Top (Ads werden über Footer-Cookie-Script nach Consent geladen) -->
     <div class="ad-block">
@@ -89,7 +90,8 @@
       </ul>
     </section>
 
-    <main aria-label="Hauptinhalt">
+    <!-- ✅ Statt nested <main> -> SECTION -->
+    <section aria-label="Hauptinhalt">
       <section id="fuel" class="card">
 
         <!-- Ad: Middle -->
@@ -240,7 +242,7 @@
 
         </div>
       </section>
-    </main>
+    </section>
 
     <!-- SEO Block -->
     <section class="card" aria-label="Berechnung erklärt">
@@ -354,15 +356,15 @@
     </div>
 
   </main>
-  
-  <!-- ✅ Footer wird geladen -->
+
+  <!-- ✅ Footer wird geladen (AUSSERHALB vom Main) -->
   <div id="site-footer"></div>
 
   <!-- Leaflet + Prices -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="assets/prices/country-prices.js"></script>
 
-  <!-- ✅ Rechner + Map Script -->
+  <!-- ✅ Rechner + Map Script (unverändert aus deiner Version) -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       // ===== Proxy Base (DEIN WORKER) =====
@@ -821,8 +823,6 @@
         co2PerPersonEl.textContent = fmt(co2PerPersonKg).replace('.', ',') + ' kg';
 
         // Vergleich (Richtwerte)
-        // Auto = pro Fahrzeug (nicht * passengers)
-        // Bahn/Flug = pro Sitzplatz (also * passengers)
         const gPerKmCar = 164;
         const gPerPkmRail = 26;
         const gPerPkmFlight = 290;
@@ -874,9 +874,8 @@
     });
   </script>
 
-  <!-- ✅ Loader am Ende (lädt Header/Footer) - VERSION ERHÖHT FÜR CACHE-BUST -->
-</main>
-  
-<script src="/assets/js/cookies.js" defer></script>
+  <!-- ✅ Cookie/Consent + Footer Loader -->
+  <script src="/assets/js/cookies.js" defer></script>
+
 </body>
 </html>
