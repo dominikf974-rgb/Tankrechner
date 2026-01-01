@@ -539,30 +539,28 @@ header{
   margin-bottom:0;
 }
 
-/* ===== FINAL COOKIE BANNER (2026 PREMIUM) ===== */
 #cookieBanner{
   position: fixed;
-  left: 16;
-  right: 16;
-  bottom: 16;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
   z-index: 2147483647;
-  padding: 0px;
+  padding: 0;
 }
-
-#cookieBanner.is-hidden{ display:none !important; }
 
 #cookieBanner .row{
   width: 100%;
-  max-width: none;
-  margin: 0 auto;
+  margin: 0;
   background: rgba(20,20,25,0.90);
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 14px;
-  padding: 70px 24px;
+
+  padding: 32px 24px; /* FETTER */
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap: 20px;
+
   box-shadow: 0 -12px 40px rgba(0,0,0,0.35);
   backdrop-filter: blur(8px);
 }
@@ -613,6 +611,7 @@ header{
   #cookieBanner .actions{width:100%;}
   #cookieBanner button{width:100%;}
 }
+
 
 
 
