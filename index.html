@@ -244,8 +244,38 @@
 <!-- Cookie Script -->
 <script src="/assets/js/cookies.js" defer></script>
 
+  <script>
+(function(){
+  function setActiveNav(){
+    const nav = document.getElementById('site-nav') || document;
+    const path = (location.pathname || '/').toLowerCase();
+
+    document.querySelectorAll('.tablink').forEach(a => a.removeAttribute('aria-current'));
+
+    const match = Array.from(document.querySelectorAll('.tablink')).find(a => {
+      const href = (a.getAttribute('href') || '').toLowerCase();
+      if(!href) return false;
+
+      if(href === '/' || href === '/index.html'){
+        return (path === '/' || path.endsWith('/index.html'));
+      }
+      return path.endsWith(href);
+    });
+
+    if(match) match.setAttribute('aria-current','page');
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', setActiveNav);
+  } else {
+    setActiveNav();
+  }
+})();
+</script>
+
 </body>
 </html>
+
 
 
 
