@@ -56,7 +56,7 @@ h2{ margin:0 0 12px 0; }
   align-items:center;
   justify-content:space-between;
   gap:12px;
-  position:relative; /* fürs Mobile Dropdown */
+  position:relative;
 }
 
 .logo-title{
@@ -83,7 +83,6 @@ h2{ margin:0 0 12px 0; }
   color:#e5e7eb;
 }
 
-/* Desktop Tabs */
 .tabs{
   display:flex;
   gap:8px;
@@ -105,7 +104,6 @@ h2{ margin:0 0 12px 0; }
   cursor:pointer;
 }
 
-/* HEADER LINKS: normal hell (kein Button) */
 .site-header .tablink{
   background:transparent;
   border:1px solid transparent;
@@ -114,7 +112,6 @@ h2{ margin:0 0 12px 0; }
   transition:all .22s ease;
 }
 
-/* Hover = hologramm glow (nur hover!) */
 .site-header .tablink:hover{
   background: linear-gradient(135deg,#a855f7,#6366f1,#38bdf8);
   background-size:200% 200%;
@@ -124,7 +121,6 @@ h2{ margin:0 0 12px 0; }
   animation: holoFlow 6s linear infinite;
 }
 
-/* ACTIVE TAB = dauerhaft hologramm */
 .site-header .tablink[aria-current="page"]{
   background: linear-gradient(135deg,#a855f7,#6366f1,#38bdf8);
   background-size:200% 200%;
@@ -134,7 +130,6 @@ h2{ margin:0 0 12px 0; }
   animation: holoFlow 6s linear infinite;
 }
 
-/* EN Button: dezent (nicht hologramm) */
 .site-header .lang-link{
   font-weight:800;
   color:#ffffff;
@@ -153,7 +148,7 @@ h2{ margin:0 0 12px 0; }
    HAMBURGER (nur Mobile)
    ========================= */
 .nav-toggle{
-  display:none; /* Desktop: aus */
+  display:none;
   width:46px;
   height:46px;
   border-radius:10px;
@@ -172,17 +167,15 @@ h2{ margin:0 0 12px 0; }
   height:3px;
   width:100%;
   border-radius:999px;
-  background:#ffffff; /* 3 Striche weiß */
+  background:#ffffff;
 }
 
-/* Mobile Header/Nav */
 @media(max-width:720px){
   .header-inner{padding:10px 12px}
   .site-title{max-width:160px;}
   .nav-toggle{ display:inline-flex; }
   .site-header{ position:relative; z-index:9999; }
 
-  /* Dropdown: FIXED + blau wie Header + immer klickbar */
   .site-header .tabs{
     position:fixed;
     left:12px;
@@ -203,7 +196,6 @@ h2{ margin:0 0 12px 0; }
   }
   .site-header.is-open .tabs{ display:flex; }
 
-  /* Mobile links: hell + leichtes Panel-Feeling */
   .site-header .tablink{
     width:100%;
     justify-content:flex-start;
@@ -215,21 +207,18 @@ h2{ margin:0 0 12px 0; }
     border:1px solid rgba(255,255,255,0.10);
   }
 
-  /* Hover existiert auf Mobile kaum – aber sicher */
   .site-header .tablink:hover{
     background: rgba(56,189,248,0.18);
     border-color: rgba(56,189,248,0.25);
     animation:none;
   }
 
-  /* Active bleibt hologramm */
   .site-header .tablink[aria-current="page"]{
     background: linear-gradient(135deg,#a855f7,#6366f1,#38bdf8);
     border:1px solid rgba(255,255,255,0.10);
     animation: holoFlow 6s linear infinite;
   }
 
-  /* EN Button im Dropdown auch dezent */
   .site-header .lang-link{
     width:100%;
     justify-content:flex-start;
@@ -244,7 +233,6 @@ h2{ margin:0 0 12px 0; }
   .site-title{display:none;}
 }
 
-/* Mobile: kein dauer-hover-glow außer active */
 @media (hover: none){
   .site-header .tablink:hover{
     box-shadow:none;
@@ -292,7 +280,7 @@ h2{ margin:0 0 12px 0; }
   display:grid;
   grid-template-columns:minmax(0,420px) minmax(0,1fr);
   gap:16px;
-  align-items:stretch; /* beide Spalten gleich hoch */
+  align-items:stretch;
   width:100%;
 }
 @media(max-width:980px){
@@ -322,12 +310,17 @@ input[type="number"], input[type="text"], select{
   margin-top:.25rem;
 }
 
-.km-{display:flex;gap:8px;align-items:center;flex-wrap:nowrap}
-.km-row .km-input{flex:1;min-width:0}
+/* ✅ FIX: richtige Klasse (dein Tippfehler war .km-{ ... }) */
+.km-row{display:flex;gap:10px;align-items:stretch;flex-wrap:nowrap}
+.km-row .km-input{flex:1;min-width:0;height:var(--button-h)}
 
+/* Spinner im KM-Block rechts, gleiche Gesamthöhe wie Input */
 .spinner{display:flex;flex-direction:column;gap:6px}
-.spinner button{
-  width:44px;height:44px;border-radius:8px;border:none;
+.km-row .spinner{gap:6px}
+.km-row .spinner button{
+  width:44px;
+  height:calc((var(--button-h) - 6px) / 2);
+  border-radius:8px;border:none;
   background:linear-gradient(135deg,#a855f7,#6366f1,#38bdf8);
   background-size:200% 200%;
   color:#fff;font-weight:900;font-size:18px;cursor:pointer;
@@ -335,7 +328,7 @@ input[type="number"], input[type="text"], select{
   animation:holoFlow 6s linear infinite;
 }
 
-/* Buttons (immer Hologramm, wie du wolltest) */
+/* Buttons */
 .btn{
   height:var(--button-h);
   border-radius:10px;
@@ -372,16 +365,26 @@ input[type="number"], input[type="text"], select{
 
 .btn.large{font-size:1.05rem;padding:0 14px;height:54px}
 
+/* ✅ Strecke berechnen + Karte zurücksetzen: zentriert nebeneinander */
+.route-actions{
+  margin-top:10px;
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:nowrap;
+}
+
+/* big-action: Berechnen + Zurücksetzen zentriert nebeneinander */
 .big-action{
   display:flex;
-  gap:10px;
+  gap:12px;
   margin-top:12px;
-  flex-wrap:wrap
+  flex-wrap:nowrap;
+  justify-content:center;
 }
-@media(max-width:720px){
-  .big-action{flex-direction:column}
-  .btn{width:100%}
-}
+
+/* ✅ WICHTIG: diese Mobile-Regel hat vorher ALLES kaputt gemacht (full width + stacking) */
+/* Entfernt: .big-action{flex-direction:column} und .btn{width:100%} */
 
 /* Helper text */
 .small{font-size:.9rem;color:var(--muted)}
@@ -389,19 +392,26 @@ input[type="number"], input[type="text"], select{
 .hint.error{color:#e53e3e}
 .error{color:#e53e3e}
 
-/* Price section */
+/* Price section: ✅ Preis + Reset in einer Linie */
 .price-input-group{
-  display:grid;
-  grid-template-columns: 1fr auto;
+  display:flex;
   gap:10px;
-  align-items:end;
+  align-items:flex-end;
   margin-top:8px;
 }
-@media(max-width:720px){
-  .price-input-group{ grid-template-columns:1fr; }
+.price-input-group input#price{height:var(--button-h)}
+.reset-price-btn{
+  height:var(--button-h);
+  padding:0 14px;
+  white-space:nowrap;
+  margin:0;
 }
-.reset-price-btn{ height:44px; padding:0 14px; white-space:nowrap; }
+@media(max-width:720px){
+  .price-input-group{ flex-direction:column; align-items:stretch; }
+  .reset-price-btn{ width:100%; }
+}
 
+/* Price table */
 .price-table{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
 .price-card{
   flex:1;
@@ -453,15 +463,14 @@ input[type="number"], input[type="text"], select{
 .country-badge{margin-top:8px; min-height:18px; font-size:.85rem; color:var(--muted);}
 
 /* =========================
-   MAP RIGHT COLUMN + ALIGN FIX
+   MAP RIGHT COLUMN
    ========================= */
 .map-col{
   display:flex;
   flex-direction:column;
-  min-height:100%; /* Vergleich kann nach unten gedrückt werden */
+  min-height:100%;
 }
 
-/* Leaflet braucht echte Höhe */
 #map{
   width:100%;
   height:520px;
@@ -476,9 +485,9 @@ input[type="number"], input[type="text"], select{
 }
 #toll-info{ margin:0 !important; }
 
-/* Thin boxes: gleiche Abstände */
+/* Thin boxes: gleicher Abstand überall */
 .thinbox{
-  margin-top:14px; /* Maut/CO2/Vergleich gleich */
+  margin-top:14px;
   padding:12px 12px;
   border-radius:10px;
   background:#ffffff;
@@ -502,9 +511,9 @@ input[type="number"], input[type="text"], select{
 .thinbox .line:last-child{border-bottom:0}
 .mono{font-variant-numeric:tabular-nums;}
 
-/* Vergleich (Richtwerte) unten bündig */
+/* ✅ Vergleich NICHT nach unten drücken */
 .map-col .thinbox[aria-label="Vergleich Verkehrsmittel"]{
-  margin-top:auto;
+  margin-top:14px;
 }
 
 /* Ads */
@@ -704,67 +713,3 @@ input[type="number"], input[type="text"], select{
   50%{background-position:100% 50%}
   100%{background-position:0% 50%}
 }
-
-/* ===== Layout Fixes Index ===== */
-
-/* 1) KM: Input + Spinner sauber nebeneinander (Spinner rechts im gleichen Rahmen) */
-.km-row{
-  display:flex;
-  align-items:stretch;
-  gap:10px;
-}
-
-.km-input{
-  flex:1;
-  min-width:0;
-}
-
-/* Spinner: feste Breite, gleiche Höhe wie Input */
-.km-row .spinner{
-  display:flex;
-  flex-direction:column;
-  width:38px;
-}
-
-.km-row .spinner button{
-  flex:1;
-  width:38px;
-  line-height:1;
-}
-
-/* 2) Strecke berechnen + Karte zurücksetzen: zentriert nebeneinander unter Ziel */
-.route-actions{
-  margin-top:10px;
-  display:flex;
-  justify-content:center;  /* zentriert */
-  gap:10px;
-  flex-wrap:nowrap;        /* nicht umbrechen */
-}
-
-/* Optional: damit Buttons optisch gleich breit sind */
-.route-actions .btn{
-  min-width:180px;
-}
-
-/* 3) Preis pro Liter + "Auf Standard zurücksetzen": exakt gleiche Zeile/Höhe */
-.price-input-group{
-  display:flex;
-  align-items:flex-end; /* richtet Button zur Input-Unterkante aus */
-  gap:10px;
-}
-
-.reset-price-btn{
-  height:38px;    /* gleiche Höhe wie Input */
-  margin:0;       /* verhindert “runterrutschen” */
-  white-space:nowrap;
-}
-
-/* 4) Berechnen + Zurücksetzen: zentriert nebeneinander unter Personen */
-.big-action{
-  display:flex;
-  justify-content:center; /* zentriert */
-  gap:12px;
-  flex-wrap:nowrap;
-}
-
-
