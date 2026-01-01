@@ -519,4 +519,18 @@ main,
   position: static !important;
 }
 
+/* ===== LETZTER FINAL FIX ===== */
+
+/* Die Seite muss über BODY scrollen */
+.page-container{
+  overflow: visible !important;
+  height: auto !important;
+  max-height: none !important;
+}
+
+/* Header ist normaler Block im Flow */
+.site-header{
+  position: static !important;
+}
+
 
