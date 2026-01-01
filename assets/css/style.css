@@ -512,3 +512,29 @@ input[type="number"], input[type="text"], select{
   #cookieBanner .actions{width:100%;}
   #cookieBanner button{width:100%;}
 }
+
+/* ===== DEBUG/FIX: Body muss scrollen, sonst wirkt Header sticky ===== */
+html, body{
+  height: auto !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+/* Nichts darf einen eigenen Scroll-Container bauen */
+.page-container,
+main,
+.layout,
+.map-col,
+#site-header,
+#site-footer{
+  overflow: visible !important;
+  height: auto !important;
+  max-height: none !important;
+}
+
+/* Falls irgendwo 100vh + overflow genutzt wird */
+body{
+  min-height: 100vh !important;
+}
+
+
