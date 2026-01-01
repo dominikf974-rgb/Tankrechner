@@ -1,71 +1,85 @@
 (function () {
-  const BASE = "/"; // bei spritkosten-check.de Root passt "/"
+  // Base: auf GitHub Pages kein führender Slash, auf Domain schon ok
+  const BASE = window.location.hostname.includes("github.io") ? "" : "/";
+
   const HEADER_URL = BASE + "assets/partials/header.html";
   const FOOTER_URL = BASE + "assets/partials/footer.html";
 
   function fetchWithTimeout(url, ms = 8000) {
     const ctrl = new AbortController();
     const t = setTimeout(() => ctrl.abort(), ms);
-    return fetch(url, { cache: "force-cache", signal: ctrl.signal })
+    return fetch(url, { cache: "no-store", signal: ctrl.signal })
       .finally(() => clearTimeout(t));
   }
 
   async function loadInto(id, url) {
     const el = document.getElementById(id);
-    if (!el) return;
+    if (!el) return false;
 
     try {
       const res = await fetchWithTimeout(url, 8000);
-      if (!res.ok) return;
+      if (!res.ok) return false;
       el.innerHTML = await res.text();
-    } catch (_) {
-      // Timeout/Netzfehler -> einfach überspringen, kein Endlos-Laden
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 
-async function init() {
-  // parallel laden, nicht nacheinander blockieren
-  await Promise.allSettled([
-    loadInto("site-header", HEADER_URL),
-    loadInto("site-footer", FOOTER_URL),
-  ]);
+  function killStickyHard() {
+    const wrap = document.getElementById("site-header");
+    const hdr = wrap?.querySelector("header.site-header");
+    if (!wrap || !hdr) return;
 
-  /* ===== HEADER FINAL KILL ===== */
-  const headerWrap = document.getElementById("site-header");
+    // falls irgendwas den Header versteckt hat:
+    wrap.style.display = "block";
+    hdr.style.display = "block";
 
-  function killStickyHard(){
-    const hdr = headerWrap?.querySelector("header.site-header");
-
-    [headerWrap, hdr].filter(Boolean).forEach(el=>{
-      el.style.setProperty("position","static","important");
-      el.style.setProperty("top","auto","important");
-      el.style.setProperty("bottom","auto","important");
-      el.style.setProperty("left","auto","important");
-      el.style.setProperty("right","auto","important");
-      el.style.setProperty("inset","auto","important");
-      el.style.setProperty("transform","none","important");
-      el.style.setProperty("z-index","auto","important");
+    [wrap, hdr].forEach(el => {
+      el.style.setProperty("position", "static", "important");
+      el.style.setProperty("top", "auto", "important");
+      el.style.setProperty("bottom", "auto", "important");
+      el.style.setProperty("left", "auto", "important");
+      el.style.setProperty("right", "auto", "important");
+      el.style.setProperty("inset", "auto", "important");
+      el.style.setProperty("transform", "none", "important");
+      el.style.setProperty("z-index", "auto", "important");
     });
 
-    if(hdr) hdr.classList.remove("sticky","is-sticky","fixed","fixed-top","sticky-top");
+    hdr.classList.remove("sticky", "is-sticky", "fixed", "fixed-top", "sticky-top");
   }
 
-  killStickyHard();
-  requestAnimationFrame(killStickyHard);
+  async function init() {
+    // Header/Footer laden
+    const results = await Promise.allSettled([
+      loadInto("site-header", HEADER_URL),
+      loadInto("site-footer", FOOTER_URL),
+    ]);
 
-  if(headerWrap){
-    const mo = new MutationObserver(()=>killStickyHard());
-    mo.observe(headerWrap,{subtree:true,attributes:true,attributeFilter:["class","style"]});
-  }
-  /* ============================== */
-}
+    // Sticky kill erst NACH dem Laden
+    killStickyHard();
+    requestAnimationFrame(killStickyHard);
 
-    // Active Tab
+    const wrap = document.getElementById("site-header");
+    if (wrap) {
+      const mo = new MutationObserver(() => killStickyHard());
+      mo.observe(wrap, { subtree: true, attributes: true, attributeFilter: ["class", "style"] });
+    }
+
+    // Active Tab markieren (nachdem Header da ist)
     const page = document.body.getAttribute("data-page") || "home";
     document.querySelectorAll('.tablink[data-page]').forEach(a => {
       if (a.getAttribute("data-page") === page) a.setAttribute("aria-current", "page");
       else a.removeAttribute("aria-current");
     });
+
+    // Wenn Header nicht geladen wurde: kleine Fehlermeldung anzeigen (damit du es siehst)
+    const headerOk = results[0].status === "fulfilled" && results[0].value === true;
+    if (!headerOk && wrap) {
+      wrap.innerHTML = `<div style="padding:12px 16px;background:#fff;border-bottom:1px solid rgba(15,23,42,.1)">
+        <b>Header konnte nicht geladen werden.</b> Prüfe Datei-Pfad: <code>${HEADER_URL}</code>
+      </div>`;
+    }
   }
 
   if (document.readyState === "loading") {
