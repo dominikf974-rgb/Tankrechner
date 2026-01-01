@@ -166,6 +166,27 @@
   <!-- Cookie Script -->
   <script src="/assets/js/cookies.js" defer></script>
 
+  <script>
+async function loadPart(id, url){
+  const el = document.getElementById(id);
+  if(!el) return;
+  try{
+    const r = await fetch(url, { cache: 'no-cache' });
+    el.innerHTML = await r.text();
+  }catch(e){
+    console.warn('Konnte nicht laden:', url);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadPart('site-header', '/practice/header.html');
+  await loadPart('site-footer', '/practice/footer.html');
+});
+</script>
+
+<script src="/assets/js/nav.js" defer></script>
+
 </body>
 </html>
+
 
