@@ -1,49 +1,49 @@
-(async function(){
+// Lade Header und Footer in die entsprechenden Divs
+(function() {
+  document.addEventListener('DOMContentLoaded', () => {
+    // Header laden
+    const headerEl = document.getElementById('site-header');
+    const footerEl = document.getElementById('site-footer');
 
-  async function loadInto(id, url){
-    const el = document.getElementById(id);
-    if(!el) return;
-    const res = await fetch(url, { cache: "no-store" });
-    el.innerHTML = await res.text();
-  }
-
-  await loadInto("site-header", "/assets/partials/header.html");
-  await loadInto("site-footer", "/assets/partials/footer.html");
-
-  // ✅ Sticky-Killer (für Wrapper + Header + Nav)
-  const killSticky = () => {
-    const wrap  = document.getElementById("site-header");
-    const hdr   = document.querySelector("#site-header header.site-header");
-    const inner = document.querySelector("#site-header .header-inner");
-    const nav   = document.querySelector("#site-header nav.tabs");
-
-    [wrap, hdr, inner, nav].forEach(el => {
-      if(!el) return;
-      el.style.position = "static";
-      el.style.top = "auto";
-      el.style.bottom = "auto";
-      el.style.left = "auto";
-      el.style.right = "auto";
-      el.style.zIndex = "auto";
-      el.style.transform = "none";
-    });
-
-    if(hdr){
-      hdr.classList.remove("sticky","is-sticky","fixed","fixed-top","sticky-top");
+    if (headerEl) {
+      headerEl.innerHTML = `
+        <nav>
+          <div class="logo">
+            <a href="/">Spritkosten-Rechner</a>
+          </div>
+          <ul class="nav-links">
+            <li><a href="/faq.html">FAQ</a></li>
+            <li><a href="/ratgeber.html">Ratgeber</a></li>
+            <li><a href="/datenschutz.html">Datenschutz</a></li>
+          </ul>
+        </nav>
+      `;
     }
-  };
 
-  killSticky();
-  setTimeout(killSticky, 50);
-  setTimeout(killSticky, 300);
-  setTimeout(killSticky, 1200);
-  setInterval(killSticky, 2000);
-
-  // Active Tab
-  const page = document.body.getAttribute("data-page") || "home";
-  document.querySelectorAll('.tablink[data-page]').forEach(a => {
-    if(a.getAttribute("data-page") === page) a.setAttribute("aria-current","page");
-    else a.removeAttribute("aria-current");
+    // Footer laden
+    if (footerEl) {
+      fetch('assets/partials/footer.html')
+        .then(r => r.text())
+        .then(html => { footerEl.innerHTML = html; })
+        .catch(e => {
+          console.warn('Footer konnte nicht geladen werden:', e);
+          // Fallback Footer
+          footerEl.innerHTML = `
+            <div class="footer-grid">
+              <div>
+                <h4>Spritkosten-Rechner</h4>
+                <p>Plane deine Fahrtkosten schnell und kostenlos.</p>
+              </div>
+              <div>
+                <h4>Seiten</h4>
+                <ul>
+                  <li><a href="/faq.html">FAQ</a></li>
+                  <li><a href="/ratgeber.html">Ratgeber</a></li>
+                </ul>
+              </div>
+            </div>
+          `;
+        });
+    }
   });
-
 })();
