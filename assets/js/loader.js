@@ -4,34 +4,21 @@
     if (!el) return;
 
     const res = await fetch(url, { cache: "no-store" });
-    if (!res.ok) throw new Error(`Failed to load ${url}: ${res.status}`);
+    if (!res.ok) return;
 
     el.innerHTML = await res.text();
   }
 
-  // --- Load Partials ---
-  try {
-    await loadInto("site-header", "/assets/partials/header.html");
-    await loadInto("site-footer", "/assets/partials/footer.html");
-  } catch (e) {
-    // Keine F12? Dann wenigstens nicht alles crashen:
-    // Seite läuft weiter, nur Header/Footer fehlen.
-    return;
-  }
+  await loadInto("site-header", "/assets/partials/header.html");
+  await loadInto("site-footer", "/assets/partials/footer.html");
 
-  // --- Header: garantiert NICHT sticky/fixed ---
+  // Header: niemals sticky/fixed (einmalig + leicht)
   const headerWrap = document.getElementById("site-header");
 
   function killSticky() {
     if (!headerWrap) return;
-
-    // Nur die relevanten Elemente, nicht wild alles!
-    const nodes = [
-      headerWrap,
-      headerWrap.querySelector("header.site-header"),
-    ].filter(Boolean);
-
-    nodes.forEach((el) => {
+    const hdr = headerWrap.querySelector("header.site-header");
+    [headerWrap, hdr].filter(Boolean).forEach(el => {
       el.style.position = "static";
       el.style.top = "auto";
       el.style.bottom = "auto";
@@ -40,25 +27,22 @@
       el.style.zIndex = "auto";
       el.style.transform = "none";
     });
-
-    const hdr = headerWrap.querySelector("header.site-header");
-    if (hdr) hdr.classList.remove("sticky", "is-sticky", "fixed", "fixed-top", "sticky-top");
+    if (hdr) hdr.classList.remove("sticky","is-sticky","fixed","fixed-top","sticky-top");
   }
 
-  // 1x direkt + nach dem Render-Frame
   killSticky();
   requestAnimationFrame(killSticky);
 
-  // Wenn wirklich jemand später sticky setzt: nur Header beobachten (leicht & sauber)
+  // Nur Header beobachten (kein Intervall, kein Ruckeln)
   if (headerWrap) {
     const mo = new MutationObserver(() => killSticky());
     mo.observe(headerWrap, { attributes: true, subtree: true, attributeFilter: ["class", "style"] });
   }
 
-  // --- Active Tab ---
+  // Active tab markieren
   const page = document.body.getAttribute("data-page") || "home";
-  document.querySelectorAll('.tablink[data-page]').forEach((a) => {
-    if (a.getAttribute("data-page") === page) a.setAttribute("aria-current", "page");
+  document.querySelectorAll('.tablink[data-page]').forEach(a => {
+    if (a.getAttribute("data-page") === page) a.setAttribute("aria-current","page");
     else a.removeAttribute("aria-current");
   });
 })();
