@@ -1,6 +1,17 @@
 (() => {
   const KEY = "consent_marketing";
 
+    // Reset per URL: /?resetconsent=1
+  try{
+    const p = new URLSearchParams(location.search);
+    if(p.get("resetconsent") === "1"){
+      localStorage.removeItem(KEY);
+      localStorage.removeItem("cookie-consent");
+      localStorage.removeItem("consent_ads_v1");
+    }
+  }catch(e){}
+
+
   function loadAdsOnce({ npa } = { npa: false }) {
     if (window.__adsLoaded) return;
     window.__adsLoaded = true;
