@@ -1,5 +1,5 @@
 /* =========================
-   GLOBAL 2026 (FULL)
+   GLOBAL 2026 (CLEAN FULL)
    ========================= */
 *{
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
@@ -38,13 +38,14 @@ body{
 h2{ margin:0 0 12px 0; }
 
 /* =========================
-   HEADER (normal, clean)
+   HEADER (BLUE like FOOTER)
    ========================= */
 .site-header{
   width:100%;
-  background:#fff;
-  border-bottom:1px solid rgba(15,23,42,0.06);
-  z-index:10;
+  background: linear-gradient(180deg,#0f172a,#020617);
+  border-bottom:1px solid rgba(255,255,255,0.12);
+  box-shadow:0 10px 28px rgba(15,23,42,.85);
+  z-index:9999;
 }
 
 .header-inner{
@@ -55,7 +56,7 @@ h2{ margin:0 0 12px 0; }
   align-items:center;
   justify-content:space-between;
   gap:12px;
-  position:relative; /* für Mobile-Dropdown */
+  position:relative; /* fürs Mobile Dropdown */
 }
 
 .logo-title{
@@ -63,11 +64,11 @@ h2{ margin:0 0 12px 0; }
   align-items:center;
   gap:12px;
   text-decoration:none;
-  color:inherit;
+  color:#e5e7eb;
   flex:1 1 auto;
   min-width:0;
 }
-.logo-title:hover{opacity:.88;}
+.logo-title:hover{opacity:.92;}
 .logo-title img{ height:54px; width:auto; display:block; }
 
 .site-title{
@@ -79,6 +80,7 @@ h2{ margin:0 0 12px 0; }
   max-width:560px;
   overflow:hidden;
   text-overflow:ellipsis;
+  color:#e5e7eb;
 }
 
 /* Desktop Tabs */
@@ -103,22 +105,48 @@ h2{ margin:0 0 12px 0; }
   cursor:pointer;
 }
 
-.tablink{
+/* HEADER LINKS: normal hell (kein Button) */
+.site-header .tablink{
   background:transparent;
   border:1px solid transparent;
-  color:var(--muted);
-}
-.tablink:hover{ background:rgba(79,70,229,0.06); }
-.tablink[aria-current="page"]{
-  background:linear-gradient(90deg,var(--accent),var(--accent-2));
-  color:#fff;
+  color:#ffffff;
+  text-shadow:0 0 10px rgba(56,189,248,.18);
+  transition:all .22s ease;
 }
 
-.lang-link{
+/* Hover = hologramm glow (nur hover!) */
+.site-header .tablink:hover{
+  background: linear-gradient(135deg,#a855f7,#6366f1,#38bdf8);
+  background-size:200% 200%;
+  color:#fff;
+  border:1px solid rgba(255,255,255,0.10);
+  box-shadow:0 0 18px rgba(168,85,247,.45),0 0 35px rgba(56,189,248,.25);
+  animation: holoFlow 6s linear infinite;
+}
+
+/* ACTIVE TAB = dauerhaft hologramm */
+.site-header .tablink[aria-current="page"]{
+  background: linear-gradient(135deg,#a855f7,#6366f1,#38bdf8);
+  background-size:200% 200%;
+  color:#fff;
+  border:1px solid rgba(255,255,255,0.10);
+  box-shadow:0 0 22px rgba(168,85,247,.6),0 0 45px rgba(56,189,248,.35);
+  animation: holoFlow 6s linear infinite;
+}
+
+/* EN Button: dezent (nicht hologramm) */
+.site-header .lang-link{
   font-weight:800;
-  color:var(--accent-2);
-  border:1px solid rgba(79,70,229,0.15);
-  background:#eef2ff;
+  color:#ffffff;
+  background:rgba(255,255,255,0.10);
+  border:1px solid rgba(255,255,255,0.18);
+  box-shadow:none;
+  text-shadow:none;
+  transition:all .2s ease;
+}
+.site-header .lang-link:hover{
+  background:rgba(255,255,255,0.16);
+  border-color:rgba(255,255,255,0.28);
 }
 
 /* =========================
@@ -129,58 +157,99 @@ h2{ margin:0 0 12px 0; }
   width:46px;
   height:46px;
   border-radius:10px;
-  border:1px solid rgba(15,23,42,0.10);
-  background:#fff;
+  border:1px solid rgba(255,255,255,0.18);
+  background:rgba(255,255,255,0.10);
   cursor:pointer;
   align-items:center;
   justify-content:center;
   gap:6px;
   padding:10px;
+  position:relative;
+  z-index:10001;
 }
 .nav-toggle span{
   display:block;
   height:3px;
   width:100%;
   border-radius:999px;
-  background: linear-gradient(90deg,var(--accent),var(--accent-2));
+  background:#ffffff; /* 3 Striche weiß */
 }
 
 /* Mobile Header/Nav */
 @media(max-width:720px){
   .header-inner{padding:10px 12px}
   .site-title{max-width:160px;}
-
   .nav-toggle{ display:inline-flex; }
+  .site-header{ position:relative; z-index:9999; }
 
-  /* Tabs werden Dropdown */
-  .tabs{
-    position:absolute;
+  /* Dropdown: FIXED + blau wie Header + immer klickbar */
+  .site-header .tabs{
+    position:fixed;
     left:12px;
     right:12px;
     top:72px;
-    background:#fff;
-    border:1px solid rgba(15,23,42,0.08);
+    z-index:10000;
+
+    background: linear-gradient(180deg,#0f172a,#020617);
+    border:1px solid rgba(255,255,255,0.14);
     border-radius:14px;
     padding:10px;
-    box-shadow:0 18px 40px rgba(0,0,0,.12);
+    box-shadow:0 24px 60px rgba(0,0,0,.85);
 
     display:none;
     flex-direction:column;
     gap:8px;
-    z-index:999;
+    pointer-events:auto;
   }
   .site-header.is-open .tabs{ display:flex; }
 
-  .tablink, .lang-link{
+  /* Mobile links: hell + leichtes Panel-Feeling */
+  .site-header .tablink{
     width:100%;
     justify-content:flex-start;
     height:42px;
     padding:.5rem .7rem;
     font-size:.95rem;
+
+    background: rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.10);
+  }
+
+  /* Hover existiert auf Mobile kaum – aber sicher */
+  .site-header .tablink:hover{
+    background: rgba(56,189,248,0.18);
+    border-color: rgba(56,189,248,0.25);
+    animation:none;
+  }
+
+  /* Active bleibt hologramm */
+  .site-header .tablink[aria-current="page"]{
+    background: linear-gradient(135deg,#a855f7,#6366f1,#38bdf8);
+    border:1px solid rgba(255,255,255,0.10);
+    animation: holoFlow 6s linear infinite;
+  }
+
+  /* EN Button im Dropdown auch dezent */
+  .site-header .lang-link{
+    width:100%;
+    justify-content:flex-start;
+    height:42px;
+    padding:.5rem .7rem;
+    background: rgba(255,255,255,0.10);
+    border:1px solid rgba(255,255,255,0.18);
   }
 }
+
 @media(max-width:420px){
   .site-title{display:none;}
+}
+
+/* Mobile: kein dauer-hover-glow außer active */
+@media (hover: none){
+  .site-header .tablink:hover{
+    box-shadow:none;
+    animation:none;
+  }
 }
 
 /* =========================
@@ -223,7 +292,7 @@ h2{ margin:0 0 12px 0; }
   display:grid;
   grid-template-columns:minmax(0,420px) minmax(0,1fr);
   gap:16px;
-  align-items:stretch; /* wichtig: beide Spalten gleich hoch */
+  align-items:stretch; /* beide Spalten gleich hoch */
   width:100%;
 }
 @media(max-width:980px){
@@ -259,19 +328,22 @@ input[type="number"], input[type="text"], select{
 .spinner{display:flex;flex-direction:column;gap:6px}
 .spinner button{
   width:44px;height:44px;border-radius:8px;border:none;
-  background:linear-gradient(90deg,var(--accent),var(--accent-2));
+  background:linear-gradient(135deg,#a855f7,#6366f1,#38bdf8);
+  background-size:200% 200%;
   color:#fff;font-weight:900;font-size:18px;cursor:pointer;
-  display:inline-flex;align-items:center;justify-content:center
+  display:inline-flex;align-items:center;justify-content:center;
+  animation:holoFlow 6s linear infinite;
 }
 
-/* Buttons */
+/* Buttons (immer Hologramm, wie du wolltest) */
 .btn{
   height:var(--button-h);
   border-radius:10px;
   border:none;
   cursor:pointer;
   font-weight:800;
-  background:linear-gradient(90deg,var(--accent),var(--accent-2));
+  background:linear-gradient(135deg,#a855f7,#6366f1,#38bdf8);
+  background-size:200% 200%;
   color:#fff;
   font-size:1rem;
   min-width:140px;
@@ -280,12 +352,24 @@ input[type="number"], input[type="text"], select{
   align-items:center;
   justify-content:center;
   padding:0 14px;
+  box-shadow: 0 0 20px rgba(168,85,247,.35), 0 0 40px rgba(56,189,248,.18);
+  animation:holoFlow 6s linear infinite;
+  transition:transform .18s ease, box-shadow .18s ease;
 }
+.btn:hover{
+  transform:translateY(-1px);
+  box-shadow: 0 0 26px rgba(168,85,247,.55), 0 0 55px rgba(56,189,248,.28);
+}
+
 .btn.secondary{
-  background:#eef2ff;
-  color:var(--accent-2);
-  border:1px solid rgba(79,70,229,0.12)
+  background: linear-gradient(135deg,#c084fc,#818cf8,#60a5fa);
+  background-size:200% 200%;
+  color:#fff;
+  border:1px solid rgba(255,255,255,0.0);
+  box-shadow:none;
+  animation:holoFlow 6s linear infinite;
 }
+
 .btn.large{font-size:1.05rem;padding:0 14px;height:54px}
 
 .big-action{
@@ -374,7 +458,7 @@ input[type="number"], input[type="text"], select{
 .map-col{
   display:flex;
   flex-direction:column;
-  min-height:100%; /* wichtig: Vergleich kann nach unten gedrückt werden */
+  min-height:100%; /* Vergleich kann nach unten gedrückt werden */
 }
 
 /* Leaflet braucht echte Höhe */
@@ -394,7 +478,7 @@ input[type="number"], input[type="text"], select{
 
 /* Thin boxes: gleiche Abstände */
 .thinbox{
-  margin-top:14px; /* einheitlich: Maut/CO2/Vergleich */
+  margin-top:14px; /* Maut/CO2/Vergleich gleich */
   padding:12px 12px;
   border-radius:10px;
   background:#ffffff;
@@ -418,9 +502,9 @@ input[type="number"], input[type="text"], select{
 .thinbox .line:last-child{border-bottom:0}
 .mono{font-variant-numeric:tabular-nums;}
 
-/* ✅ Vergleich (Richtwerte) unten bündig zur linken Seite */
+/* Vergleich (Richtwerte) unten bündig */
 .map-col .thinbox[aria-label="Vergleich Verkehrsmittel"]{
-  margin-top:auto; /* drückt Vergleich an Unterkante */
+  margin-top:auto;
 }
 
 /* Ads */
@@ -462,7 +546,7 @@ input[type="number"], input[type="text"], select{
 .country-card p{ margin-bottom:0; }
 
 /* =========================
-   COOKIE BANNER (dein System)
+   COOKIE BANNER
    ========================= */
 #cookieBanner{
   position: fixed;
@@ -477,17 +561,14 @@ input[type="number"], input[type="text"], select{
 #cookieBanner .row{
   width: 100%;
   margin: 0;
-
   background: rgba(20,20,25,0.92);
   border: 1px solid rgba(255,255,255,0.10);
   border-radius: 16px;
-
-  padding: 18px 26px; /* Desktop angenehm */
+  padding: 18px 26px;
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap: 22px;
-
   box-shadow: 0 -14px 44px rgba(0,0,0,0.45);
   backdrop-filter: blur(10px);
 }
@@ -523,9 +604,12 @@ input[type="number"], input[type="text"], select{
 }
 
 #cookieBanner button.accept{
-  background: linear-gradient(90deg,var(--accent),var(--accent-2));
+  background: linear-gradient(135deg,#a855f7,#6366f1,#38bdf8);
+  background-size:200% 200%;
   color:#fff;
+  animation:holoFlow 6s linear infinite;
 }
+
 #cookieBanner button.reject{
   background: rgba(255,255,255,0.1);
   color: rgba(255,255,255,0.78);
@@ -539,7 +623,7 @@ input[type="number"], input[type="text"], select{
 }
 
 /* =========================
-   FOOTER (FULL)
+   FOOTER
    ========================= */
 .site-footer{
   margin-top:48px;
@@ -612,118 +696,9 @@ input[type="number"], input[type="text"], select{
 }
 .footer-seal .seal{ font-size:16px; }
 
-/* ===== Mobile Menü: immer oben & klickbar ===== */
-@media(max-width:720px){
-  .site-header{ position:relative; z-index:9999; } /* Header immer oben */
-
-  .site-header .nav-toggle{
-    position:relative;
-    z-index:10001; /* Button immer klickbar */
-    pointer-events:auto;
-  }
-
-  /* Dropdown als FIXED (nicht absolute) => liegt nie hinter Map/Ads */
-  .site-header .tabs{
-    position:fixed;
-    left:12px;
-    right:12px;
-    top:72px;
-    z-index:10000;
-    pointer-events:auto;
-  }
-}
-
-/* ===== Header blau (auch Mobile) ===== */
-.site-header{
-  background: linear-gradient(180deg,#0f172a,#020617);
-  border-bottom:1px solid rgba(255,255,255,0.12);
-  box-shadow:0 10px 28px rgba(15,23,42,.85);
-}
-
-.site-header,
-.site-header a,
-.site-header .site-title{
-  color:#e5e7eb;
-}
-
-/* Menütexte heller */
-.site-header .tablink,
-.site-header .lang-link{
-  color:#ffffff;
-  text-shadow:0 0 10px rgba(56,189,248,.25);
-}
-
-.site-header .tablink:hover{
-  background:rgba(56,189,248,.22);
-  color:#fff;
-}
-
-.site-header .tablink[aria-current="page"]{
-  background:linear-gradient(90deg,#38bdf8,#6366f1);
-  color:#fff;
-  box-shadow:0 0 22px rgba(56,189,248,.45);
-}
-
-.site-header .lang-link{
-  background:rgba(99,102,241,.15);
-  border:1px solid rgba(99,102,241,.35);
-}
-
-@media(max-width:720px){
-
-  /* Dropdown Hintergrund exakt wie Header */
-  .site-header .tabs{
-    background: linear-gradient(180deg,#0f172a,#020617) !important;
-    border:1px solid rgba(255,255,255,0.12);
-    box-shadow:0 24px 60px rgba(0,0,0,.85);
-  }
-
-  /* Menülinks richtig weiß */
-  .site-header .tabs a{
-    color:#ffffff !important;
-    text-shadow:0 0 10px rgba(56,189,248,.30);
-  }
-
-  .site-header .tabs a:hover{
-    background:rgba(56,189,248,.22);
-  }
-
-  /* Trenner optisch dezenter */
-  .site-header .tabs .sep{
-    color:rgba(255,255,255,0.45);
-  }
-}
 /* =========================
-   HOLOGRAM BUTTON STYLE
+   HOLOGRAM ANIMATION
    ========================= */
-
-/* Alle Hauptbuttons */
-.btn,
-.site-header .tabs a,
-.site-header .lang-link{
-  background: linear-gradient(135deg,#a855f7,#6366f1,#38bdf8);
-  background-size:200% 200%;
-  color:#ffffff !important;
-  border: none;
-  box-shadow: 0 0 20px rgba(168,85,247,.45), 0 0 40px rgba(56,189,248,.25);
-  animation: holoFlow 6s ease infinite;
-}
-
-/* Hover Effekt */
-.btn:hover,
-.site-header .tabs a:hover,
-.site-header .lang-link:hover{
-  transform:translateY(-1px);
-  box-shadow: 0 0 26px rgba(168,85,247,.7), 0 0 55px rgba(56,189,248,.4);
-}
-
-/* Sekundäre Buttons */
-.btn.secondary{
-  background: linear-gradient(135deg,#c084fc,#818cf8,#60a5fa);
-  color:#fff !important;
-}
-
-/* Animation */
 @keyframes holoFlow{
   0%{background-position:0% 50%}
   50%{background-position:100% 50%}
