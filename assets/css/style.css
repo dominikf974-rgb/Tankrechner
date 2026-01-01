@@ -705,4 +705,66 @@ input[type="number"], input[type="text"], select{
   100%{background-position:0% 50%}
 }
 
+/* ===== Layout Fixes Index ===== */
+
+/* 1) KM: Input + Spinner sauber nebeneinander (Spinner rechts im gleichen Rahmen) */
+.km-row{
+  display:flex;
+  align-items:stretch;
+  gap:10px;
+}
+
+.km-input{
+  flex:1;
+  min-width:0;
+}
+
+/* Spinner: feste Breite, gleiche Höhe wie Input */
+.km-row .spinner{
+  display:flex;
+  flex-direction:column;
+  width:38px;
+}
+
+.km-row .spinner button{
+  flex:1;
+  width:38px;
+  line-height:1;
+}
+
+/* 2) Strecke berechnen + Karte zurücksetzen: zentriert nebeneinander unter Ziel */
+.route-actions{
+  margin-top:10px;
+  display:flex;
+  justify-content:center;  /* zentriert */
+  gap:10px;
+  flex-wrap:nowrap;        /* nicht umbrechen */
+}
+
+/* Optional: damit Buttons optisch gleich breit sind */
+.route-actions .btn{
+  min-width:180px;
+}
+
+/* 3) Preis pro Liter + "Auf Standard zurücksetzen": exakt gleiche Zeile/Höhe */
+.price-input-group{
+  display:flex;
+  align-items:flex-end; /* richtet Button zur Input-Unterkante aus */
+  gap:10px;
+}
+
+.reset-price-btn{
+  height:38px;    /* gleiche Höhe wie Input */
+  margin:0;       /* verhindert “runterrutschen” */
+  white-space:nowrap;
+}
+
+/* 4) Berechnen + Zurücksetzen: zentriert nebeneinander unter Personen */
+.big-action{
+  display:flex;
+  justify-content:center; /* zentriert */
+  gap:12px;
+  flex-wrap:nowrap;
+}
+
 
