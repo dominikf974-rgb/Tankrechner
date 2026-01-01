@@ -1,55 +1,338 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>FAQ – Spritkosten-Rechner</title>
-<meta name="description" content="Antworten auf häufige Fragen zum Spritkosten-Rechner, Maut, CO₂-Bilanz, Verbrauch & Reisekosten.">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-<link rel="stylesheet" href="/assets/css/style.css?v=2026-02">
-<script src="/assets/js/loader.js?v=2026-02" defer></script>
+  <title>FAQ – Spritkosten-Rechner | SpritKosten-Check.de</title>
+  <meta name="description" content="FAQ zum Spritkosten-Rechner: Spritkosten, Verbrauch, Route, Maut/Vignette, CO₂, Kosten pro Person und mehr. Antworten auf die wichtigsten Fragen." />
+  <meta name="robots" content="index, follow" />
+
+  <link rel="canonical" href="https://spritkosten-check.de/faq.html" />
+  <link rel="alternate" hreflang="de" href="https://spritkosten-check.de/faq.html" />
+  <link rel="alternate" hreflang="en" href="https://petrolcostcalculator.com/" />
+  <link rel="alternate" hreflang="x-default" href="https://petrolcostcalculator.com/" />
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="icon" href="/favicon.ico">
+
+  <!-- Global CSS -->
+  <link rel="stylesheet" href="assets/css/style.css?v=2026-02" />
+
+  <!-- FAQ Schema (15 Fragen) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {"@type":"Question","name":"Wie berechne ich die Spritkosten?","acceptedAnswer":{"@type":"Answer","text":"Spritkosten = (Strecke in km × Verbrauch in L/100 km ÷ 100) × Preis pro Liter."}},
+      {"@type":"Question","name":"Was bedeutet Verbrauch in L/100 km?","acceptedAnswer":{"@type":"Answer","text":"Das ist der Kraftstoffverbrauch deines Autos pro 100 km. Du findest ihn oft im Bordcomputer oder in den Fahrzeugdaten."}},
+      {"@type":"Question","name":"Kann ich die Kosten pro Person berechnen?","acceptedAnswer":{"@type":"Answer","text":"Ja. Trage einfach die Anzahl der Personen (inkl. Fahrer) ein, dann werden die Gesamtkosten fair pro Kopf geteilt."}},
+      {"@type":"Question","name":"Wie genau ist die Maut- und Vignetten-Schätzung?","acceptedAnswer":{"@type":"Answer","text":"Die Maut/Vignette ist eine schnelle Näherung nach Ländern. Reale Kosten hängen u. a. von Route, Fahrzeugklasse und lokalen Regeln ab."}},
+      {"@type":"Question","name":"Kann ich Start und Ziel eingeben statt die Kilometer?","acceptedAnswer":{"@type":"Answer","text":"Ja. Gib Start und Ziel als Ort/Land ein – die Strecke wird über eine Routenberechnung ermittelt und auf der Karte angezeigt."}},
+      {"@type":"Question","name":"Welche Kraftstoffarten unterstützt der Rechner?","acceptedAnswer":{"@type":"Answer","text":"Benzin (E10/91), Super (E5/95) und Diesel. Du kannst jederzeit umschalten."}},
+      {"@type":"Question","name":"Woher kommen die Spritpreise?","acceptedAnswer":{"@type":"Answer","text":"Je nach Land werden Durchschnittswerte genutzt. Für Deutschland kann zusätzlich eine Live-Preisquelle verwendet werden (wenn verfügbar)."}},      
+      {"@type":"Question","name":"Kann ich den Preis pro Liter manuell ändern?","acceptedAnswer":{"@type":"Answer","text":"Ja. Du kannst den Preis jederzeit überschreiben. Auf Wunsch kannst du wieder auf den Standardpreis zurücksetzen."}},
+      {"@type":"Question","name":"Was sind „laufende Kosten“?","acceptedAnswer":{"@type":"Answer","text":"Eine Näherung für Wartung, Reifen, Wertverlust, Versicherung etc. Zusätzlich wird eine Maut/Vignetten-Schätzung einbezogen."}},
+      {"@type":"Question","name":"Warum unterscheiden sich meine echten Kosten von der Rechnung?","acceptedAnswer":{"@type":"Answer","text":"Reale Kosten hängen z. B. von Fahrstil, Verkehr, Beladung, Reifen, Wetter, realen Spritpreisen und Mautdetails ab."}},
+      {"@type":"Question","name":"Wie wird die CO₂-Bilanz berechnet?","acceptedAnswer":{"@type":"Answer","text":"CO₂ wird näherungsweise aus dem Kraftstoffverbrauch berechnet (kg CO₂ pro Liter), basierend auf Benzin/Diesel-Faktoren."}},
+      {"@type":"Question","name":"Warum zeigt der Rechner CO₂-Vergleichswerte (Auto/Bahn/Flug)?","acceptedAnswer":{"@type":"Answer","text":"Das sind grobe Richtwerte zur Orientierung für deine Strecke. Bahn/Flug üblicherweise pro Sitzplatz, Auto pro Fahrzeug."}},
+      {"@type":"Question","name":"Funktioniert der Rechner auch für Auslandsreisen?","acceptedAnswer":{"@type":"Answer","text":"Ja, du kannst weltweit Start und Ziel wählen. Preise/Maut sind je nach Land als Näherung hinterlegt."}},
+      {"@type":"Question","name":"Kann ich Hin- und Rückfahrt berechnen?","acceptedAnswer":{"@type":"Answer","text":"Ja. Entweder du verdoppelst die Kilometer oder gibst Start/Ziel entsprechend an (Route hin und zurück separat)."}},
+      {"@type":"Question","name":"Ich bekomme keine Route angezeigt – was kann ich tun?","acceptedAnswer":{"@type":"Answer","text":"Prüfe Schreibweise der Orte, versuche genauer (Stadt + Land), und prüfe deine Internetverbindung. Manchmal hilft auch ein anderer Ort/Begriff."}}
+    ]
+  }
+  </script>
+
+  <style>
+    /* FAQ-spezifisch (klein & safe, passt zu deinem CSS) */
+    .faq-wrap{ display:flex; flex-direction:column; gap:12px; }
+    .faq-item{
+      border:1px solid rgba(15,23,42,0.10);
+      border-radius:12px;
+      padding:0;
+      overflow:hidden;
+      background:linear-gradient(180deg,#ffffff,#fbfdff);
+    }
+    .faq-item summary{
+      cursor:pointer;
+      list-style:none;
+      padding:14px 14px;
+      font-weight:900;
+      color:var(--accent-2);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .faq-item summary::-webkit-details-marker{ display:none; }
+    .faq-item summary .chev{
+      font-weight:900;
+      opacity:.7;
+      transform:rotate(0deg);
+      transition:transform .18s ease;
+    }
+    .faq-item[open] summary .chev{ transform:rotate(180deg); }
+    .faq-item .answer{
+      padding:0 14px 14px 14px;
+      color:var(--text);
+      line-height:1.6;
+    }
+
+    .contact-box{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .contact-row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .contact-row input[type="email"]{
+      flex:1 1 260px;
+      min-width:240px;
+    }
+  </style>
 </head>
 
 <body data-page="faq">
 
-<div id="site-header"></div>
+  <!-- Header wird geladen -->
+  <div id="site-header"></div>
 
-<div class="page-container">
+  <main class="page-container" aria-label="Seiteninhalt">
 
-<section class="card">
-<h1 style="margin-top:0">Häufige Fragen (FAQ)</h1>
+    <section class="card" aria-label="FAQ Intro">
+      <h2>FAQ – Häufige Fragen zum Spritkosten-Rechner</h2>
+      <p class="small" style="margin-top:0">
+        Hier findest du Antworten zu Spritkosten, Verbrauch, Strecke, Maut/Vignette, CO₂ und Kosten pro Person.
+        Klicke auf eine Frage, um die Antwort aufzuklappen.
+      </p>
+    </section>
 
-<details class="faq-item"><summary>Wie berechne ich die Liter?</summary><p>Liter = Kilometer × Verbrauch ÷ 100.</p></details>
-<details class="faq-item"><summary>Was bedeutet L/100 km?</summary><p>Wie viele Liter dein Auto auf 100 km verbraucht.</p></details>
-<details class="faq-item"><summary>Kann ich Hin- und Rückfahrt berechnen?</summary><p>Ja, einfach die gesamte Kilometerzahl eingeben.</p></details>
-<details class="faq-item"><summary>Wie werden Spritpreise bestimmt?</summary><p>Entweder automatisch nach Land oder manuell von dir.</p></details>
-<details class="faq-item"><summary>Warum unterscheiden sich Preise je Land?</summary><p>Steuern und Abgaben sind in jedem Land unterschiedlich.</p></details>
-<details class="faq-item"><summary>Wie genau ist die Maut-Schätzung?</summary><p>Sie ist eine Näherung nach Ländern & Strecke.</p></details>
-<details class="faq-item"><summary>Was zählt zu laufenden Kosten?</summary><p>Wartung, Reifen, Versicherung, Wertverlust & Maut/Vignette.</p></details>
-<details class="faq-item"><summary>Wie teile ich die Kosten pro Person?</summary><p>Personenzahl erhöhen – der Rechner teilt automatisch.</p></details>
-<details class="faq-item"><summary>Wie wird die CO₂-Bilanz berechnet?</summary><p>Aus deinem Verbrauch mit offiziellen Emissionswerten.</p></details>
-<details class="faq-item"><summary>Ist der Rechner kostenlos?</summary><p>Ja – dauerhaft kostenlos & ohne Anmeldung.</p></details>
-<details class="faq-item"><summary>Funktioniert der Rechner weltweit?</summary><p>Ja, weltweit mit Länder- & Routen-Erkennung.</p></details>
-<details class="faq-item"><summary>Warum weicht mein Realverbrauch ab?</summary><p>Fahrstil, Geschwindigkeit, Wetter & Gewicht beeinflussen ihn.</p></details>
-<details class="faq-item"><summary>Kann ich Diesel und Benzin vergleichen?</summary><p>Ja, beides wird unterstützt.</p></details>
-<details class="faq-item"><summary>Was passiert bei Länderwechsel?</summary><p>Der Rechner mischt automatisch die Preise.</p></details>
-<details class="faq-item"><summary>Gibt es CO₂-Vergleiche?</summary><p>Ja, Bahn & Flug werden mit angezeigt.</p></details>
+    <section class="card" aria-label="FAQ Liste">
+      <div class="faq-wrap">
 
-<hr style="margin:18px 0">
+        <details class="faq-item">
+          <summary>Wie berechne ich die Spritkosten? <span class="chev">▼</span></summary>
+          <div class="answer">
+            Spritkosten = (Strecke in km × Verbrauch in L/100 km ÷ 100) × Preis pro Liter.
+          </div>
+        </details>
 
-<h3 style="color:var(--accent-2)">Weitere Fragen?</h3>
-<p class="small">Schreiben Sie uns gerne: <b>info@spritkosten-check.de</b></p>
+        <details class="faq-item">
+          <summary>Was bedeutet Verbrauch in L/100 km? <span class="chev">▼</span></summary>
+          <div class="answer">
+            Das ist der Kraftstoffverbrauch deines Fahrzeugs pro 100 km. Du findest ihn häufig im Bordcomputer oder in den Fahrzeugdaten.
+          </div>
+        </details>
 
-<div class="big-action">
-  <a class="btn large" href="/">Zum Spritkosten-Rechner</a>
-  <a class="btn large" href="mailto:info@spritkosten-check.de">E-Mail schreiben</a>
-</div>
+        <details class="faq-item">
+          <summary>Kann ich die Kosten pro Person berechnen? <span class="chev">▼</span></summary>
+          <div class="answer">
+            Ja. Trage einfach die Anzahl der Personen (inkl. Fahrer) ein, dann werden die Gesamtkosten fair pro Kopf geteilt.
+          </div>
+        </details>
 
-</section>
+        <details class="faq-item">
+          <summary>Wie genau ist die Maut- und Vignetten-Schätzung? <span class="chev">▼</span></summary>
+          <div class="answer">
+            Die Maut/Vignette ist eine schnelle Näherung nach Ländern. Reale Kosten hängen u. a. von Route, Fahrzeugklasse und lokalen Regeln ab.
+          </div>
+        </details>
 
-</div>
+        <details class="faq-item">
+          <summary>Kann ich Start und Ziel eingeben statt die Kilometer? <span class="chev">▼</span></summary>
+          <div class="answer">
+            Ja. Gib Start und Ziel als Ort/Land ein – die Strecke wird per Routing ermittelt und auf der Karte dargestellt.
+          </div>
+        </details>
 
-<div id="site-footer"></div>
+        <details class="faq-item">
+          <summary>Welche Kraftstoffarten unterstützt der Rechner? <span class="chev">▼</span></summary>
+          <div class="answer">
+            Benzin (E10/91), Super (E5/95) und Diesel. Du kannst jederzeit umschalten.
+          </div>
+        </details>
 
+        <details class="faq-item">
+          <summary>Woher kommen die Spritpreise? <span class="chev">▼</span></summary>
+          <div class="answer">
+            Je nach Land werden Durchschnittswerte genutzt. Für Deutschland kann zusätzlich eine Live-Preisquelle verwendet werden (wenn verfügbar).
+            Du kannst den Preis immer manuell ändern.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Kann ich den Preis pro Liter manuell ändern? <span class="chev">▼</span></summary>
+          <div class="answer">
+            Ja. Du kannst den Preis jederzeit überschreiben. Mit „Auf Standard zurücksetzen“ springst du wieder auf die Standardwerte.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Was sind „laufende Kosten“? <span class="chev">▼</span></summary>
+          <div class="answer">
+            Eine Näherung für Wartung, Reifen, Wertverlust, Versicherung etc. Zusätzlich wird eine Maut/Vignetten-Schätzung einbezogen.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Warum unterscheiden sich meine echten Kosten von der Rechnung? <span class="chev">▼</span></summary>
+          <div class="answer">
+            Reale Kosten hängen z. B. von Fahrstil, Verkehr, Beladung, Reifen, Wetter, realen Spritpreisen und Mautdetails ab.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Wie wird die CO₂-Bilanz berechnet? <span class="chev">▼</span></summary>
+          <div class="answer">
+            CO₂ wird näherungsweise aus dem Kraftstoffverbrauch berechnet (kg CO₂ pro Liter), abhängig davon ob Benzin oder Diesel gewählt ist.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Warum gibt es CO₂-Vergleichswerte (Auto/Bahn/Flug)? <span class="chev">▼</span></summary>
+          <div class="answer">
+            Das sind grobe Richtwerte zur Orientierung für deine Strecke. Bahn/Flug üblicherweise pro Sitzplatz, Auto pro Fahrzeug.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Funktioniert der Rechner auch für Auslandsreisen? <span class="chev">▼</span></summary>
+          <div class="answer">
+            Ja, du kannst weltweit Start und Ziel wählen. Preise und Maut/Vignette sind je nach Land als Näherung hinterlegt.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Kann ich Hin- und Rückfahrt berechnen? <span class="chev">▼</span></summary>
+          <div class="answer">
+            Ja. Entweder du verdoppelst die Kilometer oder berechnest die Route hin und zurück separat.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Ich bekomme keine Route angezeigt – was kann ich tun? <span class="chev">▼</span></summary>
+          <div class="answer">
+            Prüfe Schreibweise der Orte, versuche genauer (Stadt + Land), und prüfe deine Internetverbindung. Manchmal hilft ein anderer Suchbegriff.
+          </div>
+        </details>
+
+      </div>
+    </section>
+
+    <!-- Kontakt / E-Mail Feld -->
+    <section class="card" aria-label="Weitere Fragen">
+      <h2>Weitere Fragen?</h2>
+      <p class="small" style="margin-top:0">
+        Wenn deine Frage hier nicht dabei ist, schreib uns gerne eine E-Mail.
+      </p>
+
+      <div class="contact-box">
+        <label for="userEmail">Deine E-Mail (optional, falls du eine Antwort möchtest)</label>
+        <div class="contact-row">
+          <input id="userEmail" type="email" placeholder="deinname@beispiel.de" autocomplete="email" />
+          <button id="mailBtn" class="btn" type="button">E-Mail senden</button>
+        </div>
+        <div class="small" style="opacity:.9">
+          Oder direkt: <a href="mailto:info@spritkosten-check.de">info@spritkosten-check.de</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer wird geladen -->
+  <div id="site-footer"></div>
+
+  <!-- Cookies -->
+  <script src="/assets/js/cookies.js" defer></script>
+
+  <!-- Header/Footer Loader + Mobile Nav init (wie bei dir) -->
+  <script>
+    async function loadPart(id, url){
+      const el = document.getElementById(id);
+      if(!el) return false;
+      try{
+        const r = await fetch(url, { cache: 'no-cache' });
+        el.innerHTML = await r.text();
+        return true;
+      }catch(e){
+        console.warn('Konnte nicht laden:', url);
+        return false;
+      }
+    }
+
+    function initMobileNav(){
+      const header = document.querySelector('.site-header');
+      const btn = document.querySelector('.nav-toggle');
+      const nav = document.getElementById('site-nav');
+      if(!header || !btn || !nav) return;
+
+      const close = () => {
+        header.classList.remove('is-open');
+        btn.setAttribute('aria-expanded', 'false');
+        btn.setAttribute('aria-label', 'Menü öffnen');
+      };
+
+      const open = () => {
+        header.classList.add('is-open');
+        btn.setAttribute('aria-expanded', 'true');
+        btn.setAttribute('aria-label', 'Menü schließen');
+      };
+
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        header.classList.contains('is-open') ? close() : open();
+      });
+
+      document.addEventListener('click', (e) => {
+        if(!header.classList.contains('is-open')) return;
+        if(header.contains(e.target)) return;
+        close();
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if(e.key === 'Escape') close();
+      });
+
+      window.addEventListener('resize', () => {
+        if(window.innerWidth > 720) close();
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadPart('site-header', '/practice/header.html');
+      await loadPart('site-footer', '/practice/footer.html');
+      initMobileNav();
+
+      // Mail Button
+      const mailBtn = document.getElementById('mailBtn');
+      const userEmail = document.getElementById('userEmail');
+
+      if(mailBtn){
+        mailBtn.addEventListener('click', () => {
+          const from = (userEmail && userEmail.value ? userEmail.value.trim() : '');
+          const subject = encodeURIComponent('Frage zum Spritkosten-Rechner');
+          const body = encodeURIComponent(
+            `Hallo SpritKosten-Check Team,\n\n` +
+            `ich habe eine Frage:\n\n` +
+            `\n\n` +
+            (from ? `Meine E-Mail für Rückfragen: ${from}\n\n` : ``) +
+            `Viele Grüße`
+          );
+          window.location.href = `mailto:info@spritkosten-check.de?subject=${subject}&body=${body}`;
+        });
+      }
+    });
+  </script>
 </body>
 </html>
