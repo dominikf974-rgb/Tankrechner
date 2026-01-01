@@ -27,54 +27,17 @@ body{
 }
 
 /* =========================
-   HEADER: 100% KEIN STICKY
+   HEADER (NORMAL, NICHT STICKY)
    ========================= */
 
-/* Kill sticky/fixed on any likely header/nav element */
-header,
-.site-header,
-#site-header,
-#masthead,
-.navbar,
-.navbar-sticky,
-.header,
-.topbar{
-  position: static !important;
-  inset: auto !important;         /* top/right/bottom/left reset */
-  top: auto !important;
-  right: auto !important;
-  bottom: auto !important;
-  left: auto !important;
-  transform: none !important;
-  z-index: auto !important;
-}
-
-/* If frameworks/classes add sticky/fixed, neutralize them */
-.sticky,
-.is-sticky,
-.sticky-top,
-.fixed,
-.fixed-top,
-.header-fixed,
-.navbar-fixed{
-  position: static !important;
-  inset: auto !important;
-  top: auto !important;
-  right: auto !important;
-  bottom: auto !important;
-  left: auto !important;
-  transform: none !important;
-  z-index: auto !important;
-}
-
-/* Your actual header styling (still normal flow) */
+/* Optik */
 .site-header{
   width:100%;
   background:#fff;
   border-bottom:1px solid rgba(15,23,42,0.06);
 }
 
-/* Header content */
+/* Inhalt */
 .header-inner{
   width:100%;
   max-width:none;
@@ -146,6 +109,31 @@ header,
   color:var(--accent-2);
   border:1px solid rgba(79,70,229,0.15);
   background:#eef2ff;
+}
+
+/* FINAL: Header darf NIE sticky/fixed sein – aber NUR im site-header Bereich */
+#site-header,
+#site-header header.site-header,
+#site-header .site-header,
+#site-header .header-inner,
+#site-header nav.tabs{
+  position: static !important;
+  top:auto !important;
+  right:auto !important;
+  bottom:auto !important;
+  left:auto !important;
+  inset:auto !important;
+  transform:none !important;
+  z-index:auto !important;
+}
+
+/* Falls irgendwo inline sticky/fixed gesetzt wird */
+#site-header [style*="position:sticky"],
+#site-header [style*="position: sticky"],
+#site-header [style*="position:fixed"],
+#site-header [style*="position: fixed"]{
+  position: static !important;
+  top:auto !important;
 }
 
 /* =========================
@@ -329,16 +317,17 @@ input[type="number"], input[type="text"], select{
 .thinbox .title{
   font-weight:900;
   color:var(--accent-2);
-  margin-bottom:8px;
+  margin-bottom:10px;
   font-size:.98rem
 }
 .thinbox .line{
   display:flex;
   justify-content:space-between;
   gap:10px;
-  padding:6px 0;
+  padding:8px 0;
   border-bottom:1px dashed rgba(15,23,42,0.10);
   font-size:.92rem;
+  align-items:baseline;
 }
 .thinbox .line:last-child{border-bottom:0}
 .mono{font-variant-numeric:tabular-nums;}
@@ -362,18 +351,34 @@ input[type="number"], input[type="text"], select{
 .country-badge{margin-top:8px; min-height:18px; font-size:.85rem; color:var(--muted);}
 
 /* Map */
-.map-col{display:flex;flex-direction:column;gap:10px}
+.map-col{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  height:100%;
+  min-height:0;
+}
+
 #map{
   width:100%;
   height:520px;
-  min-height:320px;
+  min-height:380px;
   border-radius:10px;
   border:1px solid rgba(15,23,42,0.10);
   background:#fff;
+  flex: 1 1 auto;
 }
+
 @media(max-width:980px){
-  #map{height:260px !important;}
+  #map{
+    height:260px !important;
+    min-height:260px;
+    flex: 0 0 auto;
+  }
 }
+
+/* toll info spacing */
+#toll-info{ margin:0 !important; }
 
 /* FAQ */
 .faq-item{margin:10px 0}
@@ -394,85 +399,7 @@ input[type="number"], input[type="text"], select{
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media(max-width:980px){ .two-col{grid-template-columns:1fr} }
 
-/* Footer */
-footer, footer *{ color:#000 !important; opacity:1 !important; }
-footer{ padding:18px 0 30px 0; }
-footer a{ text-decoration:none; }
-footer a:hover{ text-decoration:underline; }
-
-/* Consent Banner */
-#consentBanner{
-  position:fixed;
-  left:14px; right:14px; bottom:14px;
-  background:#fff;
-  border:1px solid rgba(15,23,42,0.12);
-  border-radius:14px;
-  box-shadow:0 18px 40px rgba(0,0,0,.15);
-  padding:12px 12px;
-  z-index:2147483647;
-  display:none;
-}
-#consentBanner .row{
-  display:flex;
-  gap:10px;
-  align-items:center;
-  justify-content:space-between;
-  flex-wrap:wrap
-}
-#consentBanner .txt{
-  flex:1;
-  min-width:260px;
-  color:var(--muted);
-  font-size:.92rem;
-  line-height:1.5
-}
-#consentBanner .actions{display:flex;gap:10px;flex-wrap:wrap}
-/* ================================
-   FIXES: Index Layout / Abstände
-   ================================ */
-
-.layout{
-  align-items: stretch;
-}
-
-.map-col{
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-  height:100%;
-  min-height:0;
-}
-
-#map{
-  flex: 1 1 auto;
-  min-height:380px;
-}
-
-@media(max-width:980px){
-  #map{
-    flex: 0 0 auto;
-    height:260px !important;
-    min-height:260px;
-  }
-}
-
-.thinbox{
-  margin-top:0 !important;
-}
-
-#toll-info{
-  margin:0 !important;
-}
-
-.thinbox .line{
-  padding:8px 0;
-  align-items:baseline;
-}
-
-.thinbox .title{
-  margin-bottom:10px;
-}
-
+/* Countries */
 .countries-grid{
   display:grid;
   grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
@@ -485,37 +412,7 @@ footer a:hover{ text-decoration:underline; }
   flex-direction:column;
   justify-content:flex-start;
   min-height:140px;
-}
 
-.price-input-group{
-  align-items:start !important;
-}
-
-.reset-price-btn{
-  margin-top:28px;
-  height:44px;
-}
-
-@media(max-width:720px){
-  .reset-price-btn{
-    margin-top:0;
-  }
-}
-/* ===== ABSOLUTE NOTBREMSE: HEADER DARF NIEMALS STICKY SEIN ===== */
-.site-header,
-header.site-header,
-header{
-  position: static !important;
-  top: auto !important;
-  left: auto !important;
-  right: auto !important;
-  bottom: auto !important;
-  transform: none !important;
-  z-index: auto !important;
-}
-/* ===== PREMIUM COUNTRY CARDS ===== */
-
-.country-card{
   background:linear-gradient(180deg,#ffffff,#f8fbff);
   border-radius:16px;
   padding:16px 14px;
@@ -530,14 +427,15 @@ header{
   border-color:rgba(79,70,229,.35);
 }
 
-.country-card h3{
-  margin-top:0;
-  font-size:1.05rem;
-}
+.country-card h3{ margin-top:0; font-size:1.05rem; }
+.country-card p{ margin-bottom:0; }
 
-.country-card p{
-  margin-bottom:0;
+/* Footer (ohne Holzhammer!) */
+.site-footer{
+  padding:18px 0 30px 0;
 }
+.site-footer a{ text-decoration:none; }
+.site-footer a:hover{ text-decoration:underline; }
 
 /* ===== FINAL COOKIE BANNER – FULLWIDTH / FETT / KLEBT ===== */
 #cookieBanner{
@@ -554,12 +452,11 @@ header{
 #cookieBanner .row{
   width: 100%;
   margin: 0;
-
   background: rgba(20,20,25,0.92);
   border: 1px solid rgba(255,255,255,0.10);
   border-radius: 16px;
 
-  padding: 85px 26px;        /* schön fett */
+  padding: 85px 26px; /* schön fett */
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -615,6 +512,3 @@ header{
   #cookieBanner .actions{width:100%;}
   #cookieBanner button{width:100%;}
 }
-
-
-
