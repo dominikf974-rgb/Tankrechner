@@ -23,12 +23,42 @@
     }
   }
 
-  async function init() {
-    // parallel laden, nicht nacheinander blockieren
-    await Promise.allSettled([
-      loadInto("site-header", HEADER_URL),
-      loadInto("site-footer", FOOTER_URL),
-    ]);
+async function init() {
+  // parallel laden, nicht nacheinander blockieren
+  await Promise.allSettled([
+    loadInto("site-header", HEADER_URL),
+    loadInto("site-footer", FOOTER_URL),
+  ]);
+
+  /* ===== HEADER FINAL KILL ===== */
+  const headerWrap = document.getElementById("site-header");
+
+  function killStickyHard(){
+    const hdr = headerWrap?.querySelector("header.site-header");
+
+    [headerWrap, hdr].filter(Boolean).forEach(el=>{
+      el.style.setProperty("position","static","important");
+      el.style.setProperty("top","auto","important");
+      el.style.setProperty("bottom","auto","important");
+      el.style.setProperty("left","auto","important");
+      el.style.setProperty("right","auto","important");
+      el.style.setProperty("inset","auto","important");
+      el.style.setProperty("transform","none","important");
+      el.style.setProperty("z-index","auto","important");
+    });
+
+    if(hdr) hdr.classList.remove("sticky","is-sticky","fixed","fixed-top","sticky-top");
+  }
+
+  killStickyHard();
+  requestAnimationFrame(killStickyHard);
+
+  if(headerWrap){
+    const mo = new MutationObserver(()=>killStickyHard());
+    mo.observe(headerWrap,{subtree:true,attributes:true,attributeFilter:["class","style"]});
+  }
+  /* ============================== */
+}
 
     // Active Tab
     const page = document.body.getAttribute("data-page") || "home";
