@@ -533,4 +533,13 @@ main,
   position: relative;
 }
 
+/* FINAL FIX: Header MUSS mitscrollen */
+.site-header{
+  position: relative !important;
+}
+
+body{
+  overflow-y: auto !important;
+}
+
 
