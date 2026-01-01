@@ -558,7 +558,7 @@ header{
   background: rgba(20,20,25,0.90);
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 14px;
-  padding: 28px 24px;
+  padding: 70px 24px;
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -613,4 +613,5 @@ header{
   #cookieBanner .actions{width:100%;}
   #cookieBanner button{width:100%;}
 }
+
 
