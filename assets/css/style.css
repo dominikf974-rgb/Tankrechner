@@ -668,3 +668,64 @@ input[type="number"], input[type="text"], select{
   background:rgba(99,102,241,.15);
   border:1px solid rgba(99,102,241,.35);
 }
+
+@media(max-width:720px){
+
+  /* Dropdown Hintergrund exakt wie Header */
+  .site-header .tabs{
+    background: linear-gradient(180deg,#0f172a,#020617) !important;
+    border:1px solid rgba(255,255,255,0.12);
+    box-shadow:0 24px 60px rgba(0,0,0,.85);
+  }
+
+  /* Menülinks richtig weiß */
+  .site-header .tabs a{
+    color:#ffffff !important;
+    text-shadow:0 0 10px rgba(56,189,248,.30);
+  }
+
+  .site-header .tabs a:hover{
+    background:rgba(56,189,248,.22);
+  }
+
+  /* Trenner optisch dezenter */
+  .site-header .tabs .sep{
+    color:rgba(255,255,255,0.45);
+  }
+}
+/* =========================
+   HOLOGRAM BUTTON STYLE
+   ========================= */
+
+/* Alle Hauptbuttons */
+.btn,
+.site-header .tabs a,
+.site-header .lang-link{
+  background: linear-gradient(135deg,#a855f7,#6366f1,#38bdf8);
+  background-size:200% 200%;
+  color:#ffffff !important;
+  border: none;
+  box-shadow: 0 0 20px rgba(168,85,247,.45), 0 0 40px rgba(56,189,248,.25);
+  animation: holoFlow 6s ease infinite;
+}
+
+/* Hover Effekt */
+.btn:hover,
+.site-header .tabs a:hover,
+.site-header .lang-link:hover{
+  transform:translateY(-1px);
+  box-shadow: 0 0 26px rgba(168,85,247,.7), 0 0 55px rgba(56,189,248,.4);
+}
+
+/* Sekundäre Buttons */
+.btn.secondary{
+  background: linear-gradient(135deg,#c084fc,#818cf8,#60a5fa);
+  color:#fff !important;
+}
+
+/* Animation */
+@keyframes holoFlow{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
