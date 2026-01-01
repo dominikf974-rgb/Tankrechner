@@ -522,3 +522,30 @@ input[type="number"], input[type="text"], select{
   overflow:visible !important;
   max-height:none !important;
 }
+
+/* =========================
+   FINAL SCROLL SAFETY
+   ========================= */
+html, body{
+  height:auto !important;
+  min-height:100% !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+}
+
+/* Nichts darf ein Scroll-Container sein */
+.page-container,
+main,
+section,
+.layout,
+.map-col{
+  height:auto !important;
+  max-height:none !important;
+  overflow:visible !important;
+}
+
+/* Header MUSS normal sein */
+.site-header{
+  position: static !important;
+  top:auto !important;
+}
