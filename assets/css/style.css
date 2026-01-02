@@ -780,3 +780,61 @@ input[type="number"], input[type="text"], select{
   50%{background-position:100% 50%}
   100%{background-position:0% 50%}
 }
+/* ===== FINAL TUNING (Preis-Karten kleiner + rechte Spalte unten bündig) ===== */
+
+/* 1) Preis-Karten (Ø Benzin / Ø Super / Ø Diesel) kleiner + kompakter */
+.price-table{
+  margin-top:6px;
+  gap:6px;
+  justify-content:flex-start;   /* nach links */
+}
+
+.price-card{
+  flex:0 0 auto;                /* nicht mehr breit ziehen */
+  min-width:110px;              /* kleiner */
+  padding:6px 8px;              /* weniger Höhe */
+  border-radius:10px;
+}
+
+.price-card .small{
+  font-size:.78rem;
+}
+
+.price-card strong{
+  font-size:.98rem;
+  margin-top:4px;
+}
+
+/* 2) Rechte Spalte: Map füllt Platz, 3 Boxen unten rechts */
+@media(min-width:981px){
+  .map-col{
+    display:flex !important;
+    flex-direction:column !important;
+    min-height:100% !important;
+  }
+
+  /* Map wächst nach oben/unten, damit unten Platz für Boxen bleibt */
+  #map{
+    height:auto !important;
+    min-height:420px !important;
+    flex:1 1 auto !important;
+  }
+
+  #toll-info{
+    margin:0 !important;
+    padding-top:6px;
+    padding-bottom:2px;
+  }
+
+  /* 3 Boxen unten: gleichmäßiger Abstand, nicht wachsen */
+  .map-col .thinbox{
+    margin-top:10px !important;
+    flex:0 0 auto !important;
+  }
+
+  /* Boxen ein bisschen “satt” */
+  .thinbox{
+    padding:16px 14px;
+    border-radius:12px;
+  }
+}
