@@ -6,9 +6,12 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
   <title>Taschenrechner – Schnell rechnen (Plus, Minus, Mal, Geteilt)</title>
-  <meta name="description" content="Einfacher Taschenrechner im gleichen Design: Plus, Minus, Mal, Geteilt – direkt im Browser." />
+  <meta name="description" content="Einfacher Taschenrechner im gleichen Design: Rechne direkt als Ausdruck (z. B. 8 × 12 oder (15,5 + 2) / 3) – mobilfreundlich mit Keypad." />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://spritkosten-check.de/taschenrechner.html" />
+  <link rel="alternate" hreflang="de" href="https://spritkosten-check.de/taschenrechner.html" />
+  <link rel="alternate" hreflang="en" href="https://petrolcostcalculator.com/" />
+  <link rel="alternate" hreflang="x-default" href="https://petrolcostcalculator.com/" />
 
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -20,85 +23,450 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/style.css?v=2026-02" />
+
+  <style>
+    /* Taschenrechner page-only */
+    .calc-grid{
+      display:grid;
+      grid-template-columns: minmax(0,1fr) minmax(0,360px);
+      gap:14px;
+      align-items:start;
+    }
+    @media(max-width:980px){
+      .calc-grid{ grid-template-columns:1fr; }
+    }
+
+    .expr-input{
+      font-size:1.15rem;
+      padding:.8rem .9rem;
+    }
+
+    .big-result{
+      margin-top:12px;
+      padding:14px;
+      border-radius:14px;
+      border:1px solid rgba(15,23,42,0.10);
+      background:linear-gradient(180deg,#ffffff,#fbfdff);
+    }
+    .big-result .label{
+      color:var(--muted);
+      font-weight:800;
+      font-size:.9rem;
+      margin-bottom:6px;
+    }
+    .big-result .value{
+      font-weight:900;
+      color:var(--accent-2);
+      font-size:1.6rem;
+      line-height:1.15;
+      word-break:break-word;
+    }
+    .big-result .meta{
+      margin-top:10px;
+      font-size:.9rem;
+      color:var(--muted);
+      line-height:1.55;
+    }
+
+    .keypad{
+      display:grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap:10px;
+      margin-top:12px;
+    }
+    .keypad .btn{
+      min-width:unset;
+      width:100%;
+      height:48px;
+      font-size:1.05rem;
+    }
+    .keypad .btn.secondary{
+      box-shadow:none;
+    }
+    .keypad .wide{
+      grid-column: span 2;
+    }
+
+    @media(max-width:720px){
+      .expr-input{ font-size:1.1rem; }
+      .big-result .value{ font-size:1.8rem; }
+      .keypad .btn{ height:54px; font-size:1.12rem; }
+    }
+
+    .calc-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+    @media(max-width:720px){
+      .calc-actions{ flex-direction:column; }
+      .calc-actions .btn{ width:100%; }
+    }
+  </style>
 </head>
 
 <body data-page="calc">
+
+  <!-- Header via loader -->
   <div id="site-header"></div>
 
-  <div class="page-container">
-    <section class="card">
+  <main class="page-container" aria-label="Seiteninhalt">
+
+    <!-- Ad: Top -->
+    <div class="ad-block" aria-label="Werbung">
+      <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-4852698472752437"
+        data-ad-slot="7158625008"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+    </div>
+
+    <section class="card" aria-label="Taschenrechner">
       <h2>Taschenrechner</h2>
-      <p class="small" style="margin-top:0">Für schnelle Überschläge (z. B. Kosten teilen, Liter umrechnen, etc.).</p>
+      <p class="small" style="margin-top:0">
+        Rechne direkt als Ausdruck – z. B. <b>8 × 12</b>, <b>15,5 + 2</b> oder <b>(120 / 3) + 7</b>.
+        Komma funktioniert (wird als Dezimalpunkt gerechnet).
+      </p>
 
-      <label for="num1">Zahl 1</label>
-      <input id="num1" type="number" inputmode="decimal" placeholder="Zahl 1" />
+      <div class="calc-grid">
+        <!-- Left: Input + Result -->
+        <div>
+          <label for="expr">Rechnung</label>
+          <input id="expr" class="expr-input" type="text" inputmode="text" autocomplete="off"
+                 placeholder="z. B. 8 x 12 oder (15,5 + 2) / 3" aria-label="Rechnung eingeben" />
 
-      <label for="num2">Zahl 2</label>
-      <input id="num2" type="number" inputmode="decimal" placeholder="Zahl 2" />
+          <div class="big-result" aria-live="polite">
+            <div class="label">Ergebnis</div>
+            <div class="value" id="result">–</div>
+            <div class="meta" id="hint">
+              Tipp: Du kannst <b>x</b> oder <b>×</b> für Mal nutzen und <b>/</b> oder <b>÷</b> für Geteilt.
+            </div>
+          </div>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;max-width:260px">
-        <button data-op="+" class="btn" style="height:44px;font-size:1.1rem">+</button>
-        <button data-op="-" class="btn" style="height:44px;font-size:1.1rem">−</button>
-        <button data-op="*" class="btn" style="height:44px;font-size:1.1rem">×</button>
-        <button data-op="/" class="btn" style="height:44px;font-size:1.1rem">÷</button>
-      </div>
+          <div class="calc-actions">
+            <button id="btn-eq" class="btn large" type="button">Berechnen</button>
+            <button id="btn-clear" class="btn secondary large" type="button">Zurücksetzen</button>
+          </div>
 
-      <div class="resultbox" style="margin-top:12px">
-        <div class="result-row">
-          <div class="result-key">Ergebnis</div>
-          <div class="result-val" id="result">–</div>
+          <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+            <a class="btn secondary" href="/">Zum Spritkosten-Rechner</a>
+            <a class="btn secondary" href="/faq.html">Zur FAQ</a>
+            <a class="btn secondary" href="/ratgeber.html">Zum Ratgeber</a>
+          </div>
         </div>
-        <div class="small" style="margin-top:8px">
-          Tipp: Dezimal-Komma geht auch (z. B. 12,5).
-        </div>
-      </div>
 
-      <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
-        <a class="btn secondary" href="/">Zum Spritkosten-Rechner</a>
-    
+        <!-- Right: Keypad -->
+        <div aria-label="Keypad">
+          <div class="small" style="margin-top:2px">
+            Keypad (mobilfreundlich)
+          </div>
+
+          <div class="keypad">
+            <button class="btn secondary" data-k="(" type="button">(</button>
+            <button class="btn secondary" data-k=")" type="button">)</button>
+            <button class="btn secondary" id="btn-back" type="button">⌫</button>
+            <button class="btn secondary" data-k=" / " type="button">÷</button>
+
+            <button class="btn" data-k="7" type="button">7</button>
+            <button class="btn" data-k="8" type="button">8</button>
+            <button class="btn" data-k="9" type="button">9</button>
+            <button class="btn secondary" data-k=" * " type="button">×</button>
+
+            <button class="btn" data-k="4" type="button">4</button>
+            <button class="btn" data-k="5" type="button">5</button>
+            <button class="btn" data-k="6" type="button">6</button>
+            <button class="btn secondary" data-k=" - " type="button">−</button>
+
+            <button class="btn" data-k="1" type="button">1</button>
+            <button class="btn" data-k="2" type="button">2</button>
+            <button class="btn" data-k="3" type="button">3</button>
+            <button class="btn secondary" data-k=" + " type="button">+</button>
+
+            <button class="btn wide" data-k="0" type="button">0</button>
+            <button class="btn" data-k="," type="button">,</button>
+            <button class="btn wide" id="btn-eq-2" type="button">=</button>
+          </div>
+
+          <div class="small" style="margin-top:10px;line-height:1.6;color:var(--muted)">
+            Erlaubt: Zahlen, Komma/Punkt, + − × ÷, Klammern.<br>
+            Enter = Berechnen.
+          </div>
+        </div>
       </div>
     </section>
 
-    <div id="site-footer"></div>
-
-    <div class="small" style="text-align:center;opacity:.35;margin:14px 0 22px 0">
-      Dominik Fisher
+    <!-- Ad: Middle -->
+    <div class="ad-block" aria-label="Werbung">
+      <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-4852698472752437"
+        data-ad-slot="3355111369"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
     </div>
-  </div>
 
+    <!-- Tipps Block (wie Startseite) -->
+    <section class="card" aria-label="Tipps Sprit sparen">
+      <h2>Tipps: Sprit sparen & Reisekosten reduzieren</h2>
+      <p class="small" style="margin-top:0">
+        Kleine Änderungen senken die Kosten schnell: richtiger Reifendruck, gleichmäßige Geschwindigkeit
+        und realistische Verbrauchswerte. Wenn ihr zusammen fahrt, teilt die Kosten fair pro Person.
+      </p>
+      <ul style="margin:0;padding-left:18px;line-height:1.7">
+        <li><strong>Ruhig fahren:</strong> weniger stark beschleunigen und bremsen.</li>
+        <li><strong>Reifendruck prüfen:</strong> zu niedriger Druck erhöht den Verbrauch.</li>
+        <li><strong>Gewicht reduzieren:</strong> unnötige Ladung raus, Dachbox nur wenn nötig.</li>
+        <li><strong>Kosten teilen:</strong> „Personen" nutzen für fairen Betrag pro Kopf.</li>
+      </ul>
+
+      <div style="margin-top:18px;display:flex;justify-content:center">
+        <a class="btn large" href="/ratgeber.html" style="max-width:320px">Zum Ratgeber</a>
+      </div>
+    </section>
+
+    <!-- Countries Block (wie Startseite) -->
+    <section class="card countries-section" aria-label="Spritkosten-Rechner nach Land">
+      <h2>Spritkosten-Rechner nach Land</h2>
+      <p class="small" style="margin:0 0 10px 0">Funktioniert weltweit mit Länder-Erkennung. Beliebte Regionen:</p>
+
+      <div class="countries-grid">
+        <div class="country-card">
+          <h3>Deutschland</h3>
+          <p>Plane Fahrtkosten, Spritkosten, laufende Kosten und teile fair pro Person.</p>
+        </div>
+        <div class="country-card">
+          <h3>Österreich</h3>
+          <p>Ideal für Autobahn &amp; Alpenstrecken – inkl. grober Maut/Vignetten-Schätzung.</p>
+        </div>
+        <div class="country-card">
+          <h3>Schweiz</h3>
+          <p>Perfekt für Alpenpässe und Autobahnen – inkl. Vignetten-Schätzung.</p>
+        </div>
+        <div class="country-card">
+          <h3>Europa</h3>
+          <p>Für grenzüberschreitende Fahrten mit schneller Maut-/Kosten-Näherung.</p>
+        </div>
+        <div class="country-card">
+          <h3>Weltweit</h3>
+          <p>Für Roadtrips und Urlaubsreisen in nahezu allen Ländern &amp; Regionen.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ad: Bottom -->
+    <div class="ad-block" aria-label="Werbung">
+      <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-4852698472752437"
+        data-ad-slot="3048839661"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+    </div>
+
+  </main>
+
+  <!-- Footer via loader (außerhalb vom Container = kein weißer Rand) -->
+  <div id="site-footer"></div>
+
+  <!-- Rechner Script -->
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const num1 = document.getElementById('num1');
-      const num2 = document.getElementById('num2');
-      const result = document.getElementById('result');
+    (function(){
+      const exprEl = document.getElementById('expr');
+      const resEl = document.getElementById('result');
+      const hintEl = document.getElementById('hint');
 
-      const parse = v => (v === '' || v == null) ? NaN : Number(String(v).replace(',', '.'));
-      const fmt = n => (Number.isFinite(n) ? Number.parseFloat(n.toFixed(6)).toString() : '–');
+      function normalize(input){
+        let s = String(input ?? '');
+        s = s.replace(/,/g, '.');           // Komma -> Punkt
+        s = s.replace(/[x×]/gi, '*');       // x/× -> *
+        s = s.replace(/[÷]/g, '/');         // ÷ -> /
+        s = s.replace(/[−–]/g, '-');        // minus-varianten
+        // nur erlaubte chars: digits, dot, ops, parentheses, spaces
+        if(!/^[0-9+\-*/().\s]*$/.test(s)) return null;
+        return s;
+      }
 
-      document.querySelectorAll('[data-op]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const a = parse(num1.value);
-          const b = parse(num2.value);
-          if (Number.isNaN(a) || Number.isNaN(b)) { result.textContent = '–'; return; }
+      function formatNumber(n){
+        if(!Number.isFinite(n)) return '–';
+        // max 8 Nachkommastellen, dann trimmen
+        const s = Number.parseFloat(n.toFixed(8)).toString();
+        return s.replace('.', ',');
+      }
 
-          let res;
-          switch (btn.dataset.op) {
-            case '+': res = a + b; break;
-            case '-': res = a - b; break;
-            case '*': res = a * b; break;
-            case '/': res = (b === 0 ? '∞' : a / b); break;
+      function evaluate(){
+        const raw = exprEl.value.trim();
+        if(!raw){
+          resEl.textContent = '–';
+          hintEl.textContent = 'Tipp: z. B. 8 × 12 oder (15,5 + 2) / 3';
+          return;
+        }
+
+        const s = normalize(raw);
+        if(s == null){
+          resEl.textContent = '–';
+          hintEl.textContent = 'Ungültige Zeichen. Erlaubt sind Zahlen, + − × ÷, Klammern, Komma/Punkt.';
+          return;
+        }
+
+        try{
+          // sichere Auswertung via Allowlist + Function
+          const out = Function('"use strict"; return (' + s + ');')();
+          if(typeof out !== 'number' || !Number.isFinite(out)){
+            resEl.textContent = String(out) === 'Infinity' ? '∞' : '–';
+            hintEl.textContent = (String(out) === 'Infinity') ? 'Division durch 0 ergibt ∞.' : 'Bitte Ausdruck prüfen.';
+            return;
           }
-          result.textContent = (typeof res === 'number') ? fmt(res).replace('.', ',') : res;
+          resEl.textContent = formatNumber(out);
+          hintEl.textContent = 'OK. Du kannst weiterrechnen oder den Ausdruck anpassen.';
+        }catch(e){
+          resEl.textContent = '–';
+          hintEl.textContent = 'Fehler im Ausdruck. Beispiel: (12 + 3) * 4';
+        }
+      }
+
+      function insertText(t){
+        const el = exprEl;
+        const start = el.selectionStart ?? el.value.length;
+        const end = el.selectionEnd ?? el.value.length;
+        const before = el.value.slice(0, start);
+        const after = el.value.slice(end);
+        el.value = before + t + after;
+        const pos = start + t.length;
+        el.setSelectionRange(pos, pos);
+        el.focus();
+      }
+
+      function backspace(){
+        const el = exprEl;
+        const start = el.selectionStart ?? 0;
+        const end = el.selectionEnd ?? 0;
+        if(start !== end){
+          // delete selection
+          const before = el.value.slice(0, start);
+          const after = el.value.slice(end);
+          el.value = before + after;
+          el.setSelectionRange(start, start);
+          el.focus();
+          return;
+        }
+        if(start <= 0) return;
+        el.value = el.value.slice(0, start - 1) + el.value.slice(end);
+        el.setSelectionRange(start - 1, start - 1);
+        el.focus();
+      }
+
+      document.getElementById('btn-eq').addEventListener('click', evaluate);
+      document.getElementById('btn-eq-2').addEventListener('click', evaluate);
+      document.getElementById('btn-clear').addEventListener('click', () => {
+        exprEl.value = '';
+        resEl.textContent = '–';
+        hintEl.textContent = 'Tipp: z. B. 8 × 12 oder (15,5 + 2) / 3';
+        exprEl.focus();
+      });
+      document.getElementById('btn-back').addEventListener('click', backspace);
+
+      document.querySelectorAll('[data-k]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const k = btn.getAttribute('data-k');
+          if(btn.textContent.trim() === '×') insertText(' * ');
+          else if(btn.textContent.trim() === '÷') insertText(' / ');
+          else insertText(k);
         });
       });
-    });
+
+      exprEl.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter'){
+          e.preventDefault();
+          evaluate();
+        }
+      });
+
+      // beim Tippen optional live
+      exprEl.addEventListener('input', () => {
+        // nur sanft updaten, ohne nervige Fehlertexte
+        const raw = exprEl.value.trim();
+        if(!raw){ resEl.textContent='–'; return; }
+      });
+
+      // focus start
+      setTimeout(() => exprEl.focus(), 50);
+    })();
   </script>
 
-  <script src="/assets/js/loader.js"></script>
+  <!-- Active Tab -->
+  <script src="/assets/js/active-nav.js" defer></script>
 
-  <script src="/assets/js/loader.js"></script>
-<script src="/assets/js/app.js"></script>
+  <!-- Header/Footer Loader + Mobile Nav + Cookies -->
+  <script>
+    async function loadPart(id, url){
+      const el = document.getElementById(id);
+      if(!el) return false;
+      try{
+        const r = await fetch(url, { cache: 'no-cache' });
+        el.innerHTML = await r.text();
+        return true;
+      }catch(e){
+        console.warn('Konnte nicht laden:', url);
+        return false;
+      }
+    }
+
+    function initMobileNav(){
+      const header = document.querySelector('.site-header');
+      const btn = document.querySelector('.nav-toggle');
+      const nav = document.getElementById('site-nav');
+      if(!header || !btn || !nav) return;
+
+      const close = () => {
+        header.classList.remove('is-open');
+        btn.setAttribute('aria-expanded', 'false');
+        btn.setAttribute('aria-label', 'Menü öffnen');
+      };
+
+      const open = () => {
+        header.classList.add('is-open');
+        btn.setAttribute('aria-expanded', 'true');
+        btn.setAttribute('aria-label', 'Menü schließen');
+      };
+
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        header.classList.contains('is-open') ? close() : open();
+      });
+
+      document.addEventListener('click', (e) => {
+        if(!header.classList.contains('is-open')) return;
+        if(header.contains(e.target)) return;
+        close();
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if(e.key === 'Escape') close();
+      });
+
+      window.addEventListener('resize', () => {
+        if(window.innerWidth > 720) close();
+      });
+    }
+
+    function loadCookiesAfterFooter(){
+      const s = document.createElement('script');
+      s.src = '/assets/js/cookies.js';
+      s.defer = true;
+      document.body.appendChild(s);
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadPart('site-header', '/practice/header.html');
+      initMobileNav();
+
+      await loadPart('site-footer', '/practice/footer.html');
+      loadCookiesAfterFooter();
+    });
+  </script>
 
 </body>
 </html>
