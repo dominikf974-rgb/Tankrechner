@@ -257,31 +257,35 @@
   <!-- Footer via loader -->
   <div id="site-footer"></div>
 
-  <!-- Cookies -->
-  <script src="/assets/js/cookies.js" defer></script>
+ <!-- Active Tab -->
+<script src="/assets/js/active-nav.js" defer></script>
 
-  <!-- Active Tab -->
-  <script src="/assets/js/active-nav.js" defer></script>
-
-  <script>
-async function loadPart(id, url){
-  const el = document.getElementById(id);
-  if(!el) return false;
-  try{
-    const r = await fetch(url, { cache: 'no-cache' });
-    el.innerHTML = await r.text();
-    return true;
-  }catch(e){
-    console.warn('Konnte nicht laden:', url);
-    return false;
+<script>
+  async function loadPart(id, url){
+    const el = document.getElementById(id);
+    if(!el) return false;
+    try{
+      const r = await fetch(url, { cache: 'no-cache' });
+      el.innerHTML = await r.text();
+      return true;
+    }catch(e){
+      console.warn('Konnte nicht laden:', url);
+      return false;
+    }
   }
-}
 
-document.addEventListener('DOMContentLoaded', async () => {
-  await loadPart('site-header', '/practice/header.html');
-  await loadPart('site-footer', '/practice/footer.html');
-});
+  document.addEventListener('DOMContentLoaded', async () => {
+    await loadPart('site-header', '/practice/header.html');
+    await loadPart('site-footer', '/practice/footer.html');
+
+    // cookies.js erst laden, wenn cookieBanner im DOM ist
+    const s = document.createElement('script');
+    s.src = '/assets/js/cookies.js';
+    s.defer = true;
+    document.body.appendChild(s);
+  });
 </script>
+
 
 </body>
 </html>
