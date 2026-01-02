@@ -1,15 +1,24 @@
 (() => {
-  const KEY = "consent_marketing";
+  const KEY = "consent_marketing";          // "1" oder "0"
+  const KEY_DATE = "consent_marketing_date"; // Timestamp (ms)
+  const REASK_DAYS = 90;                    // <- HIER: 90 Tage
+
+  function daysToMs(d) {
+    return d * 24 * 60 * 60 * 1000;
+  }
+
+  function hasAdSlots() {
+    return !!document.querySelector("ins.adsbygoogle");
+  }
 
   function loadAdsOnce({ npa } = { npa: false }) {
     if (window.__adsLoaded) return;
+    if (!hasAdSlots()) return; // keine Slots -> Script nicht laden
     window.__adsLoaded = true;
 
-    // NPA vor Script-Load setzen
-    if (npa) {
-      window.adsbygoogle = window.adsbygoogle || [];
-      window.adsbygoogle.requestNonPersonalizedAds = 1;
-    }
+    // NPA-Flag immer explizit setzen
+    window.adsbygoogle = window.adsbygoogle || [];
+    window.adsbygoogle.requestNonPersonalizedAds = npa ? 1 : 0;
 
     const s = document.createElement("script");
     s.async = true;
@@ -27,42 +36,72 @@
     };
   }
 
+  function getStoredConsent() {
+    try {
+      return localStorage.getItem(KEY); // "1" | "0" | null
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function getStoredTs() {
+    try {
+      return Number(localStorage.getItem(KEY_DATE) || 0);
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  function storeConsent(value) {
+    // value: "1" oder "0"
+    try {
+      localStorage.setItem(KEY, value);
+      localStorage.setItem(KEY_DATE, String(Date.now()));
+    } catch (e) {}
+  }
+
+  function isTooOld(ts) {
+    if (!ts) return true;
+    return (Date.now() - ts) > daysToMs(REASK_DAYS);
+  }
+
   function init() {
+    // OPTIONAL: Auf Datenschutz/Impressum gar nicht laufen lassen
+    // (Wenn du cookies.js dort sowieso NICHT einbindest, kannst du das weglassen.)
+    if (document.body && document.body.dataset.page === "legal") return;
+
     const banner = document.getElementById("cookieBanner");
     const btnAccept = document.getElementById("cookieAccept");
     const btnReject = document.getElementById("cookieReject");
-    
+
+    // Banner evtl. noch nicht im DOM -> später nochmal probieren
     if (!banner || !btnAccept || !btnReject) {
-  // Footer/Partial evtl. noch nicht geladen -> später nochmal probieren
-  setTimeout(init, 150);
-  return;
-}
-    let consent = null;
-    try { consent = localStorage.getItem(KEY); } catch (e) {}
-
-    // bereits entschieden
-    if (consent === "1") {
-      banner.remove();
-      loadAdsOnce({ npa: false });
-      return;
-    }
-    if (consent === "0") {
-      banner.remove();
-      loadAdsOnce({ npa: true });
+      setTimeout(init, 150);
       return;
     }
 
-    // keine Entscheidung -> Banner zeigen, keine Ads
+    const consent = getStoredConsent(); // "1"|"0"|null
+    const ts = getStoredTs();
+    const expired = isTooOld(ts);
+
+    // Bereits entschieden UND noch gültig -> Banner weg, Ads gemäß Auswahl laden
+    if ((consent === "1" || consent === "0") && !expired) {
+      banner.remove();
+      loadAdsOnce({ npa: consent === "0" });
+      return;
+    }
+
+    // Entscheidung fehlt oder ist abgelaufen -> Banner zeigen, KEINE Ads bis Entscheidung
     banner.classList.remove("is-hidden");
 
     btnAccept.addEventListener("click", () => {
-      try { localStorage.setItem(KEY, "1"); } catch (e) {}
+      storeConsent("1");
       banner.remove();
       loadAdsOnce({ npa: false });
     });
 
     btnReject.addEventListener("click", () => {
-      try { localStorage.setItem(KEY, "0"); } catch (e) {}
+      storeConsent("0");
       banner.remove();
       loadAdsOnce({ npa: true });
     });
