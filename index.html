@@ -110,10 +110,13 @@
 
             <div style="margin-top:12px">
               <label for="place-from">Oder: Start (Ort, Land)</label>
-              <input id="place-from" type="text" placeholder="z. B. Moskau, Russland" aria-label="Startort" />
+              <input id="place-from" type="text" placeholder="z. B. Paris, Frankreich" aria-label="Startort" />
 
               <label for="place-to" style="margin-top:10px">Ziel (Ort, Land)</label>
-              <input id="place-to" type="text" placeholder="z. B. Sankt Petersburg, Russland" aria-label="Zielort" />
+              <input id="place-to" type="text" placeholder="z. B. Berlin, Deustchland" aria-label="Zielort" />
+              <div class="small" style="margin-top:4px">
+              Beispiel: <b>Paris, Frankreich</b> → <b>Berlin, Deutschland</b>
+              </div>
 
               <!-- ✅ Buttons: nebeneinander, zentriert -->
               <div class="route-actions">
@@ -590,21 +593,30 @@
         return m;
       }
 
-      async function geocode(q){
-        const key = q.trim().toLowerCase();
-        if(geoCache.has(key)) return geoCache.get(key);
+  async function geocode(q){
+  const key = q.trim().toLowerCase();
+  if(geoCache.has(key)) return geoCache.get(key);
 
-        const url = API_BASE + '/api/geocode?q=' + encodeURIComponent(q);
-        const res = await fetchWithTimeout(url, 12000);
-        if(!res.ok) throw new Error('Geocoding fehlgeschlagen');
-        const data = await res.json();
-        if(data?.length){
-          const out = { lat:+data[0].lat, lon:+data[0].lon, name:data[0].display_name };
-          geoCache.set(key, out);
-          return out;
-        }
-        return null;
-      }
+  const url = API_BASE + '/api/geocode?q=' + encodeURIComponent(q);
+  const res = await fetchWithTimeout(url, 12000);
+  if(!res.ok) throw new Error('Geocoding fehlgeschlagen');
+
+  const data = await res.json();
+  if(!Array.isArray(data) || !data.length) return null;
+
+  // Bevorzugt: alles außer reines Land (country)
+  const pick =
+    data.find(x => x?.addresstype && x.addresstype !== "country") ||
+    data.find(x => x?.type && x.type !== "country") ||
+    data[0];
+
+  const isCountry = (pick?.addresstype === "country" || pick?.type === "country");
+  if(isCountry) return null; // -> wird unten als "Ort nicht gefunden" behandelt
+
+  const out = { lat:+pick.lat, lon:+pick.lon, name:pick.display_name };
+  geoCache.set(key, out);
+  return out;
+}
 
       async function reverseCountryCode(lat, lon){
         const k = cacheKeyLL(lat,lon);
@@ -742,7 +754,7 @@
           const a = await geocode(from);
           const b = await geocode(to);
           if(!a || !b){
-            tollInfoEl.textContent = 'Ort nicht gefunden. Bitte genauer eingeben.';
+            tollInfoEl.textContent = 'Bitte Stadt/Ort + Land eingeben (z. B. "Paris, Frankreich"), nicht nur das Land.';
             tollInfoEl.classList.add('error');
             return;
           }
@@ -977,4 +989,5 @@
 
 </body>
 </html>
+
 
