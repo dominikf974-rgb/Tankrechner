@@ -146,24 +146,19 @@
             <input id="consumption" type="number" inputmode="decimal" min="0" step="0.1"
               value="7.5" placeholder="z. B. 7,5" aria-label="Kraftstoffverbrauch" />
 
-          <div class="price-input-group">
-  <div class="price-field">
-    <label for="price">Preis pro Liter (€)</label>
-    <input id="price" type="number" inputmode="decimal" min="0" step="0.01"
-      placeholder="z. B. 1,89" aria-label="Spritpreis pro Liter" />
-  </div>
-
-  <button id="btn-reset-price" class="btn secondary reset-price-btn" type="button">
-    Auf Standard zurücksetzen
-  </button>
-
-  <span id="price-info" class="hint"></span>
-</div>
-
+            <!-- ✅ Preisblock (KORREKT, nur 1 Button, keine kaputten </div>) -->
+            <div class="price-input-group">
+              <div class="price-field">
+                <label for="price">Preis pro Liter (€)</label>
+                <input id="price" type="number" inputmode="decimal" min="0" step="0.01"
+                  placeholder="z. B. 1,89" aria-label="Spritpreis pro Liter" />
+              </div>
 
               <button id="btn-reset-price" class="btn secondary reset-price-btn" type="button">
                 Auf Standard zurücksetzen
               </button>
+
+              <span id="price-info" class="hint"></span>
             </div>
 
             <div class="price-table">
@@ -377,10 +372,8 @@
   <!-- ✅ Rechner + Map Script (dein Original) -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // ===== Proxy Base (DEIN WORKER) =====
       const API_BASE = "https://soft-pine-874.dominikf974.workers.dev";
 
-      // ===== Utils =====
       const CURRENCY_SYMBOL = '€';
       const parse = v => (v === '' || v == null) ? NaN : Number(String(v).replace(',', '.'));
       const fmt = n => (Number.isFinite(n) ? Number.parseFloat(n.toFixed(2)).toFixed(2) : '0.00');
@@ -393,18 +386,16 @@
         return fetch(url, { signal: controller.signal }).finally(() => clearTimeout(t));
       }
 
-      // ===== Mini Schutz gegen zu viele Requests =====
       let isRouting = false;
       let lastRouteClick = 0;
 
-      const geoCache = new Map();   // q -> {lat,lon,name}
-      const revCache = new Map();   // "lat,lon" -> CC
-      const routeCache = new Map(); // "a|b" -> km
+      const geoCache = new Map();
+      const revCache = new Map();
+      const routeCache = new Map();
 
       const cacheKeyLL = (lat,lon) => `${lat.toFixed(5)},${lon.toFixed(5)}`;
       const cacheKeyRoute = (a,b) => `${cacheKeyLL(a.lat,a.lon)}|${cacheKeyLL(b.lat,b.lon)}`;
 
-      // DOM
       const kmEl = document.getElementById('km');
       const consumptionEl = document.getElementById('consumption');
       const priceEl = document.getElementById('price');
@@ -443,7 +434,6 @@
       const cmpRailEl = document.getElementById('cmp-rail');
       const cmpFlightEl = document.getElementById('cmp-flight');
 
-      // Preise
       const countryPrices = window.COUNTRY_FUEL_PRICES_EUR || null;
       const priceStand = window.COUNTRY_FUEL_PRICES_STAND || '';
       const fallbackPrices = { unleaded91: 1.50, unleaded95: 1.60, diesel: 1.45, name:'Fallback' };
@@ -473,7 +463,6 @@
         return (e && e.name) ? e.name : cc;
       }
 
-      // DE: live via Tankerkönig, sonst: statisch
       async function pricesForCountryStatic(cc, lat=null, lon=null){
         cc = (cc || "").toUpperCase();
 
@@ -571,7 +560,6 @@
         });
       });
 
-      // ===== Map =====
       const map = L.map('map', { attributionControl:true }).setView([51.1657, 10.4515], 5);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom:19,
@@ -659,7 +647,6 @@
         return distKm;
       }
 
-      // Maut / Vignette
       const tollPer100km = {
         DE:0, AT:6, CH:4, FR:10, IT:9, ES:10, NL:0, BE:0,
         PL:6, CZ:4, SK:4, HU:5, SI:5, HR:5, RO:3, BG:3,
@@ -990,4 +977,3 @@
 
 </body>
 </html>
-
