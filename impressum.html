@@ -121,13 +121,12 @@
         E-Mail: info@spritkosten-check.de
       </p>
     </section>
-
-    <div id="site-footer"></div>
-
-
   </div>
 
- <script>
+  <!-- Footer MUSS außerhalb vom Container sein (sonst weißer Rand) -->
+  <div id="site-footer"></div>
+
+  <script>
     fetch('/practice/footer.html')
       .then(r => r.text())
       .then(html => {
@@ -135,6 +134,5 @@
       })
       .catch(() => {});
   </script>
-  
 </body>
 </html>
