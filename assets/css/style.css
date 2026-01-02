@@ -11,9 +11,7 @@
   --muted:#4b5563; --text:#0b1220;
   --accent:#0ea5a3; --accent-2:#4f46e5;
   --button-h:48px; --maxw:1400px;
-
-  /* Abstände rechts (gleichmäßig) */
-  --right-gap: 12px;
+  --gap:16px;
 }
 
 /* Nur BODY/HTML scrollen */
@@ -116,6 +114,7 @@ h2{ margin:0 0 12px 0; }
   text-shadow:0 0 10px rgba(56,189,248,.18);
   transition:all .22s ease;
 }
+
 .site-header .tablink:hover{
   background: linear-gradient(135deg,#a855f7,#6366f1,#38bdf8);
   background-size:200% 200%;
@@ -124,6 +123,7 @@ h2{ margin:0 0 12px 0; }
   box-shadow:0 0 18px rgba(168,85,247,.45),0 0 35px rgba(56,189,248,.25);
   animation: holoFlow 6s linear infinite;
 }
+
 .site-header .tablink[aria-current="page"]{
   background: linear-gradient(135deg,#a855f7,#6366f1,#38bdf8);
   background-size:200% 200%;
@@ -186,13 +186,11 @@ h2{ margin:0 0 12px 0; }
     right:12px;
     top:72px;
     z-index:10000;
-
     background: linear-gradient(180deg,#0f172a,#020617);
     border:1px solid rgba(255,255,255,0.14);
     border-radius:14px;
     padding:10px;
     box-shadow:0 24px 60px rgba(0,0,0,.85);
-
     display:none;
     flex-direction:column;
     gap:8px;
@@ -206,23 +204,10 @@ h2{ margin:0 0 12px 0; }
     height:42px;
     padding:.5rem .7rem;
     font-size:.95rem;
-
     background: rgba(255,255,255,0.06);
     border:1px solid rgba(255,255,255,0.10);
   }
-
-  .site-header .tablink:hover{
-    background: rgba(56,189,248,0.18);
-    border-color: rgba(56,189,248,0.25);
-    animation:none;
-  }
-
-  .site-header .tablink[aria-current="page"]{
-    background: linear-gradient(135deg,#a855f7,#6366f1,#38bdf8);
-    border:1px solid rgba(255,255,255,0.10);
-    animation: holoFlow 6s linear infinite;
-  }
-
+  .site-header .tablink:hover{ animation:none; }
   .site-header .lang-link{
     width:100%;
     justify-content:flex-start;
@@ -235,13 +220,6 @@ h2{ margin:0 0 12px 0; }
 
 @media(max-width:420px){
   .site-title{display:none;}
-}
-
-@media (hover: none){
-  .site-header .tablink:hover{
-    box-shadow:none;
-    animation:none;
-  }
 }
 
 /* =========================
@@ -257,7 +235,6 @@ h2{ margin:0 0 12px 0; }
   gap:18px;
   overflow:visible;
 }
-
 @media (min-width: 992px){
   .page-container{ padding-left:24px; padding-right:24px; padding-top:24px; }
 }
@@ -283,7 +260,7 @@ h2{ margin:0 0 12px 0; }
 .layout{
   display:grid;
   grid-template-columns:minmax(0,420px) minmax(0,1fr);
-  gap:16px;
+  gap:var(--gap);
   align-items:stretch;
   width:100%;
 }
@@ -317,20 +294,34 @@ input[type="number"], input[type="text"], select{
 /* KM row */
 .km-row{
   display:flex;
-  gap:8px;
-  align-items:center;
-  flex-wrap:nowrap;
+  gap:10px;
+  align-items:stretch;
 }
-.km-row .km-input{flex:1;min-width:0}
+.km-row .km-input{
+  flex:1;
+  min-width:0;
+}
 
 /* Spinner */
-.spinner{display:flex;flex-direction:column;gap:6px}
+.spinner{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
 .spinner button{
-  width:44px;height:44px;border-radius:8px;border:none;
+  width:44px;
+  height:44px;
+  border-radius:8px;
+  border:none;
   background:linear-gradient(135deg,#a855f7,#6366f1,#38bdf8);
   background-size:200% 200%;
-  color:#fff;font-weight:900;font-size:18px;cursor:pointer;
-  display:inline-flex;align-items:center;justify-content:center;
+  color:#fff;
+  font-weight:900;
+  font-size:18px;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
   animation:holoFlow 6s linear infinite;
 }
 
@@ -364,14 +355,13 @@ input[type="number"], input[type="text"], select{
   background: linear-gradient(135deg,#c084fc,#818cf8,#60a5fa);
   background-size:200% 200%;
   color:#fff;
-  border:1px solid rgba(255,255,255,0.0);
   box-shadow:none;
   animation:holoFlow 6s linear infinite;
 }
 
 .btn.large{font-size:1.05rem;padding:0 14px;height:54px}
 
-/* Strecke Buttons (wenn du route-actions nutzt) */
+/* Strecke berechnen + Karte zurücksetzen */
 .route-actions{
   margin-top:10px;
   display:flex;
@@ -380,12 +370,12 @@ input[type="number"], input[type="text"], select{
   flex-wrap:nowrap;
 }
 
-/* Berechnen/Zurücksetzen */
+/* Berechnen / Zurücksetzen */
 .big-action{
   display:flex;
-  gap:10px;
-  margin-top:12px;
   justify-content:center;
+  gap:12px;
+  margin-top:12px;
   flex-wrap:wrap;
 }
 
@@ -396,31 +386,21 @@ input[type="number"], input[type="text"], select{
 .error{color:#e53e3e}
 
 /* =========================
-   PRICE SECTION (CSS-only FIX)
+   PRICE SECTION (stabil, nix verschiebt)
    ========================= */
-/* Wir bauen das so um, dass:
-   - Input-Block in Zeile 1
-   - Button in Zeile 1
-   - Hint (#price-info) in Zeile 2 über volle Breite
-   -> Button bleibt bündig, obwohl Hint existiert.
-*/
 .price-input-group{
   display:grid;
   grid-template-columns: 1fr auto;
-  grid-template-rows: auto auto;
+  grid-template-rows:auto auto;
   column-gap:10px;
   row-gap:6px;
   align-items:end;
   margin-top:8px;
 }
-
-/* 1. Child (div mit Label+Input) */
 .price-input-group > div:first-child{
   grid-column:1;
   grid-row:1;
 }
-
-/* Reset Button */
 .price-input-group > button.reset-price-btn{
   grid-column:2;
   grid-row:1;
@@ -429,19 +409,13 @@ input[type="number"], input[type="text"], select{
   white-space:nowrap;
   margin:0;
   align-self:end;
-
-  /* 2px höher, OHNE Layout-Fluss zu verändern */
-  transform: translateY(-2px);
+  transform: translateY(-2px); /* 2px höher */
 }
-
-/* Hint unter die komplette Zeile */
 .price-input-group #price-info{
   grid-column:1 / -1;
   grid-row:2;
   margin-top:0;
 }
-
-/* Mobile: stacked */
 @media(max-width:720px){
   .price-input-group{
     grid-template-columns:1fr;
@@ -457,18 +431,25 @@ input[type="number"], input[type="text"], select{
   .price-input-group #price-info{ grid-column:1; grid-row:3; }
 }
 
-/* Price table */
-.price-table{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+/* ✅ Preis-Karten: kleiner & links */
+.price-table{
+  display:flex;
+  gap:6px;
+  margin-top:6px;
+  flex-wrap:wrap;
+  justify-content:flex-start;
+}
 .price-card{
-  flex:1;
-  min-width:140px;
-  padding:8px;
-  border-radius:8px;
+  flex:0 0 auto;
+  min-width:110px;
+  padding:6px 8px;
+  border-radius:10px;
   background:#fafafa;
   border:1px solid rgba(15,23,42,0.05);
-  text-align:center
+  text-align:center;
 }
-.price-card strong{display:block;font-size:1.05rem;color:var(--accent-2);margin-top:6px}
+.price-card .small{font-size:.78rem;color:var(--muted)}
+.price-card strong{display:block;font-size:.98rem;color:var(--accent-2);margin-top:4px}
 
 /* Results */
 .resultbox{
@@ -509,27 +490,15 @@ input[type="number"], input[type="text"], select{
 .country-badge{margin-top:8px; min-height:18px; font-size:.85rem; color:var(--muted);}
 
 /* =========================
-   RIGHT COLUMN (GRID FIX: stabil + bündig unten)
+   RIGHT COLUMN (Map oben, Boxen unten rechts)
    ========================= */
-/* Statt flex: Wir machen die rechte Spalte zu einem Grid.
-   Reihenfolge im HTML:
-   h2
-   #map
-   #toll-info
-   thinbox (Maut)
-   thinbox (CO2)
-   thinbox (Vergleich)
-   -> die 3 thinbox werden 1fr, also gleich groß,
-      und die letzte ist automatisch bündig unten.
-*/
 .map-col{
-  display:grid;
-  grid-template-rows: auto auto auto 1fr 1fr 1fr;
-  gap: var(--right-gap);
+  display:flex;
+  flex-direction:column;
   min-height:100%;
 }
 
-/* Map */
+/* Map füllt den Platz oben aus */
 #map{
   width:100%;
   height:520px;
@@ -539,30 +508,31 @@ input[type="number"], input[type="text"], select{
   background:#fff;
   display:block;
 }
-
-/* Responsive map-height */
 @media(max-width:980px){
-  .map-col{
-    display:flex;
-    flex-direction:column;
-    gap: var(--right-gap);
-  }
+  #map{ height:260px; min-height:260px; }
+}
+
+/* Desktop: Map wächst, Boxen sitzen unten */
+@media(min-width:981px){
   #map{
-    height:260px;
-    min-height:260px;
+    height:auto;
+    min-height:420px;
+    flex:1 1 auto;
   }
 }
 
-/* toll-info */
-#toll-info{ margin:0 !important; }
+/* toll-info kompakt */
+#toll-info{
+  margin:6px 0 0 0 !important;
+}
 
-/* Thin boxes: größer + gleiches Spacing */
+/* Thinboxes: größer, gleicher Abstand */
 .thinbox{
-  margin:0;                 /* Grid gap regelt Abstand */
-  padding:14px 14px;
+  padding:16px 14px;
   border-radius:12px;
   background:#ffffff;
   border:1px solid rgba(15,23,42,0.10);
+  margin-top:12px;
 }
 
 .thinbox .title{
@@ -582,6 +552,17 @@ input[type="number"], input[type="text"], select{
 }
 .thinbox .line:last-child{border-bottom:0}
 .mono{font-variant-numeric:tabular-nums;}
+
+/* ✅ WICHTIG: Erste Box drückt alle 3 nach unten -> unten rechts bündig */
+@media(min-width:981px){
+  .map-col .thinbox:first-of-type{
+    margin-top:auto; /* push down */
+  }
+  /* gleiche Abstände zwischen den Boxen */
+  .map-col .thinbox + .thinbox{
+    margin-top:12px;
+  }
+}
 
 /* Ads */
 .ad-block{ margin:0; }
@@ -779,62 +760,4 @@ input[type="number"], input[type="text"], select{
   0%{background-position:0% 50%}
   50%{background-position:100% 50%}
   100%{background-position:0% 50%}
-}
-/* ===== FINAL TUNING (Preis-Karten kleiner + rechte Spalte unten bündig) ===== */
-
-/* 1) Preis-Karten (Ø Benzin / Ø Super / Ø Diesel) kleiner + kompakter */
-.price-table{
-  margin-top:6px;
-  gap:6px;
-  justify-content:flex-start;   /* nach links */
-}
-
-.price-card{
-  flex:0 0 auto;                /* nicht mehr breit ziehen */
-  min-width:110px;              /* kleiner */
-  padding:6px 8px;              /* weniger Höhe */
-  border-radius:10px;
-}
-
-.price-card .small{
-  font-size:.78rem;
-}
-
-.price-card strong{
-  font-size:.98rem;
-  margin-top:4px;
-}
-
-/* 2) Rechte Spalte: Map füllt Platz, 3 Boxen unten rechts */
-@media(min-width:981px){
-  .map-col{
-    display:flex !important;
-    flex-direction:column !important;
-    min-height:100% !important;
-  }
-
-  /* Map wächst nach oben/unten, damit unten Platz für Boxen bleibt */
-  #map{
-    height:auto !important;
-    min-height:420px !important;
-    flex:1 1 auto !important;
-  }
-
-  #toll-info{
-    margin:0 !important;
-    padding-top:6px;
-    padding-bottom:2px;
-  }
-
-  /* 3 Boxen unten: gleichmäßiger Abstand, nicht wachsen */
-  .map-col .thinbox{
-    margin-top:10px !important;
-    flex:0 0 auto !important;
-  }
-
-  /* Boxen ein bisschen “satt” */
-  .thinbox{
-    padding:16px 14px;
-    border-radius:12px;
-  }
 }
