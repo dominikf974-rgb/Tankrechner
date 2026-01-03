@@ -644,39 +644,42 @@ document.addEventListener('DOMContentLoaded', () => {
     return cc;
   }
 
-  async function getRouteOSRM(lat1, lon1, lat2, lon2){
- const url =
-  API_BASE + `/api/route?lat1=${encodeURIComponent(lat1)}&lon1=${encodeURIComponent(lon1)}` +
-  `&lat2=${encodeURIComponent(lat2)}&lon2=${encodeURIComponent(lon2)}` +
-  `&overview=full&geometries=geojson&steps=true`;
+async function getRouteOSRM(lat1, lon1, lat2, lon2){
+  const a = {lat:lat1, lon:lon1}, b = {lat:lat2, lon:lon2};
+  const ck = cacheKeyRoute(a,b);
 
-    const url =
-      API_BASE + `/api/route?lat1=${encodeURIComponent(lat1)}&lon1=${encodeURIComponent(lon1)}` +
-      `&lat2=${encodeURIComponent(lat2)}&lon2=${encodeURIComponent(lon2)}`;
+  // Cache nutzen
+  if(routeCache.has(ck)) return routeCache.get(ck);
 
-    const res = await fetchWithTimeout(url, 15000);
-    if(!res.ok) throw new Error('OSRM request failed');
+  // ⚠️ WICHTIG: nur EIN url
+  // (Dein Worker entscheidet, ob er overview/geometries/steps nutzt oder ignoriert.)
+  const url =
+    API_BASE + `/api/route?lat1=${encodeURIComponent(lat1)}&lon1=${encodeURIComponent(lon1)}` +
+    `&lat2=${encodeURIComponent(lat2)}&lon2=${encodeURIComponent(lon2)}`;
 
-    const j = await res.json();
-    if(!j || j.code !== 'Ok' || !j.routes || !j.routes.length) throw new Error('OSRM no route');
+  const res = await fetchWithTimeout(url, 15000);
+  if(!res.ok) throw new Error('OSRM request failed');
 
-    const r = j.routes[0];
-    const distKm = (r.distance || 0) / 1000;
+  const j = await res.json();
+  if(!j || j.code !== 'Ok' || !j.routes || !j.routes.length) throw new Error('OSRM no route');
 
-    // ✅ NEU: echte Geometry speichern (für Länder-Split)
-    lastRouteGeo = r.geometry;
-    lastKmByCountry = null; // invalidieren, weil neue Route
+  const r = j.routes[0];
+  const distKm = (r.distance || 0) / 1000;
 
-    clearRoute();
-    routeLayer = L.geoJSON(r.geometry, { style: { weight: 5, opacity: 0.9 } }).addTo(map);
-    map.fitBounds(routeLayer.getBounds(), { padding:[60,60] });
+  // Geometry speichern für Länder-Split
+  lastRouteGeo = r.geometry;
+  lastKmByCountry = null;
 
-    setTimeout(safeInvalidate, 60);
-    setTimeout(safeInvalidate, 220);
+  clearRoute();
+  routeLayer = L.geoJSON(r.geometry, { style: { weight: 5, opacity: 0.9 } }).addTo(map);
+  map.fitBounds(routeLayer.getBounds(), { padding:[60,60] });
 
-    routeCache.set(ck, distKm);
-    return distKm;
-  }
+  setTimeout(safeInvalidate, 60);
+  setTimeout(safeInvalidate, 220);
+
+  routeCache.set(ck, distKm);
+  return distKm;
+}
 
   // ---------- "Super genau" Länder-Split ohne extra API ----------
   // Du brauchst: /assets/geo/countries-lite.geojson (Features mit properties.ISO_A2)
@@ -1217,6 +1220,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
