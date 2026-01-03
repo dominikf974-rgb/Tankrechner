@@ -18,6 +18,10 @@
 
   <link rel="stylesheet" href="/assets/css/style.css?v=2026-02" />
 
+  <!-- Google AdSense Library -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4852698472752437"
+          crossorigin="anonymous"></script>
+
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
@@ -72,6 +76,7 @@
       </div>
     </section>
 
+    <!-- Ad #1 -->
     <div class="ad-block" aria-label="Werbung">
       <ins class="adsbygoogle"
         style="display:block"
@@ -79,6 +84,7 @@
         data-ad-slot="7158625008"
         data-ad-format="auto"
         data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>
 
     <section id="formeln" class="card">
@@ -111,6 +117,7 @@
       <p><b>Gesamt</b> ≈ 0,2258 € = <b>22,6 Cent/km</b></p>
     </section>
 
+    <!-- Ad #2 -->
     <div class="ad-block" aria-label="Werbung">
       <ins class="adsbygoogle"
         style="display:block"
@@ -118,6 +125,7 @@
         data-ad-slot="3355111369"
         data-ad-format="auto"
         data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>
 
     <section id="nutzen" class="card">
@@ -137,6 +145,17 @@
         <a class="btn secondary large" href="/ratgeber.html">Zur Ratgeber-Übersicht</a>
       </div>
     </section>
+
+    <!-- Ad #3 -->
+    <div class="ad-block" aria-label="Werbung">
+      <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-4852698472752437"
+        data-ad-slot="7158625008"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
 
     <section id="faq" class="card">
       <h2>FAQ</h2>
@@ -171,11 +190,9 @@
       const btn = document.querySelector('.nav-toggle');
       const nav = document.getElementById('site-nav');
       if(!header || !btn || !nav) return;
-
       const close = () => { header.classList.remove('is-open'); btn.setAttribute('aria-expanded','false'); btn.setAttribute('aria-label','Menü öffnen'); };
       const open  = () => { header.classList.add('is-open');    btn.setAttribute('aria-expanded','true');  btn.setAttribute('aria-label','Menü schließen'); };
-
-      btn.addEventListener('click', (e)=>{ e.stopPropagation(); header.classList.contains('is-open') ? close() : open(); });
+      btn.addEventListener('click',(e)=>{ e.stopPropagation(); header.classList.contains('is-open') ? close() : open(); });
       document.addEventListener('click',(e)=>{ if(!header.classList.contains('is-open')) return; if(header.contains(e.target)) return; close(); });
       document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') close(); });
       window.addEventListener('resize',()=>{ if(window.innerWidth>720) close(); });
