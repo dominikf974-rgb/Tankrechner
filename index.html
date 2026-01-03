@@ -537,17 +537,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fuelPrices = { unleaded91: chosen.unleaded91, unleaded95: chosen.unleaded95, diesel: chosen.diesel };
     renderAvgPrices();
+    
+if(!userEditedPrice){
+  priceEl.value = fuelPrices[fuelTypeEl.value] ?? '';
 
-    if(!userEditedPrice){
-      priceEl.value = fuelPrices[fuelTypeEl.value] ?? '';
-      const standTxt = priceStand ? ` (Stand: ${priceStand})` : '';
-      const sourceTxt = (startCC === "DE" && chosen.name.includes("Live"))
-        ? "Quelle: Tankerkönig (Live, DE) – sonst Länderpreise (statisch)"
-        : "Quelle: Länderpreise (statisch)";
-      priceInfoEl.textContent = `${note}. ${sourceTxt}${standTxt}. Du kannst den Preis ändern.`;
-      priceInfoEl.classList.remove('error');
-    }
-  }
+  priceInfoEl.textContent =
+    `${note}. Durchschnittliche Spritpreise als Orientierung. Du kannst den Preis jederzeit anpassen.`;
+
+  priceInfoEl.classList.remove('error');
+}
+
 
   fuelTypeEl.addEventListener('change', () => {
     if(!userEditedPrice){
@@ -868,11 +867,12 @@ async function splitRouteByCountry(routeGeo){
 
   // ---------- Toll/Vignette Model (deins, aber sauber getrennt) ----------
   // Hinweis: Das sind weiterhin Modellwerte, aber Split ist jetzt "echt".
-  const tollPer100km = {
-    DE:0, AT:6, CH:4, FR:10, IT:9, ES:10, NL:0, BE:0,
-    PL:6, CZ:4, SK:4, HU:5, SI:5, HR:5, RO:3, BG:3,
-    US:3, CA:2, GB:0, AU:5, RU:1
-  };
+const tollPer100km = {
+  DE:0, AT:0, CH:0, FR:10, IT:9, ES:10, NL:0, BE:0,
+  PL:6, CZ:0, SK:0, HU:0, SI:0, HR:5, RO:0, BG:0,
+  US:3, CA:2, GB:0, AU:5, RU:1
+};
+
   const vignetteFlat = {
     AT: 11.50, CH: 40.00, CZ: 12.00, SK: 12.00, HU: 16.00, SI: 16.00, RO: 3.50, BG: 7.50
   };
@@ -964,7 +964,7 @@ async function splitRouteByCountry(routeGeo){
     tollBreakdownEl.innerHTML =
       lines.join('<br>') +
       vignetteLine +
-      `<br><span class="small">Hinweis: Länderanteile basieren auf der echten Straßenroute (OSRM) – ohne zusätzliche API-Abfragen.</span>`;
+      `<br><span class="small">Hinweis: Maut- und Vignettenwerte sind Näherungen und können je nach Route und Fahrzeugklasse variieren.</span>`;
   }
 
   // ---------- Route Buttons ----------
@@ -1243,6 +1243,7 @@ async function splitRouteByCountry(routeGeo){
 
 </body>
 </html>
+
 
 
 
