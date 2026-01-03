@@ -109,6 +109,41 @@
   display:none !important;
 }
 
+    /* Menü-Links wie Buttons aussehen */
+.popular-menu ul{
+  list-style:none;
+  margin:10px 0 0 0;
+  padding:0;
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap:10px;
+}
+
+.popular-menu li{
+  margin:0;
+  padding:0;
+}
+
+.popular-menu a{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px 12px;
+  border-radius:14px;
+  border:1px solid rgba(15,23,42,0.10);
+  background:linear-gradient(180deg,#ffffff,#fbfdff);
+  font-weight:900;
+  color:var(--accent-2);
+  text-decoration:none;
+  line-height:1.2;
+}
+
+@media (min-width: 721px){
+  .popular-menu ul{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
   </style>
 </head>
 
