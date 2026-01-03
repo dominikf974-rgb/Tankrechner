@@ -1,351 +1,162 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-
- <title>FAQ – Spritkosten, Maut, Verbrauch & Kosten pro Person | Spritkosten-Check.de</title>
-  <meta name="description" content="FAQ zum Spritkosten-Rechner: Spritkosten, Verbrauch, Route, Maut/Vignette, CO₂ und Kosten pro Person. Antworten auf die wichtigsten Fragen." />
-  <meta name="robots" content="index, follow" />
-
-  <link rel="canonical" href="https://spritkosten-check.de/faq.html" />
-  <link rel="alternate" hreflang="de" href="https://spritkosten-check.de/faq.html" />
-  <link rel="alternate" hreflang="en" href="https://petrolcostcalculator.com/" />
-  <link rel="alternate" hreflang="x-default" href="https://petrolcostcalculator.com/" />
-
-  <!-- Icons -->
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
-  <link rel="icon" href="/favicon.ico">
-
-  <!-- Global CSS -->
-  <link rel="stylesheet" href="assets/css/style.css?v=2026-02" />
-
-  <!-- FAQ Schema (20 Fragen) -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {"@type":"Question","name":"Wie berechne ich die Spritkosten?","acceptedAnswer":{"@type":"Answer","text":"Spritkosten = (Strecke (km) × Verbrauch (L/100 km) ÷ 100) × Preis pro Liter."}},
-      {"@type":"Question","name":"Was bedeutet Verbrauch in L/100 km?","acceptedAnswer":{"@type":"Answer","text":"Das ist der Kraftstoffverbrauch deines Autos pro 100 km. Du findest ihn im Bordcomputer oder in den Fahrzeugdaten."}},
-      {"@type":"Question","name":"Kann ich die Kosten pro Person berechnen?","acceptedAnswer":{"@type":"Answer","text":"Ja. Gib die Anzahl der Personen (inkl. Fahrer) ein, dann teilt der Rechner die Gesamtkosten pro Kopf."}},
-      {"@type":"Question","name":"Kann ich Start und Ziel eingeben statt Kilometer?","acceptedAnswer":{"@type":"Answer","text":"Ja. Mit Start/Ziel wird eine Straßenroute berechnet und die Distanz automatisch eingetragen."}},
-      {"@type":"Question","name":"Wie genau ist die Maut- und Vignetten-Schätzung?","acceptedAnswer":{"@type":"Answer","text":"Es ist eine Näherung nach Ländern. Reale Kosten hängen von Route, Fahrzeugklasse und lokalen Regeln ab."}},
-      {"@type":"Question","name":"Welche Kraftstoffarten werden unterstützt?","acceptedAnswer":{"@type":"Answer","text":"Benzin (E10/91), Super (E5/95) und Diesel."}},
-      {"@type":"Question","name":"Kann ich den Spritpreis manuell ändern?","acceptedAnswer":{"@type":"Answer","text":"Ja. Du kannst den Preis jederzeit überschreiben oder auf Standard zurücksetzen."}},
-      {"@type":"Question","name":"Woher kommen die Spritpreise?","acceptedAnswer":{"@type":"Answer","text":"Je nach Land werden Durchschnittswerte genutzt. Für Deutschland kann zusätzlich eine Live-Quelle verwendet werden (wenn verfügbar)."}},
-      {"@type":"Question","name":"Warum unterscheiden sich echte Kosten von der Rechnung?","acceptedAnswer":{"@type":"Answer","text":"Fahrstil, Verkehr, Wetter, Beladung, Reifen, tatsächliche Preise und Mautdetails beeinflussen die Realität."}},
-      {"@type":"Question","name":"Was sind „laufende Kosten“?","acceptedAnswer":{"@type":"Answer","text":"Eine Näherung für Wartung, Verschleiß, Wertverlust und Versicherung; plus eine Maut/Vignetten-Schätzung."}},
-      {"@type":"Question","name":"Kann ich Hin- und Rückfahrt berechnen?","acceptedAnswer":{"@type":"Answer","text":"Ja. Entweder du verdoppelst die Kilometer oder berechnest die Route separat hin und zurück."}},
-      {"@type":"Question","name":"Wie wird die CO₂-Bilanz berechnet?","acceptedAnswer":{"@type":"Answer","text":"CO₂ basiert näherungsweise auf dem Verbrauch (kg CO₂ pro Liter) – abhängig von Benzin oder Diesel."}},
-      {"@type":"Question","name":"Was bedeuten die CO₂-Vergleichswerte (Auto/Bahn/Flug)?","acceptedAnswer":{"@type":"Answer","text":"Das sind Richtwerte zur Orientierung. Bahn/Flug üblicherweise pro Sitzplatz, Auto pro Fahrzeug."}},
-      {"@type":"Question","name":"Funktioniert der Rechner weltweit?","acceptedAnswer":{"@type":"Answer","text":"Ja. Du kannst Orte weltweit auswählen. Preise/Maut sind je nach Land als Näherung hinterlegt."}},
-      {"@type":"Question","name":"Warum wird bei Länderwechsel 50/50 gesplittet?","acceptedAnswer":{"@type":"Answer","text":"Das ist eine schnelle Schätzung, wenn Start- und Zielland unterschiedlich sind. Für exakte Werte bräuchte man die genaue Länderroute."}},
-      {"@type":"Question","name":"Was tun, wenn keine Route gefunden wird?","acceptedAnswer":{"@type":"Answer","text":"Ort genauer eingeben (Stadt + Land), Schreibweise prüfen oder einen nahegelegenen Ort versuchen."}},
-      {"@type":"Question","name":"Warum ist die Karte manchmal weiß oder lädt komisch?","acceptedAnswer":{"@type":"Answer","text":"Meist ein Resize/Viewport-Thema oder eine langsame Verbindung. Ein Reload oder „Karte zurücksetzen“ hilft oft."}},
-      {"@type":"Question","name":"Kann ich den Rechner auch ohne Karte nutzen?","acceptedAnswer":{"@type":"Answer","text":"Ja. Du kannst einfach Kilometer, Verbrauch und Preis eingeben, ganz ohne Start/Ziel."}},
-      {"@type":"Question","name":"Warum sind die Werte „€/100 km“ hilfreich?","acceptedAnswer":{"@type":"Answer","text":"Damit kannst du Fahrzeuge oder Fahrten besser vergleichen, unabhängig von der Strecke."}},
-      {"@type":"Question","name":"Speichert ihr meine Eingaben?","acceptedAnswer":{"@type":"Answer","text":"Der Rechner funktioniert ohne Anmeldung. In der Regel werden Eingaben nicht serverseitig gespeichert; Cookies betreffen nur Zustimmung/Ads."}}
-    ]
-  }
-  </script>
-
-  <style>
-    /* FAQ spezifisch: clean, passt zu deinem System */
-    .faq-wrap{ display:flex; flex-direction:column; gap:12px; }
-
-    .faq-item{
-      border:1px solid rgba(15,23,42,0.10);
-      border-radius:14px;
-      overflow:hidden;
-      background:linear-gradient(180deg,#ffffff,#fbfdff);
-    }
-
-    .faq-item summary{
-      cursor:pointer;
-      list-style:none;
-      padding:14px 14px;
-      font-weight:900;
-      color:var(--accent-2);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-    }
-    .faq-item summary::-webkit-details-marker{ display:none; }
-
-    .faq-item summary .chev{
-      font-weight:900;
-      opacity:.7;
-      transform:rotate(0deg);
-      transition:transform .18s ease;
-      user-select:none;
-    }
-    .faq-item[open] summary .chev{ transform:rotate(180deg); }
-
-    .faq-item .answer{
-      padding:0 14px 14px 14px;
-      color:var(--text);
-      line-height:1.65;
-    }
-
-    .faq-cta{
-      text-align:center;
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-      align-items:center;
-      justify-content:center;
-    }
-    .faq-cta p{ margin:0; }
-    .faq-cta .btn{ min-width:260px; }
-    @media(max-width:720px){
-      .faq-cta .btn{ width:100%; max-width:420px; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - Spritkosten-Check.de</title>
+    <meta name="description" content="Häufig gestellte Fragen zum Spritkosten-Rechner. Erfahren Sie mehr über die Berechnung von Kraftstoffkosten und Verbrauch.">
+    <meta name="keywords" content="FAQ, Spritkosten, Kraftstoffkosten, Verbrauch berechnen, Benzinkosten, Dieselkosten">
+    <meta name="author" content="Spritkosten-Check.de">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="FAQ - Spritkosten-Check.de">
+    <meta property="og:description" content="Häufig gestellte Fragen zum Spritkosten-Rechner">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.spritkosten-check.de/faq.html">
+    <meta property="og:image" content="https://www.spritkosten-check.de/assets/images/og-image.jpg">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="FAQ - Spritkosten-Check.de">
+    <meta name="twitter:description" content="Häufig gestellte Fragen zum Spritkosten-Rechner">
+    
+    <link rel="canonical" href="https://www.spritkosten-check.de/faq.html">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/assets/css/style.css?v=2026-02">
 </head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-container">
+                <a href="/" class="logo">Spritkosten-Check.de</a>
+                <ul class="nav-menu">
+                    <li><a href="/">Rechner</a></li>
+                    <li><a href="/faq.html" class="active">FAQ</a></li>
+                    <li><a href="/kontakt.html">Kontakt</a></li>
+                    <li><a href="/impressum.html">Impressum</a></li>
+                    <li><a href="/datenschutz.html">Datenschutz</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
 
-<body data-page="faq">
+    <main>
+        <div class="container">
+            <h1>Häufig gestellte Fragen (FAQ)</h1>
+            
+            <div class="faq-section">
+                <div class="faq-item">
+                    <h2>Wie genau ist der Spritkosten-Rechner?</h2>
+                    <p>Der Rechner bietet eine präzise Schätzung Ihrer Kraftstoffkosten basierend auf den eingegebenen Werten. Die Genauigkeit hängt von der Korrektheit Ihrer Angaben ab, insbesondere beim durchschnittlichen Verbrauch Ihres Fahrzeugs. Beachten Sie, dass der tatsächliche Verbrauch je nach Fahrstil, Straßenverhältnissen und Wetterbedingungen variieren kann.</p>
+                </div>
 
-  <!-- Header via loader -->
-  <div id="site-header"></div>
+                <div class="faq-item">
+                    <h2>Welchen Verbrauch soll ich eingeben?</h2>
+                    <p>Geben Sie den durchschnittlichen Kraftstoffverbrauch Ihres Fahrzeugs in Litern pro 100 Kilometer ein. Diesen Wert finden Sie:</p>
+                    <ul>
+                        <li>Im Bordcomputer Ihres Fahrzeugs</li>
+                        <li>In den technischen Daten Ihres Fahrzeugmodells</li>
+                        <li>Durch eigene Berechnung: Getankte Liter ÷ gefahrene Kilometer × 100</li>
+                    </ul>
+                    <p>Für eine genauere Berechnung empfehlen wir, Ihren tatsächlichen Durchschnittsverbrauch über mehrere Tankfüllungen zu ermitteln.</p>
+                </div>
 
-  <main class="page-container" aria-label="Seiteninhalt">
+                <div class="faq-item">
+                    <h2>Werden die Spritpreise automatisch aktualisiert?</h2>
+                    <p>Nein, Sie müssen den aktuellen Spritpreis manuell eingeben. Die Preise können Sie an Tankstellen, in Tank-Apps oder auf Vergleichsportalen nachschauen. Aktuelle Durchschnittspreise für Deutschland finden Sie auch auf der Website des ADAC oder beim Statistischen Bundesamt.</p>
+                </div>
 
-    <section class="card" aria-label="FAQ Intro">
-      <!-- Ad: FAQ Top -->
-  <div class="ad-block">
-  <ins class="adsbygoogle"
-    style="display:block"
-    data-ad-client="ca-pub-4852698472752437"
-    data-ad-slot="7158625008"
-    data-ad-format="auto"
-    data-full-width-responsive="true"></ins>
-    </div>
+                <div class="faq-item">
+                    <h2>Kann ich auch Elektroautos berechnen?</h2>
+                    <p>Dieser Rechner ist speziell für Fahrzeuge mit Verbrennungsmotor (Benzin, Diesel, Autogas, Erdgas) konzipiert. Für Elektrofahrzeuge empfehlen wir einen spezialisierten Stromkosten-Rechner, da dort andere Faktoren wie kWh-Verbrauch und Stromtarife relevant sind.</p>
+                </div>
 
-      <h2>FAQ – Häufige Fragen zum Spritkosten-Rechner</h2>
-      <p class="small" style="margin-top:0">
-        Klicke auf eine Frage, um die Antwort auszuklappen.
-      </p>
-    </section>
+                <div class="faq-item">
+                    <h2>Was bedeutet der Gesamtpreis?</h2>
+                    <p>Der Gesamtpreis zeigt die kompletten Kraftstoffkosten für Ihre eingegebene Strecke. Diese Berechnung erfolgt nach der Formel:</p>
+                    <p class="formula">Gesamtpreis = (Strecke in km ÷ 100) × Verbrauch in l/100km × Preis pro Liter</p>
+                    <p>Beispiel: Bei 200 km Strecke, 7 l/100km Verbrauch und 1,80 € Spritpreis:</p>
+                    <p class="formula">(200 ÷ 100) × 7 × 1,80 = 25,20 €</p>
+                </div>
 
-    <section class="card" aria-label="FAQ Liste">
-      <div class="faq-wrap">
+                <div class="faq-item">
+                    <h2>Berücksichtigt der Rechner unterschiedliche Fahrstile?</h2>
+                    <p>Der Rechner verwendet den von Ihnen angegebenen Durchschnittsverbrauch. Ihr individueller Fahrstil beeinflusst diesen Verbrauch erheblich:</p>
+                    <ul>
+                        <li>Sportliche Fahrweise: +20-30% Mehrverbrauch</li>
+                        <li>Stadtverkehr: +10-20% Mehrverbrauch</li>
+                        <li>Autobahn bei hoher Geschwindigkeit: +15-25% Mehrverbrauch</li>
+                        <li>Eco-Fahrweise: -10-15% Minderverbrauch</li>
+                    </ul>
+                    <p>Passen Sie den Verbrauchswert entsprechend Ihrer typischen Fahrsituation an.</p>
+                </div>
 
-        <details class="faq-item">
-          <summary>Wie berechne ich die Spritkosten? <span class="chev">▼</span></summary>
-          <div class="answer">Spritkosten = (Strecke (km) × Verbrauch (L/100 km) ÷ 100) × Preis pro Liter.</div>
-        </details>
+                <div class="faq-item">
+                    <h2>Kann ich mehrere Fahrten gleichzeitig berechnen?</h2>
+                    <p>Ja, Sie können entweder die Gesamtstrecke mehrerer Fahrten addieren und als eine Berechnung eingeben, oder jede Fahrt einzeln berechnen und die Ergebnisse addieren. Beide Methoden führen zum gleichen Gesamtergebnis.</p>
+                </div>
 
-        <details class="faq-item">
-          <summary>Was bedeutet Verbrauch in L/100 km? <span class="chev">▼</span></summary>
-          <div class="answer">Das ist der Kraftstoffverbrauch deines Autos pro 100 km – oft im Bordcomputer oder in den Fahrzeugdaten zu finden.</div>
-        </details>
+                <div class="faq-item">
+                    <h2>Werden meine Eingaben gespeichert?</h2>
+                    <p>Ja, der Rechner speichert Ihre zuletzt verwendeten Werte im lokalen Speicher Ihres Browsers (localStorage). Diese Daten bleiben nur auf Ihrem Gerät und werden nicht an uns übertragen. Sie können diese Daten jederzeit löschen, indem Sie Ihren Browser-Cache leeren.</p>
+                </div>
 
-        <details class="faq-item">
-          <summary>Kann ich die Kosten pro Person berechnen? <span class="chev">▼</span></summary>
-          <div class="answer">Ja. Gib die Anzahl der Personen (inkl. Fahrer) ein, dann werden die Gesamtkosten pro Kopf berechnet.</div>
-        </details>
+                <div class="faq-item">
+                    <h2>Wie kann ich Spritkosten sparen?</h2>
+                    <p>Hier einige bewährte Tipps zur Reduzierung Ihrer Kraftstoffkosten:</p>
+                    <ul>
+                        <li>Vorausschauend und gleichmäßig fahren</li>
+                        <li>Unnötiges Gewicht aus dem Fahrzeug entfernen</li>
+                        <li>Reifendruck regelmäßig kontrollieren und optimieren</li>
+                        <li>Dachgepäckträger bei Nichtgebrauch abmontieren</li>
+                        <li>Motor bei längeren Standzeiten abschalten</li>
+                        <li>Klimaanlage nur bei Bedarf einsetzen</li>
+                        <li>Kurzstrecken vermeiden oder zu Fuß/mit dem Rad zurücklegen</li>
+                        <li>Spritpreise vergleichen und günstig tanken</li>
+                    </ul>
+                </div>
 
-        <details class="faq-item">
-          <summary>Kann ich Start und Ziel eingeben statt Kilometer? <span class="chev">▼</span></summary>
-          <div class="answer">Ja. Start/Ziel werden in eine Straßenroute umgerechnet und die Distanz automatisch eingetragen.</div>
-        </details>
+                <div class="faq-item">
+                    <h2>Ist die Nutzung des Rechners kostenlos?</h2>
+                    <p>Ja, der Spritkosten-Rechner ist vollständig kostenlos und ohne Registrierung nutzbar. Es gibt keine versteckten Kosten oder Premium-Funktionen.</p>
+                </div>
+            </div>
 
-        <details class="faq-item">
-          <summary>Wie genau ist die Maut- und Vignetten-Schätzung? <span class="chev">▼</span></summary>
-          <div class="answer">Es ist eine Näherung nach Ländern. Reale Kosten hängen von Route, Fahrzeugklasse und lokalen Regeln ab.</div>
-        </details>
-
-        <details class="faq-item">
-          <summary>Welche Kraftstoffarten werden unterstützt? <span class="chev">▼</span></summary>
-          <div class="answer">Benzin (E10/91), Super (E5/95) und Diesel.</div>
-        </details>
-        <!-- Ad: FAQ Mid -->
-        <div class="ad-block">
-  <ins class="adsbygoogle"
-    style="display:block"
-    data-ad-client="ca-pub-4852698472752437"
-    data-ad-slot="3355111369"
-    data-ad-format="auto"
-    data-full-width-responsive="true"></ins>
-  </div>
-       
-        <details class="faq-item">
-          <summary>Kann ich den Spritpreis manuell ändern? <span class="chev">▼</span></summary>
-          <div class="answer">Ja. Du kannst den Preis jederzeit überschreiben oder auf den Standard zurücksetzen.</div>
-        </details>
-
-        <details class="faq-item">
-          <summary>Woher kommen die Spritpreise? <span class="chev">▼</span></summary>
-          <div class="answer">Je nach Land werden Durchschnittswerte genutzt. Für Deutschland kann zusätzlich eine Live-Quelle verwendet werden (wenn verfügbar).</div>
-        </details>
-
-        <details class="faq-item">
-          <summary>Warum unterscheiden sich echte Kosten von der Rechnung? <span class="chev">▼</span></summary>
-          <div class="answer">Fahrstil, Verkehr, Wetter, Beladung, Reifen, tatsächliche Preise und Mautdetails beeinflussen die Realität.</div>
-        </details>
-
-        <details class="faq-item">
-          <summary>Was sind „laufende Kosten“? <span class="chev">▼</span></summary>
-          <div class="answer">Eine Näherung für Wartung, Verschleiß, Wertverlust und Versicherung; plus eine Maut/Vignetten-Schätzung.</div>
-        </details>
-
-        <details class="faq-item">
-          <summary>Kann ich Hin- und Rückfahrt berechnen? <span class="chev">▼</span></summary>
-          <div class="answer">Ja. Entweder du verdoppelst die Kilometer oder berechnest die Route separat hin und zurück.</div>
-        </details>
-
-        <details class="faq-item">
-          <summary>Wie wird die CO₂-Bilanz berechnet? <span class="chev">▼</span></summary>
-          <div class="answer">CO₂ wird näherungsweise aus dem Verbrauch berechnet (kg CO₂ pro Liter), abhängig von Benzin oder Diesel.</div>
-        </details>
-
-        <details class="faq-item">
-          <summary>Was bedeuten die CO₂-Vergleichswerte (Auto/Bahn/Flug)? <span class="chev">▼</span></summary>
-          <div class="answer">Das sind Richtwerte zur Orientierung. Bahn/Flug üblicherweise pro Sitzplatz, Auto pro Fahrzeug.</div>
-        </details>
-
-        <details class="faq-item">
-          <summary>Funktioniert der Rechner weltweit? <span class="chev">▼</span></summary>
-          <div class="answer">Ja. Du kannst Orte weltweit auswählen. Preise und Maut/Vignette sind je nach Land als Näherung hinterlegt.</div>
-        </details>
-
-        <details class="faq-item">
-          <summary>Warum wird bei Länderwechsel 50/50 gesplittet? <span class="chev">▼</span></summary>
-          <div class="answer">Das ist eine schnelle Schätzung, wenn Start- und Zielland unterschiedlich sind. Für exakte Werte bräuchte man die genaue Länderroute.</div>
-        </details>
-
-        <details class="faq-item">
-          <summary>Was tun, wenn keine Route gefunden wird? <span class="chev">▼</span></summary>
-          <div class="answer">Ort genauer eingeben (Stadt + Land), Schreibweise prüfen oder einen nahegelegenen Ort versuchen.</div>
-        </details>
-
-        <details class="faq-item">
-          <summary>Warum ist die Karte manchmal weiß oder lädt komisch? <span class="chev">▼</span></summary>
-          <div class="answer">Meist ein Resize/Viewport-Thema oder eine langsame Verbindung. Ein Reload oder „Karte zurücksetzen“ hilft oft.</div>
-        </details>
-
-        <details class="faq-item">
-          <summary>Kann ich den Rechner auch ohne Karte nutzen? <span class="chev">▼</span></summary>
-          <div class="answer">Ja. Du kannst einfach Kilometer, Verbrauch und Preis eingeben – ganz ohne Start/Ziel.</div>
-        </details>
-
-        <details class="faq-item">
-          <summary>Warum sind die Werte „€/100 km“ hilfreich? <span class="chev">▼</span></summary>
-          <div class="answer">Damit kannst du Fahrzeuge oder Fahrten besser vergleichen, unabhängig von der Streckenlänge.</div>
-        </details>
-
-        <details class="faq-item">
-          <summary>Speichert ihr meine Eingaben? <span class="chev">▼</span></summary>
-          <div class="answer">Der Rechner funktioniert ohne Anmeldung. In der Regel werden Eingaben nicht serverseitig gespeichert; Cookies betreffen nur Zustimmung/Ads.</div>
-        </details>
-
-        <details class="faq-item">
-          <summary>Welche Daten sollte ich eingeben, damit es möglichst genau wird? <span class="chev">▼</span></summary>
-          <div class="answer">Nutze deinen realen Verbrauch (z. B. Langzeitdurchschnitt) und deinen aktuellen Spritpreis – dann sind die Ergebnisse am zuverlässigsten.</div>
-        </details>
-
-      </div>
-    </section>
-
-    <!-- CTA E-Mail -->
-    <section class="card" aria-label="Kontakt">
-      <div class="faq-cta">
-        <h2 style="margin-bottom:0;">Hast du noch mehr Fragen?</h2>
-        <p class="small">
-          Schreib uns einfach – wir helfen dir gerne weiter.
-        </p>
-
-        <a class="btn large" href="mailto:info@spritkosten-check.de?subject=Frage%20zum%20Spritkosten-Rechner&body=Hallo%20SpritKosten-Check%20Team%2C%0D%0A%0D%0Aich%20habe%20eine%20Frage%3A%0D%0A%0D%0A%0D%0AViele%20Gr%C3%BC%C3%9Fe">
-          E-Mail senden
-        </a>
-
-        <div class="small" style="opacity:.9">
-          E-Mail: <a href="mailto:info@spritkosten-check.de">info@spritkosten-check.de</a>
+            <div class="cta-section">
+                <h2>Noch Fragen?</h2>
+                <p>Wenn Sie weitere Fragen haben, die hier nicht beantwortet wurden, kontaktieren Sie uns gerne.</p>
+                <a href="/kontakt.html" class="btn">Kontakt aufnehmen</a>
+            </div>
         </div>
-      </div>
-    </section>
+    </main>
 
-  </main>
-
-  <!-- Footer via loader -->
-  <div id="site-footer"></div>
-
- <!-- Active Tab -->
-<script src="/assets/js/active-nav.js" defer></script>
-
-<script>
-  async function loadPart(id, url){
-    const el = document.getElementById(id);
-    if(!el) return false;
-    try{
-      const r = await fetch(url, { cache: 'no-cache' });
-      el.innerHTML = await r.text();
-      return true;
-    }catch(e){
-      console.warn('Konnte nicht laden:', url);
-      return false;
-    }
-  }
-
-  function initMobileNav(){
-    const header = document.querySelector('.site-header');
-    const btn = document.querySelector('.nav-toggle');
-    const nav = document.getElementById('site-nav');
-    if(!header || !btn || !nav) return;
-
-    const close = () => {
-      header.classList.remove('is-open');
-      btn.setAttribute('aria-expanded', 'false');
-      btn.setAttribute('aria-label', 'Menü öffnen');
-    };
-
-    const open = () => {
-      header.classList.add('is-open');
-      btn.setAttribute('aria-expanded', 'true');
-      btn.setAttribute('aria-label', 'Menü schließen');
-    };
-
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      header.classList.contains('is-open') ? close() : open();
-    });
-
-    document.addEventListener('click', (e) => {
-      if(!header.classList.contains('is-open')) return;
-      if(header.contains(e.target)) return;
-      close();
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if(e.key === 'Escape') close();
-    });
-
-    window.addEventListener('resize', () => {
-      if(window.innerWidth > 720) close();
-    });
-  }
-
-  function loadCookiesAfterFooter(){
-    const s = document.createElement('script');
-    s.src = '/assets/js/cookies.js';
-    s.defer = true;
-    document.body.appendChild(s);
-  }
-
-  document.addEventListener('DOMContentLoaded', async () => {
-    await loadPart('site-header', '/practice/header.html');
-    initMobileNav(); // ✅ DAS war auf Unterseiten gefehlt
-
-    await loadPart('site-footer', '/practice/footer.html');
-    loadCookiesAfterFooter(); // ✅ Cookie Banner überall sicher
-  });
-</script>
-
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Spritkosten-Check.de</h3>
+                    <p>Ihr zuverlässiger Rechner für Kraftstoffkosten</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Links</h3>
+                    <ul>
+                        <li><a href="/">Rechner</a></li>
+                        <li><a href="/faq.html">FAQ</a></li>
+                        <li><a href="/kontakt.html">Kontakt</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Rechtliches</h3>
+                    <ul>
+                        <li><a href="/impressum.html">Impressum</a></li>
+                        <li><a href="/datenschutz.html">Datenschutz</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Spritkosten-Check.de. Alle Rechte vorbehalten.</p>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>
