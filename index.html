@@ -109,8 +109,21 @@
             </div>
 
             <div style="margin-top:12px">
-              <label for="place-from">Oder: Start (Ort, Land)</label>
-              <input id="place-from" type="text" placeholder="z. B. Paris, Frankreich" aria-label="Startort" />
+            <input id="place-from" type="text"
+  placeholder="z. B. Paris, Frankreich"
+  aria-label="Startort"
+  autocomplete="off"
+  autocapitalize="off"
+  autocorrect="off"
+  spellcheck="false" />
+
+<input id="place-to" type="text"
+  placeholder="z. B. Berlin, Deutschland"
+  aria-label="Zielort"
+  autocomplete="off"
+  autocapitalize="off"
+  autocorrect="off"
+  spellcheck="false" />
 
               <label for="place-to" style="margin-top:10px">Ziel (Ort, Land)</label>
               <input id="place-to" type="text" placeholder="z. B. Berlin, Deutschland" aria-label="Zielort" />
@@ -1243,6 +1256,7 @@ const tollPer100km = {
 
 </body>
 </html>
+
 
 
 
