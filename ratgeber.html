@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
- <title>Ratgeber – Sprit sparen, Verbrauch senken & Reisekosten berechnen | Spritkosten-Check.de</title>
+  <title>Ratgeber – Sprit sparen, Verbrauch senken & Reisekosten berechnen | Spritkosten-Check.de</title>
   <meta name="description" content="Ratgeber für Autofahrer: Sprit sparen, Verbrauch senken, Roadtrip planen, Maut/Vignette verstehen und CO₂ einordnen. Praktische Tipps, Checklisten, Formeln und Mini-FAQ." />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://spritkosten-check.de/ratgeber.html" />
@@ -37,7 +37,7 @@
   </script>
 
   <style>
-    /* Ratgeber: kleine Content-Styles */
+    /* Basics */
     .toc{ display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
     .toc a{ text-decoration:none; }
     .note{
@@ -47,6 +47,8 @@
       padding:12px 12px;
     }
     .checklist{ margin:0; padding-left:18px; line-height:1.85; }
+
+    /* Mini FAQ */
     .mini-faq{ display:flex; flex-direction:column; gap:10px; }
     .mini-faq details{
       border:1px solid rgba(15,23,42,0.10);
@@ -70,7 +72,7 @@
     .mini-faq .chev{ opacity:.7; transition:transform .18s ease; user-select:none; }
     .mini-faq details[open] .chev{ transform:rotate(180deg); }
 
-    /* TOC Buttons auf Mobile sauber */
+    /* Mobile: TOC als Grid (Desktop bleibt flex) */
     @media (max-width: 720px){
       .toc{
         display:grid;
@@ -78,7 +80,6 @@
         gap:10px;
       }
       .toc a{ width:100%; }
-      /* letzter Button über volle Breite, zentriert */
       .toc a:last-child{
         grid-column: 1 / -1;
         justify-self:center;
@@ -86,96 +87,50 @@
         width: 100%;
       }
     }
-    /* Mobile Hamburger Menü für Beliebte Rechner */
-.popular-mobile { display:none; }
 
-@media (max-width:720px){
-  .popular-desktop { display:none; }
-  .popular-mobile { display:block; }
-}
+    /* Hidden Fix */
+    [hidden]{ display:none !important; }
 
-    /* Hamburger Menü – Beliebte Rechner */
-.popular-menu{
-  margin-top:10px;
-  padding-top:10px;
-  border-top:1px solid rgba(15,23,42,0.10);
-}
+    /* Desktop/Mobile Umschaltung: Beliebte Rechner */
+    .popular-mobile{ display:none; }
+    @media (max-width:720px){
+      .popular-desktop{ display:none; }
+      .popular-mobile{ display:block; }
+    }
 
-.popular-menu a{
-  text-decoration:none;
-}
+    /* Desktop/Mobile Umschaltung: Inhalte */
+    .mobile-sections{ display:none; }
+    @media (max-width:720px){
+      .mobile-sections{ display:block; }
+      .toc[aria-label="Inhaltsverzeichnis"]{ display:none; }
+    }
 
-[hidden]{
-  display:none !important;
-}
+    /* Menü-Boxen */
+    .popular-menu,
+    .sections-menu{
+      margin-top:10px;
+      padding-top:10px;
+      border-top:1px solid rgba(15,23,42,0.10);
+    }
 
-    /* Menü-Links wie Buttons aussehen */
-.popular-menu ul{
-  list-style:none;
-  margin:10px 0 0 0;
-  padding:0;
-  display:grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap:10px;
-}
+    /* Mobile Menüs: Buttons sauber anordnen */
+    .popular-menu ul,
+    .sections-menu ul{
+      list-style:none;
+      margin:10px 0 0 0;
+      padding:0;
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap:10px;
+    }
 
-.popular-menu li{
-  margin:0;
-  padding:0;
-}
-
-.popular-menu a{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:10px 12px;
-  border-radius:14px;
-  border:1px solid rgba(15,23,42,0.10);
-  background:linear-gradient(180deg,#ffffff,#fbfdff);
-  font-weight:900;
-  color:var(--accent-2);
-  text-decoration:none;
-  line-height:1.2;
-}
-
-@media (min-width: 721px){
-  .popular-menu ul{
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-/* Desktop vs Mobile Anzeige für Beliebte Rechner */
-.popular-mobile { display:none; }
-
-@media (max-width: 720px){
-  .popular-desktop { display:none; }
-  .popular-mobile { display:block; }
-}
-
-/* Hamburger Menü – Button Look */
-.popular-menu ul{
-  list-style:none;
-  margin:10px 0 0 0;
-  padding:0;
-  display:grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap:10px;
-}
-
-.popular-menu a{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:10px 12px;
-  border-radius:14px;
-  border:1px solid rgba(15,23,42,0.10);
-  background:linear-gradient(180deg,#ffffff,#fbfdff);
-  font-weight:900;
-  color:var(--accent-2);
-  text-decoration:none;
-}
-
-[hidden]{ display:none !important; }
-
+    @media (max-width:720px){
+      /* Auf Handy lieber 1 Spalte, damit nix gequetscht wird */
+      .popular-menu ul,
+      .sections-menu ul{
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 
@@ -195,43 +150,64 @@
         Wenn du direkt rechnen willst: <a href="/" class="small"><b>zum Spritkosten-Rechner</b></a>.
       </p>
 
-      <!-- Beliebte Rechner & Ratgeber (Desktop Buttons + Mobile Hamburger) -->
-<div class="popular-links" style="margin-top:14px">
+      <!-- Beliebte Rechner & Ratgeber (Desktop + Mobile) -->
+      <div class="popular-links" style="margin-top:14px">
 
-  <!-- Desktop -->
-  <div class="popular-desktop note">
-    <b>Beliebte Rechner & Ratgeber:</b>
-    <div class="toc" style="margin-top:10px">
-     <a class="btn secondary" href="/ratgeber/spritkosten-berechnen.html">Spritkosten berechnen</a>
-<a class="btn secondary" href="/ratgeber/kosten-pro-km.html">Kosten pro km berechnen</a>
-<a class="btn secondary" href="/ratgeber/spritkosten-pro-100km.html">Spritkosten pro 100 km</a>
-<a class="btn secondary" href="/ratgeber/fahrtkosten-teilen.html">Fahrtkosten teilen</a>
-<a class="btn secondary" href="/ratgeber/diesel-oder-benzin.html">Diesel oder Benzin</a>
-<a class="btn secondary" href="/ratgeber/langstrecke-tipps.html">Langstrecke Tipps</a>
-    </div>
-  </div>
+        <!-- Desktop -->
+        <div class="popular-desktop note">
+          <b>Beliebte Rechner & Ratgeber:</b>
+          <div class="toc" style="margin-top:10px">
+            <a class="btn secondary" href="/ratgeber/spritkosten-berechnen.html">Spritkosten berechnen</a>
+            <a class="btn secondary" href="/ratgeber/kosten-pro-km.html">Kosten pro km berechnen</a>
+            <a class="btn secondary" href="/ratgeber/spritkosten-pro-100km.html">Spritkosten pro 100 km</a>
+            <a class="btn secondary" href="/ratgeber/fahrtkosten-teilen.html">Fahrtkosten teilen</a>
+            <a class="btn secondary" href="/ratgeber/diesel-oder-benzin.html">Diesel oder Benzin</a>
+            <a class="btn secondary" href="/ratgeber/langstrecke-tipps.html">Langstrecke Tipps</a>
+          </div>
+        </div>
 
-  <!-- Mobile -->
-  <div class="popular-mobile note">
-    <button class="popular-toggle btn secondary" type="button"
-      aria-expanded="false" aria-controls="popularMenu">
-      ☰ Beliebte Rechner & Ratgeber
-    </button>
+        <!-- Mobile -->
+        <div class="popular-mobile note">
+          <button class="popular-toggle btn secondary" type="button"
+            aria-expanded="false" aria-controls="popularMenu">
+            ☰ Beliebte Rechner & Ratgeber
+          </button>
 
-    <div id="popularMenu" class="popular-menu" hidden>
-   <ul class="checklist">
- <li><a class="btn secondary" href="/ratgeber/spritkosten-berechnen.html">Spritkosten</a></li>
-<li><a class="btn secondary" href="/ratgeber/kosten-pro-km.html">€/km</a></li>
-<li><a class="btn secondary" href="/ratgeber/spritkosten-pro-100km.html">€/100km</a></li>
-<li><a class="btn secondary" href="/ratgeber/fahrtkosten-teilen.html">Teilen</a></li>
-<li><a class="btn secondary" href="/ratgeber/diesel-oder-benzin.html">Diesel vs Benzin</a></li>
-<li><a class="btn secondary" href="/ratgeber/langstrecke-tipps.html">Langstrecke</a></li>
-</ul>
-    </div>
-  </div>
+          <div id="popularMenu" class="popular-menu" hidden>
+            <ul class="checklist">
+              <li><a class="btn secondary" href="/ratgeber/spritkosten-berechnen.html">Spritkosten</a></li>
+              <li><a class="btn secondary" href="/ratgeber/kosten-pro-km.html">€/km</a></li>
+              <li><a class="btn secondary" href="/ratgeber/spritkosten-pro-100km.html">€/100km</a></li>
+              <li><a class="btn secondary" href="/ratgeber/fahrtkosten-teilen.html">Teilen</a></li>
+              <li><a class="btn secondary" href="/ratgeber/diesel-oder-benzin.html">Diesel vs Benzin</a></li>
+              <li><a class="btn secondary" href="/ratgeber/langstrecke-tipps.html">Langstrecke</a></li>
+            </ul>
+          </div>
+        </div>
 
-</div>
+      </div>
 
+      <!-- Mobile Inhaltsverzeichnis (kurz) -->
+      <div class="mobile-sections note" style="margin-top:14px">
+        <button class="sections-toggle btn secondary" type="button"
+          aria-expanded="false" aria-controls="sectionsMenu">
+          ☰ Inhalte
+        </button>
+
+        <div id="sectionsMenu" class="sections-menu" hidden>
+          <ul class="checklist">
+            <li><a class="btn secondary" href="#sparen">Sparen</a></li>
+            <li><a class="btn secondary" href="#verbrauch">Verbrauch</a></li>
+            <li><a class="btn secondary" href="#kostenformeln">Formeln</a></li>
+            <li><a class="btn secondary" href="#roadtrip">Roadtrip</a></li>
+            <li><a class="btn secondary" href="#maut">Maut</a></li>
+            <li><a class="btn secondary" href="#co2">CO₂</a></li>
+            <li><a class="btn secondary" href="#faq-mini">FAQ</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Desktop Inhaltsverzeichnis (bleibt sichtbar) -->
       <div class="toc" aria-label="Inhaltsverzeichnis">
         <a class="btn secondary" href="#sparen">Sprit sparen</a>
         <a class="btn secondary" href="#verbrauch">Verbrauch</a>
@@ -427,7 +403,7 @@
 
   </main>
 
-  <!-- Footer via loader (WICHTIG: außerhalb vom Container → kein weißer Rand) -->
+  <!-- Footer via loader -->
   <div id="site-footer"></div>
 
   <!-- Active Tab -->
@@ -502,14 +478,24 @@
     });
   </script>
 
+  <!-- Beide Hamburger Menüs (Beliebte Rechner + Inhalte) -->
   <script>
-document.addEventListener('DOMContentLoaded', () => {
-  const btn = document.querySelector('.popular-toggle');
-  const menu = document.getElementById('popularMenu');
-  if(!btn || !menu) return;
-  btn.addEventListener('click', () => { menu.hidden = !menu.hidden; });
-});
-</script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggle = (btnSelector, menuId) => {
+        const btn = document.querySelector(btnSelector);
+        const menu = document.getElementById(menuId);
+        if(!btn || !menu) return;
+        btn.addEventListener('click', () => {
+          const open = btn.getAttribute('aria-expanded') === 'true';
+          btn.setAttribute('aria-expanded', String(!open));
+          menu.hidden = open;
+        });
+      };
+
+      toggle('.popular-toggle', 'popularMenu');
+      toggle('.sections-toggle', 'sectionsMenu');
+    });
+  </script>
 
 </body>
 </html>
