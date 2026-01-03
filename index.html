@@ -817,31 +817,46 @@ async function getRouteOSRM(lat1, lon1, lat2, lon2){
     return out;
   }
 
-  async function splitRouteByCountry(routeGeo){
-    if(!routeGeo || routeGeo.type !== "LineString" || !Array.isArray(routeGeo.coordinates)) return null;
+async function splitRouteByCountry(routeGeo){
+  if(!routeGeo || routeGeo.type !== "LineString" || !Array.isArray(routeGeo.coordinates)) return null;
 
-    await loadCountriesGeo();
+  await loadCountriesGeo();
 
-    const coordsRaw = routeGeo.coordinates; // [ [lon,lat], ... ]
-    const coords = downsampleLineString(coordsRaw, 700);
-    if(coords.length < 2) return null;
+  const coordsRaw = routeGeo.coordinates; // [ [lon,lat], ... ]
+  const coords = downsampleLineString(coordsRaw, 700);
+  if(coords.length < 2) return null;
 
-    const kmByCC = {};
-    for(let i=1;i<coords.length;i++){
-      const [lon1,lat1] = coords[i-1];
-      const [lon2,lat2] = coords[i];
-      const segKm = haversineKm(lat1,lon1,lat2,lon2);
-      if(segKm <= 0) continue;
+  const kmByCC = {};
 
-      const midLon = (lon1+lon2)/2;
-      const midLat = (lat1+lat2)/2;
+  for(let i=1;i<coords.length;i++){
+    const [lon1,lat1] = coords[i-1];
+    const [lon2,lat2] = coords[i];
+    const segKm = haversineKm(lat1,lon1,lat2,lon2);
+    if(segKm <= 0) continue;
 
-      const cc = countryForLonLat(midLon, midLat) || "—";
-      kmByCC[cc] = (kmByCC[cc] || 0) + segKm;
+    const midLon = (lon1+lon2)/2;
+    const midLat = (lat1+lat2)/2;
+
+    let cc = countryForLonLat(midLon, midLat);
+
+    // Fallback 1: Start/Ende
+    if(!cc){
+      cc = countryForLonLat(lon1, lat1) || countryForLonLat(lon2, lat2);
     }
 
-    return kmByCC;
+    // Fallback 2: letztes Land merken
+    if(!cc){
+      cc = kmByCC.__lastCC || "—";
+    } else {
+      kmByCC.__lastCC = cc;
+    }
+
+    kmByCC[cc] = (kmByCC[cc] || 0) + segKm;
   }
+
+  delete kmByCC.__lastCC;
+  return kmByCC;
+}
 
   // ---------- Toll/Vignette Model (deins, aber sauber getrennt) ----------
   // Hinweis: Das sind weiterhin Modellwerte, aber Split ist jetzt "echt".
@@ -1220,6 +1235,7 @@ async function getRouteOSRM(lat1, lon1, lat2, lon2){
 
 </body>
 </html>
+
 
 
 
