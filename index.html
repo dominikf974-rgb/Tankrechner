@@ -372,554 +372,781 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="/prices/country-prices.js"></script>
 
-  <!-- ✅ Rechner + Map Script (dein Original) -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const API_BASE = "https://soft-pine-874.dominikf974.workers.dev";
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const API_BASE = "https://soft-pine-874.dominikf974.workers.dev";
+  const CURRENCY_SYMBOL = '€';
 
-      const CURRENCY_SYMBOL = '€';
-      const parse = v => (v === '' || v == null) ? NaN : Number(String(v).replace(',', '.'));
-      const fmt = n => (Number.isFinite(n) ? Number.parseFloat(n.toFixed(2)).toFixed(2) : '0.00');
-      const fmtMoney = n => CURRENCY_SYMBOL + fmt(n).replace('.', ',');
-      const fmtL = n => fmt(n).replace('.', ',');
+  const parse = v => (v === '' || v == null) ? NaN : Number(String(v).replace(',', '.'));
+  const fmt = n => (Number.isFinite(n) ? Number.parseFloat(n.toFixed(2)).toFixed(2) : '0.00');
+  const fmtMoney = n => CURRENCY_SYMBOL + fmt(n).replace('.', ',');
+  const fmtL = n => fmt(n).replace('.', ',');
 
-      function fetchWithTimeout(url, ms=12000){
-        const controller = new AbortController();
-        const t = setTimeout(() => controller.abort(), ms);
-        return fetch(url, { signal: controller.signal }).finally(() => clearTimeout(t));
-      }
+  function fetchWithTimeout(url, ms=12000){
+    const controller = new AbortController();
+    const t = setTimeout(() => controller.abort(), ms);
+    return fetch(url, { signal: controller.signal }).finally(() => clearTimeout(t));
+  }
 
-      let isRouting = false;
-      let lastRouteClick = 0;
+  // ---------- UI refs ----------
+  const kmEl = document.getElementById('km');
+  const consumptionEl = document.getElementById('consumption');
+  const priceEl = document.getElementById('price');
+  const passengersEl = document.getElementById('passengers');
+  const fuelTypeEl = document.getElementById('fuel-type');
 
-      const geoCache = new Map();
-      const revCache = new Map();
-      const routeCache = new Map();
+  const litersEl = document.getElementById('liters');
+  const costFuelEl = document.getElementById('cost-fuel');
+  const costRunningEl = document.getElementById('cost-running');
+  const costTotalEl = document.getElementById('cost-total');
+  const costPersonEl = document.getElementById('cost-person');
+  const avg100El = document.getElementById('avg100');
+  const runningEstEl = document.getElementById('running-est');
 
-      const cacheKeyLL = (lat,lon) => `${lat.toFixed(5)},${lon.toFixed(5)}`;
-      const cacheKeyRoute = (a,b) => `${cacheKeyLL(a.lat,a.lon)}|${cacheKeyLL(b.lat,b.lon)}`;
+  const avgUnleaded91El = document.getElementById('avg-unleaded91');
+  const avgUnleaded95El = document.getElementById('avg-unleaded95');
+  const avgDieselEl = document.getElementById('avg-diesel');
 
-      const kmEl = document.getElementById('km');
-      const consumptionEl = document.getElementById('consumption');
-      const priceEl = document.getElementById('price');
-      const passengersEl = document.getElementById('passengers');
-      const fuelTypeEl = document.getElementById('fuel-type');
+  const tollInfoEl = document.getElementById('toll-info');
+  const priceInfoEl = document.getElementById('price-info');
 
-      const litersEl = document.getElementById('liters');
-      const costFuelEl = document.getElementById('cost-fuel');
-      const costRunningEl = document.getElementById('cost-running');
-      const costTotalEl = document.getElementById('cost-total');
-      const costPersonEl = document.getElementById('cost-person');
-      const avg100El = document.getElementById('avg100');
-      const runningEstEl = document.getElementById('running-est');
+  const placeFromEl = document.getElementById('place-from');
+  const placeToEl = document.getElementById('place-to');
 
-      const avgUnleaded91El = document.getElementById('avg-unleaded91');
-      const avgUnleaded95El = document.getElementById('avg-unleaded95');
-      const avgDieselEl = document.getElementById('avg-diesel');
+  const badgeEl = document.getElementById('country-badge');
+  const priceModeWrap = document.getElementById('price-mode');
 
-      const tollInfoEl = document.getElementById('toll-info');
-      const priceInfoEl = document.getElementById('price-info');
+  const tollTotalEl = document.getElementById('toll-total');
+  const vignetteTotalEl = document.getElementById('vignette-total');
+  const tollVignetteSumEl = document.getElementById('toll-vignette-sum');
+  const tollBreakdownEl = document.getElementById('toll-breakdown');
 
-      const placeFromEl = document.getElementById('place-from');
-      const placeToEl = document.getElementById('place-to');
+  const co2TotalEl = document.getElementById('co2-total');
+  const co2PerPersonEl = document.getElementById('co2-per-person');
+  const cmpCarEl = document.getElementById('cmp-car');
+  const cmpRailEl = document.getElementById('cmp-rail');
+  const cmpFlightEl = document.getElementById('cmp-flight');
 
-      const badgeEl = document.getElementById('country-badge');
-      const priceModeWrap = document.getElementById('price-mode');
+  // ---------- State ----------
+  let isRouting = false;
+  let lastRouteClick = 0;
 
-      const tollTotalEl = document.getElementById('toll-total');
-      const vignetteTotalEl = document.getElementById('vignette-total');
-      const tollVignetteSumEl = document.getElementById('toll-vignette-sum');
-      const tollBreakdownEl = document.getElementById('toll-breakdown');
+  const geoCache = new Map();
+  const revCache = new Map();
+  const routeCache = new Map();
 
-      const co2TotalEl = document.getElementById('co2-total');
-      const co2PerPersonEl = document.getElementById('co2-per-person');
-      const cmpCarEl = document.getElementById('cmp-car');
-      const cmpRailEl = document.getElementById('cmp-rail');
-      const cmpFlightEl = document.getElementById('cmp-flight');
+  const cacheKeyLL = (lat,lon) => `${lat.toFixed(5)},${lon.toFixed(5)}`;
+  const cacheKeyRoute = (a,b) => `${cacheKeyLL(a.lat,a.lon)}|${cacheKeyLL(b.lat,b.lon)}`;
 
-      const countryPrices = window.COUNTRY_FUEL_PRICES_EUR || null;
-      const priceStand = window.COUNTRY_FUEL_PRICES_STAND || '';
-      const fallbackPrices = { unleaded91: 1.50, unleaded95: 1.60, diesel: 1.45, name:'Fallback' };
-      let fuelPrices = { ...fallbackPrices };
-      let userEditedPrice = false;
+  let startCC = null, destCC = null;
+  let routeKm = 0;
 
-      let startCC = null, destCC = null;
-      let routeKm = 0;
-      let lastTollTotal = 0;
-      let lastVignetteTotal = 0;
+  let lastTollTotal = 0;
+  let lastVignetteTotal = 0;
 
-      function renderAvgPrices(){
-        avgUnleaded91El.textContent = fmtMoney(fuelPrices.unleaded91);
-        avgUnleaded95El.textContent = fmtMoney(fuelPrices.unleaded95);
-        avgDieselEl.textContent = fmtMoney(fuelPrices.diesel);
-      }
-      renderAvgPrices();
+  // ✅ NEU: echte Route-Geometrie + Länder-Split Cache
+  let lastRouteGeo = null;              // OSRM geometry (LineString)
+  let lastKmByCountry = null;           // { DE: 123.4, FR: 56.7, ... }
+  let tollRenderSeq = 0;                // verhindert race conditions
 
-      function getMode(){
-        const el = document.querySelector('input[name="priceMode"]:checked');
-        return el ? el.value : 'avg';
-      }
+  // ---------- Prices ----------
+  const countryPrices = window.COUNTRY_FUEL_PRICES_EUR || null;
+  const priceStand = window.COUNTRY_FUEL_PRICES_STAND || '';
+  const fallbackPrices = { unleaded91: 1.50, unleaded95: 1.60, diesel: 1.45, name:'Fallback' };
 
-      function getCountryName(cc){
-        if(!cc) return '—';
-        const e = countryPrices && countryPrices[cc];
-        return (e && e.name) ? e.name : cc;
-      }
+  let fuelPrices = { ...fallbackPrices };
+  let userEditedPrice = false;
 
-      async function pricesForCountryStatic(cc, lat=null, lon=null){
-        cc = (cc || "").toUpperCase();
+  function renderAvgPrices(){
+    avgUnleaded91El.textContent = fmtMoney(fuelPrices.unleaded91);
+    avgUnleaded95El.textContent = fmtMoney(fuelPrices.unleaded95);
+    avgDieselEl.textContent = fmtMoney(fuelPrices.diesel);
+  }
+  renderAvgPrices();
 
-        if(cc === "DE" && lat != null && lon != null){
-          try{
-            const r = await fetchWithTimeout(`${API_BASE}/api/tank?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&rad=6&type=all`, 12000);
-            if(r.ok){
-              const j = await r.json();
-              if(j && j.ok && Array.isArray(j.stations) && j.stations.length){
-                let e10=null, e5=null, diesel=null;
-                j.stations.forEach(s=>{
-                  if(typeof s.e10==="number")   e10   = (e10==null)   ? s.e10   : Math.min(e10, s.e10);
-                  if(typeof s.e5==="number")    e5    = (e5==null)    ? s.e5    : Math.min(e5, s.e5);
-                  if(typeof s.diesel==="number")diesel= (diesel==null)? s.diesel: Math.min(diesel, s.diesel);
-                });
+  function getMode(){
+    const el = document.querySelector('input[name="priceMode"]:checked');
+    return el ? el.value : 'avg';
+  }
 
-                const stat = (countryPrices && countryPrices[cc]) ? countryPrices[cc] : fallbackPrices;
-                return {
-                  unleaded91: (e10   != null ? e10   : stat.unleaded91),
-                  unleaded95: (e5    != null ? e5    : stat.unleaded95),
-                  diesel:     (diesel!= null ? diesel: stat.diesel),
-                  name: "Deutschland (Live)"
-                };
-              }
-            }
-          }catch(e){}
-        }
+  function getCountryName(cc){
+    if(!cc) return '—';
+    const e = countryPrices && countryPrices[cc];
+    return (e && e.name) ? e.name : cc;
+  }
 
-        const e = countryPrices && countryPrices[cc];
-        if(e) return { ...e };
-        return { ...fallbackPrices };
-      }
+  async function pricesForCountryStatic(cc, lat=null, lon=null){
+    cc = (cc || "").toUpperCase();
 
-      function mixPrices(a, b){
-        return {
-          unleaded91: (a.unleaded91 + b.unleaded91) / 2,
-          unleaded95: (a.unleaded95 + b.unleaded95) / 2,
-          diesel:     (a.diesel + b.diesel) / 2,
-          name: `${a.name} / ${b.name}`
-        };
-      }
+    // DE Live: Tankerkönig Proxy
+    if(cc === "DE" && lat != null && lon != null){
+      try{
+        const r = await fetchWithTimeout(`${API_BASE}/api/tank?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&rad=6&type=all`, 12000);
+        if(r.ok){
+          const j = await r.json();
+          if(j && j.ok && Array.isArray(j.stations) && j.stations.length){
+            let e10=null, e5=null, diesel=null;
+            j.stations.forEach(s=>{
+              if(typeof s.e10==="number")   e10   = (e10==null)   ? s.e10   : Math.min(e10, s.e10);
+              if(typeof s.e5==="number")    e5    = (e5==null)    ? s.e5    : Math.min(e5, s.e5);
+              if(typeof s.diesel==="number")diesel= (diesel==null)? s.diesel: Math.min(diesel, s.diesel);
+            });
 
-      async function applyDetectedPrices(latA=null, lonA=null, latB=null, lonB=null){
-        const isCross = (startCC && destCC && startCC !== destCC);
-        const mode = isCross ? getMode() : 'start';
-
-        const startP = await pricesForCountryStatic(startCC, latA, lonA);
-        const destP  = await pricesForCountryStatic(destCC,  latB, lonB);
-
-        let chosen, note;
-        if(isCross){
-          if(mode === 'start'){ chosen = startP; note = `Startland (${startP.name})`; }
-          else if(mode === 'dest'){ chosen = destP; note = `Zielland (${destP.name})`; }
-          else { chosen = mixPrices(startP, destP); note = `Mittelwert (${startP.name} ↔ ${destP.name})`; }
-        }else{
-          chosen = startP;
-          note = startCC ? `Land: ${chosen.name}` : 'Land: —';
-        }
-
-        fuelPrices = { unleaded91: chosen.unleaded91, unleaded95: chosen.unleaded95, diesel: chosen.diesel };
-        renderAvgPrices();
-
-        if(!userEditedPrice){
-          priceEl.value = fuelPrices[fuelTypeEl.value] ?? '';
-          const standTxt = priceStand ? ` (Stand: ${priceStand})` : '';
-          const sourceTxt = (startCC === "DE" && chosen.name.includes("Live"))
-            ? "Quelle: Tankerkönig (Live, DE) – sonst Länderpreise (statisch)"
-            : "Quelle: Länderpreise (statisch)";
-          priceInfoEl.textContent = `${note}. ${sourceTxt}${standTxt}. Du kannst den Preis ändern.`;
-          priceInfoEl.classList.remove('error');
-        }
-      }
-
-      fuelTypeEl.addEventListener('change', () => {
-        if(!userEditedPrice){
-          priceEl.value = fuelPrices[fuelTypeEl.value] ?? '';
-        }
-      });
-
-      priceEl.addEventListener('input', () => {
-        userEditedPrice = true;
-        priceInfoEl.textContent = '';
-        priceInfoEl.classList.remove('error');
-      });
-
-      document.getElementById('btn-reset-price').addEventListener('click', async () => {
-        userEditedPrice = false;
-        await applyDetectedPrices();
-      });
-
-      document.querySelectorAll('input[name="priceMode"]').forEach(r => {
-        r.addEventListener('change', async () => {
-          if(!userEditedPrice && startCC && destCC) await applyDetectedPrices();
-          renderTollBreakdown();
-        });
-      });
-
-      const map = L.map('map', { attributionControl:true }).setView([51.1657, 10.4515], 5);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom:19,
-        attribution:'&copy; OpenStreetMap-Mitwirkende'
-      }).addTo(map);
-
-      function safeInvalidate(){ try { map.invalidateSize(); } catch(e){} }
-      setTimeout(safeInvalidate, 80);
-      setTimeout(safeInvalidate, 200);
-      setTimeout(safeInvalidate, 650);
-      window.addEventListener('resize', () => setTimeout(safeInvalidate, 180));
-      window.addEventListener('orientationchange', () => setTimeout(safeInvalidate, 260));
-
-      const mapEl = document.getElementById('map');
-      if (window.ResizeObserver && mapEl) {
-        const ro = new ResizeObserver(() => safeInvalidate());
-        ro.observe(mapEl);
-      }
-
-      let markers = [];
-      let routeLayer = null;
-
-      function clearMarkers(){ markers.forEach(m=>map.removeLayer(m)); markers=[]; }
-      function clearRoute(){ if(routeLayer){ map.removeLayer(routeLayer); routeLayer=null; } }
-      function addMarker(lat, lon, label){
-        const m = L.marker([lat, lon]).addTo(map).bindPopup(label || '');
-        markers.push(m);
-        return m;
-      }
-
-  async function geocode(q){
-  const key = q.trim().toLowerCase();
-  if(geoCache.has(key)) return geoCache.get(key);
-
-  const url = API_BASE + '/api/geocode?q=' + encodeURIComponent(q);
-  const res = await fetchWithTimeout(url, 12000);
-  if(!res.ok) throw new Error('Geocoding fehlgeschlagen');
-
-  const data = await res.json();
-  if(!Array.isArray(data) || !data.length) return null;
-
-  // Bevorzugt: alles außer reines Land (country)
-  const pick =
-    data.find(x => x?.addresstype && x.addresstype !== "country") ||
-    data.find(x => x?.type && x.type !== "country") ||
-    data[0];
-
-  const isCountry = (pick?.addresstype === "country" || pick?.type === "country");
-  if(isCountry) return null; // -> wird unten als "Ort nicht gefunden" behandelt
-
-  const out = { lat:+pick.lat, lon:+pick.lon, name:pick.display_name };
-  geoCache.set(key, out);
-  return out;
-}
-
-      async function reverseCountryCode(lat, lon){
-        const k = cacheKeyLL(lat,lon);
-        if(revCache.has(k)) return revCache.get(k);
-
-        const url = API_BASE + `/api/reverse?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`;
-        const res = await fetchWithTimeout(url, 12000);
-        if(!res.ok) return null;
-        const j = await res.json();
-        const cc = j?.address?.country_code ? String(j.address.country_code).toUpperCase() : null;
-        revCache.set(k, cc);
-        return cc;
-      }
-
-      async function getRouteOSRM(lat1, lon1, lat2, lon2){
-        const a = {lat:lat1, lon:lon1}, b = {lat:lat2, lon:lon2};
-        const ck = cacheKeyRoute(a,b);
-        if(routeCache.has(ck)) return routeCache.get(ck);
-
-        const url =
-          API_BASE + `/api/route?lat1=${encodeURIComponent(lat1)}&lon1=${encodeURIComponent(lon1)}` +
-          `&lat2=${encodeURIComponent(lat2)}&lon2=${encodeURIComponent(lon2)}`;
-
-        const res = await fetchWithTimeout(url, 15000);
-        if(!res.ok) throw new Error('OSRM request failed');
-        const j = await res.json();
-        if(!j || j.code !== 'Ok' || !j.routes || !j.routes.length) throw new Error('OSRM no route');
-
-        const r = j.routes[0];
-        const distKm = (r.distance || 0) / 1000;
-
-        clearRoute();
-        routeLayer = L.geoJSON(r.geometry, { style: { weight: 5, opacity: 0.9 } }).addTo(map);
-        map.fitBounds(routeLayer.getBounds(), { padding:[60,60] });
-
-        setTimeout(safeInvalidate, 60);
-        setTimeout(safeInvalidate, 220);
-
-        routeCache.set(ck, distKm);
-        return distKm;
-      }
-
-      const tollPer100km = {
-        DE:0, AT:6, CH:4, FR:10, IT:9, ES:10, NL:0, BE:0,
-        PL:6, CZ:4, SK:4, HU:5, SI:5, HR:5, RO:3, BG:3,
-        US:3, CA:2, GB:0, AU:5, RU:1
-      };
-      const vignetteFlat = {
-        AT: 11.50, CH: 40.00, CZ: 12.00, SK: 12.00, HU: 16.00, SI: 16.00, RO: 3.50, BG: 7.50
-      };
-
-      function estimateTollForCountry(cc, km){
-        const rate = (tollPer100km[cc] ?? 5);
-        return Math.round(((km / 100) * rate) * 100) / 100;
-      }
-      function estimateVignetteForCountry(cc){
-        const v = vignetteFlat[cc];
-        return Number.isFinite(v) ? v : 0;
-      }
-
-      function renderTollBreakdown(){
-        if(!routeKm || !startCC){
-          tollTotalEl.textContent = '—';
-          vignetteTotalEl.textContent = '—';
-          tollVignetteSumEl.textContent = '—';
-          tollBreakdownEl.textContent = 'Gib Start/Ziel ein und berechne die Strecke.';
-          return;
-        }
-
-        const isCross = (startCC && destCC && startCC !== destCC);
-        const parts = [];
-        if(!isCross){
-          parts.push({ cc: startCC, km: routeKm });
-        } else {
-          const half = routeKm / 2;
-          parts.push({ cc: startCC, km: half });
-          parts.push({ cc: destCC, km: routeKm - half });
-        }
-
-        let tollSum = 0;
-        let vignetteSum = 0;
-        const seen = new Set();
-
-        const lines = parts.map(p => {
-          const name = getCountryName(p.cc);
-          const toll = estimateTollForCountry(p.cc, p.km);
-          tollSum += toll;
-
-          if(!seen.has(p.cc)){
-            vignetteSum += estimateVignetteForCountry(p.cc);
-            seen.add(p.cc);
+            const stat = (countryPrices && countryPrices[cc]) ? countryPrices[cc] : fallbackPrices;
+            return {
+              unleaded91: (e10   != null ? e10   : stat.unleaded91),
+              unleaded95: (e5    != null ? e5    : stat.unleaded95),
+              diesel:     (diesel!= null ? diesel: stat.diesel),
+              name: "Deutschland (Live)"
+            };
           }
-
-          const rate = (tollPer100km[p.cc] ?? 5);
-          return `• ${name} (${p.cc}): ${fmtL(p.km)} km × ${fmt(rate).replace('.', ',')} €/100 km ≈ <b>${fmtMoney(toll)}</b>`;
-        });
-
-        lastTollTotal = tollSum;
-        lastVignetteTotal = vignetteSum;
-
-        tollTotalEl.textContent = fmtMoney(tollSum);
-        vignetteTotalEl.textContent = fmtMoney(vignetteSum);
-        tollVignetteSumEl.textContent = fmtMoney(tollSum + vignetteSum);
-
-        tollBreakdownEl.innerHTML =
-          lines.join('<br>') +
-          (vignetteSum > 0 ? `<br><br><span class="small">Vignetten (fix, je Land einmal): ${fmtMoney(vignetteSum)}</span>` : '') +
-          `<br><span class="small">Hinweis: Länder-Split ist eine schnelle Schätzung (bei Länderwechsel 50/50).</span>`;
-      }
-
-      const btnGeocode = document.getElementById('btn-geocode');
-
-      btnGeocode.addEventListener('click', async () => {
-        const now = Date.now();
-        if(isRouting) return;
-        if(now - lastRouteClick < 900) return;
-        lastRouteClick = now;
-
-        const from = placeFromEl.value.trim();
-        const to = placeToEl.value.trim();
-
-        if(!from || !to){
-          tollInfoEl.textContent = 'Bitte Start und Ziel eingeben.';
-          tollInfoEl.classList.add('error');
-          return;
         }
+      }catch(e){}
+    }
 
-        try{
-          isRouting = true;
-          btnGeocode.disabled = true;
+    const e = countryPrices && countryPrices[cc];
+    if(e) return { ...e };
+    return { ...fallbackPrices };
+  }
 
-          tollInfoEl.textContent = 'Route wird berechnet…';
-          tollInfoEl.classList.remove('error');
+  function mixPrices(a, b){
+    return {
+      unleaded91: (a.unleaded91 + b.unleaded91) / 2,
+      unleaded95: (a.unleaded95 + b.unleaded95) / 2,
+      diesel:     (a.diesel + b.diesel) / 2,
+      name: `${a.name} / ${b.name}`
+    };
+  }
 
-          const a = await geocode(from);
-          const b = await geocode(to);
-          if(!a || !b){
-            tollInfoEl.textContent = 'Bitte Stadt/Ort + Land eingeben (z. B. "Paris, Frankreich"), nicht nur das Land.';
-            tollInfoEl.classList.add('error');
-            return;
-          }
+  async function applyDetectedPrices(latA=null, lonA=null, latB=null, lonB=null){
+    const isCross = (startCC && destCC && startCC !== destCC);
+    const mode = isCross ? getMode() : 'start';
 
-          startCC = await reverseCountryCode(a.lat, a.lon);
-          destCC  = await reverseCountryCode(b.lat, b.lon);
+    const startP = await pricesForCountryStatic(startCC, latA, lonA);
+    const destP  = await pricesForCountryStatic(destCC,  latB, lonB);
 
-          const startName = getCountryName(startCC);
-          const destName  = getCountryName(destCC);
+    let chosen, note;
+    if(isCross){
+      if(mode === 'start'){ chosen = startP; note = `Startland (${startP.name})`; }
+      else if(mode === 'dest'){ chosen = destP; note = `Zielland (${destP.name})`; }
+      else { chosen = mixPrices(startP, destP); note = `Mittelwert (${startP.name} ↔ ${destP.name})`; }
+    }else{
+      chosen = startP;
+      note = startCC ? `Land: ${chosen.name}` : 'Land: —';
+    }
 
-          badgeEl.innerHTML =
-            `Erkannt: <b>Start</b> ${startName} (${startCC||'—'}), <b>Ziel</b> ${destName} (${destCC||'—'})` +
-            (!countryPrices ? `<br><span class="error">⚠ Preisdatei fehlt: prices/country-prices.js</span>` : '');
+    fuelPrices = { unleaded91: chosen.unleaded91, unleaded95: chosen.unleaded95, diesel: chosen.diesel };
+    renderAvgPrices();
 
-          if(startCC && destCC && startCC !== destCC) priceModeWrap.style.display = 'block';
-          else priceModeWrap.style.display = 'none';
+    if(!userEditedPrice){
+      priceEl.value = fuelPrices[fuelTypeEl.value] ?? '';
+      const standTxt = priceStand ? ` (Stand: ${priceStand})` : '';
+      const sourceTxt = (startCC === "DE" && chosen.name.includes("Live"))
+        ? "Quelle: Tankerkönig (Live, DE) – sonst Länderpreise (statisch)"
+        : "Quelle: Länderpreise (statisch)";
+      priceInfoEl.textContent = `${note}. ${sourceTxt}${standTxt}. Du kannst den Preis ändern.`;
+      priceInfoEl.classList.remove('error');
+    }
+  }
 
-          clearMarkers();
-          addMarker(a.lat,a.lon,'Start: ' + a.name);
-          addMarker(b.lat,b.lon,'Ziel: ' + b.name);
+  fuelTypeEl.addEventListener('change', () => {
+    if(!userEditedPrice){
+      priceEl.value = fuelPrices[fuelTypeEl.value] ?? '';
+    }
+  });
 
-          routeKm = await getRouteOSRM(a.lat, a.lon, b.lat, b.lon);
-          kmEl.value = Math.round(routeKm*10)/10;
+  priceEl.addEventListener('input', () => {
+    userEditedPrice = true;
+    priceInfoEl.textContent = '';
+    priceInfoEl.classList.remove('error');
+  });
 
-          await applyDetectedPrices(a.lat, a.lon, b.lat, b.lon);
-          renderTollBreakdown();
+  document.getElementById('btn-reset-price').addEventListener('click', async () => {
+    userEditedPrice = false;
+    await applyDetectedPrices();
+  });
 
-          tollInfoEl.textContent = `Strecke: ${fmtL(routeKm)} km.`;
-          setTimeout(safeInvalidate, 120);
-
-        }catch(e){
-          tollInfoEl.textContent = 'Fehler bei Routing/Geocoding. Bitte Verbindung prüfen oder anderen Ort versuchen.';
-          tollInfoEl.classList.add('error');
-        }finally{
-          isRouting = false;
-          btnGeocode.disabled = false;
-        }
-      });
-
-      document.getElementById('btn-clearmap').addEventListener('click', () => {
-        clearMarkers(); clearRoute();
-        map.setView([51.1657, 10.4515], 5);
-
-        placeFromEl.value = '';
-        placeToEl.value = '';
-        badgeEl.textContent = '';
-        priceModeWrap.style.display = 'none';
-
-        startCC = null; destCC = null;
-        routeKm = 0;
-
-        tollInfoEl.textContent = '';
-        tollInfoEl.classList.remove('error');
-
-        lastTollTotal = 0;
-        lastVignetteTotal = 0;
-        renderTollBreakdown();
-
-        setTimeout(safeInvalidate, 120);
-      });
-
-      document.getElementById('km-inc').addEventListener('click', ()=>{ const cur = parse(kmEl.value)||0; kmEl.value = Math.round((cur+1)*10)/10; });
-      document.getElementById('km-dec').addEventListener('click', ()=>{ const cur = parse(kmEl.value)||0; kmEl.value = Math.max(0, Math.round((cur-1)*10)/10); });
-
-      function estimateRunningPer100(consumptionL100){
-        if(!Number.isFinite(consumptionL100) || consumptionL100 <= 0) return 12.0;
-        const est = 1.2 * consumptionL100 + 3.5;
-        return Math.max(5, Math.min(30, Math.round(est * 10) / 10));
-      }
-
-      document.getElementById('calc-fuel').addEventListener('click', () => {
-        const km = parse(kmEl.value);
-        const v  = parse(consumptionEl.value);
-        let p    = parse(priceEl.value);
-        const passengers = Math.max(1, Math.floor(parse(passengersEl.value) || 1));
-
-        if(!Number.isFinite(p)){
-          p = (fuelPrices[fuelTypeEl.value] ?? NaN);
-        }
-        if(Number.isNaN(km) || km <= 0 || Number.isNaN(v) || Number.isNaN(p)){
-          priceInfoEl.textContent = 'Bitte Strecke, Verbrauch und Preis korrekt eingeben.';
-          priceInfoEl.classList.add('error');
-          return;
-        }
-        priceInfoEl.textContent = '';
-        priceInfoEl.classList.remove('error');
-
-        const liters = (km * v) / 100;
-        const costFuel = liters * p;
-
-        const runningPer100Base = estimateRunningPer100(v);
-        const tollPer100 = (km > 0) ? ((lastTollTotal + lastVignetteTotal) / km * 100) : 0;
-        const runningPer100Total = runningPer100Base + (tollPer100 || 0);
-
-        const costRunning = (km * runningPer100Total) / 100;
-        const total = costFuel + costRunning;
-        const perPerson = total / passengers;
-        const avgPer100 = (total / km) * 100;
-
-        litersEl.textContent = fmtL(liters) + ' L';
-        costFuelEl.textContent = fmtMoney(costFuel);
-        costRunningEl.textContent = fmtMoney(costRunning);
-        costTotalEl.textContent = fmtMoney(total);
-        costPersonEl.textContent = fmtMoney(perPerson);
-        avg100El.textContent = fmtMoney(avgPer100) + ' /100km';
-        runningEstEl.textContent = fmtMoney(runningPer100Total) + ' /100km';
-
-        const isDiesel = (fuelTypeEl.value === 'diesel');
-        const co2FactorKgPerL = isDiesel ? 2.65 : 2.33;
-        const co2Kg = liters * co2FactorKgPerL;
-        const co2PerPersonKg = co2Kg / passengers;
-
-        co2TotalEl.textContent = fmt(co2Kg).replace('.', ',') + ' kg';
-        co2PerPersonEl.textContent = fmt(co2PerPersonKg).replace('.', ',') + ' kg';
-
-        const gPerKmCar = 164;
-        const gPerPkmRail = 26;
-        const gPerPkmFlight = 290;
-
-        const cmpCarKg = (km * gPerKmCar) / 1000;
-        const cmpRailKg = (km * passengers * gPerPkmRail) / 1000;
-        const cmpFlightKg = (km * passengers * gPerPkmFlight) / 1000;
-
-        cmpCarEl.textContent = fmt(cmpCarKg).replace('.', ',') + ' kg';
-        cmpRailEl.textContent = fmt(cmpRailKg).replace('.', ',') + ' kg';
-        cmpFlightEl.textContent = fmt(cmpFlightKg).replace('.', ',') + ' kg';
-      });
-
-      document.getElementById('reset-fuel').addEventListener('click', () => {
-        kmEl.value = '';
-        consumptionEl.value = '7.5';
-        priceEl.value = '';
-        passengersEl.value = 1;
-
-        litersEl.textContent='0,00 L';
-        costFuelEl.textContent='€0,00';
-        costRunningEl.textContent='€0,00';
-        costTotalEl.textContent='€0,00';
-        costPersonEl.textContent='€0,00';
-        avg100El.textContent='€0,00 /100km';
-        runningEstEl.textContent='—';
-
-        co2TotalEl.textContent='—';
-        co2PerPersonEl.textContent='—';
-        cmpCarEl.textContent='—';
-        cmpRailEl.textContent='—';
-        cmpFlightEl.textContent='—';
-
-        userEditedPrice = false;
-        fuelPrices = { ...fallbackPrices };
-        renderAvgPrices();
-
-        lastTollTotal = 0;
-        lastVignetteTotal = 0;
-        renderTollBreakdown();
-
-        clearMarkers();
-        clearRoute();
-        map.setView([51.1657, 10.4515],5);
-        setTimeout(safeInvalidate, 120);
-      });
-
+  document.querySelectorAll('input[name="priceMode"]').forEach(r => {
+    r.addEventListener('change', async () => {
+      if(!userEditedPrice && startCC && destCC) await applyDetectedPrices();
+      // Preis-Mode hat keinen Einfluss auf Maut, aber wir lassen es ruhig neu rendern:
       renderTollBreakdown();
     });
-  </script>
+  });
+
+  // ---------- Leaflet ----------
+  const map = L.map('map', { attributionControl:true }).setView([51.1657, 10.4515], 5);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom:19,
+    attribution:'&copy; OpenStreetMap-Mitwirkende'
+  }).addTo(map);
+
+  function safeInvalidate(){ try { map.invalidateSize(); } catch(e){} }
+  setTimeout(safeInvalidate, 80);
+  setTimeout(safeInvalidate, 200);
+  setTimeout(safeInvalidate, 650);
+  window.addEventListener('resize', () => setTimeout(safeInvalidate, 180));
+  window.addEventListener('orientationchange', () => setTimeout(safeInvalidate, 260));
+
+  const mapEl = document.getElementById('map');
+  if (window.ResizeObserver && mapEl) {
+    const ro = new ResizeObserver(() => safeInvalidate());
+    ro.observe(mapEl);
+  }
+
+  let markers = [];
+  let routeLayer = null;
+
+  function clearMarkers(){ markers.forEach(m=>map.removeLayer(m)); markers=[]; }
+  function clearRoute(){ if(routeLayer){ map.removeLayer(routeLayer); routeLayer=null; } }
+  function addMarker(lat, lon, label){
+    const m = L.marker([lat, lon]).addTo(map).bindPopup(label || '');
+    markers.push(m);
+    return m;
+  }
+
+  // ---------- Geocoding ----------
+  async function geocode(q){
+    const key = q.trim().toLowerCase();
+    if(geoCache.has(key)) return geoCache.get(key);
+
+    const url = API_BASE + '/api/geocode?q=' + encodeURIComponent(q);
+    const res = await fetchWithTimeout(url, 12000);
+    if(!res.ok) throw new Error('Geocoding fehlgeschlagen');
+
+    const data = await res.json();
+    if(!Array.isArray(data) || !data.length) return null;
+
+    // bevorzugt: alles außer reines Land
+    const pick =
+      data.find(x => x?.addresstype && x.addresstype !== "country") ||
+      data.find(x => x?.type && x.type !== "country") ||
+      data[0];
+
+    const isCountry = (pick?.addresstype === "country" || pick?.type === "country");
+    if(isCountry) return null;
+
+    const out = { lat:+pick.lat, lon:+pick.lon, name:pick.display_name };
+    geoCache.set(key, out);
+    return out;
+  }
+
+  async function reverseCountryCode(lat, lon){
+    const k = cacheKeyLL(lat,lon);
+    if(revCache.has(k)) return revCache.get(k);
+
+    const url = API_BASE + `/api/reverse?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`;
+    const res = await fetchWithTimeout(url, 12000);
+    if(!res.ok) return null;
+    const j = await res.json();
+    const cc = j?.address?.country_code ? String(j.address.country_code).toUpperCase() : null;
+    revCache.set(k, cc);
+    return cc;
+  }
+
+  async function getRouteOSRM(lat1, lon1, lat2, lon2){
+    const a = {lat:lat1, lon:lon1}, b = {lat:lat2, lon:lon2};
+    const ck = cacheKeyRoute(a,b);
+    if(routeCache.has(ck)) return routeCache.get(ck);
+
+    const url =
+      API_BASE + `/api/route?lat1=${encodeURIComponent(lat1)}&lon1=${encodeURIComponent(lon1)}` +
+      `&lat2=${encodeURIComponent(lat2)}&lon2=${encodeURIComponent(lon2)}`;
+
+    const res = await fetchWithTimeout(url, 15000);
+    if(!res.ok) throw new Error('OSRM request failed');
+
+    const j = await res.json();
+    if(!j || j.code !== 'Ok' || !j.routes || !j.routes.length) throw new Error('OSRM no route');
+
+    const r = j.routes[0];
+    const distKm = (r.distance || 0) / 1000;
+
+    // ✅ NEU: echte Geometry speichern (für Länder-Split)
+    lastRouteGeo = r.geometry;
+    lastKmByCountry = null; // invalidieren, weil neue Route
+
+    clearRoute();
+    routeLayer = L.geoJSON(r.geometry, { style: { weight: 5, opacity: 0.9 } }).addTo(map);
+    map.fitBounds(routeLayer.getBounds(), { padding:[60,60] });
+
+    setTimeout(safeInvalidate, 60);
+    setTimeout(safeInvalidate, 220);
+
+    routeCache.set(ck, distKm);
+    return distKm;
+  }
+
+  // ---------- "Super genau" Länder-Split ohne extra API ----------
+  // Du brauchst: /assets/geo/countries-lite.geojson (Features mit properties.ISO_A2)
+  let countriesGeo = null;
+  let countriesIndex = null; // [{ iso, geom, bbox }...]
+
+  function computeGeomBBox(geom){
+    // returns [minLon,minLat,maxLon,maxLat]
+    let minLon=Infinity, minLat=Infinity, maxLon=-Infinity, maxLat=-Infinity;
+
+    function scan(coords){
+      for(const c of coords){
+        if(typeof c[0] === "number" && typeof c[1] === "number"){
+          const lon=c[0], lat=c[1];
+          if(lon<minLon) minLon=lon;
+          if(lat<minLat) minLat=lat;
+          if(lon>maxLon) maxLon=lon;
+          if(lat>maxLat) maxLat=lat;
+        } else if(Array.isArray(c)){
+          scan(c);
+        }
+      }
+    }
+    scan(geom.coordinates);
+    if(!Number.isFinite(minLon)) return null;
+    return [minLon,minLat,maxLon,maxLat];
+  }
+
+  async function loadCountriesGeo(){
+    if(countriesGeo && countriesIndex) return { countriesGeo, countriesIndex };
+
+    // localStorage cache (optional)
+    const LS_KEY = 'countriesGeo_lite_v1';
+    const cached = localStorage.getItem(LS_KEY);
+    if(cached){
+      try{
+        countriesGeo = JSON.parse(cached);
+      }catch(e){
+        countriesGeo = null;
+      }
+    }
+
+    if(!countriesGeo){
+      const r = await fetch('/assets/geo/countries-lite.geojson', { cache: 'force-cache' });
+      if(!r.ok) throw new Error('countries-lite.geojson fehlt oder nicht ladbar');
+      countriesGeo = await r.json();
+      try{ localStorage.setItem(LS_KEY, JSON.stringify(countriesGeo)); }catch(e){}
+    }
+
+    // Index bauen (einmal)
+    const idx = [];
+    if(countriesGeo && Array.isArray(countriesGeo.features)){
+      for(const f of countriesGeo.features){
+        const iso = (f.properties?.ISO_A2 || f.properties?.iso_a2 || '').toUpperCase();
+        if(!iso || iso === '-99') continue;
+        const geom = f.geometry;
+        if(!geom) continue;
+        const bbox = f.bbox || computeGeomBBox(geom);
+        idx.push({ iso, geom, bbox });
+      }
+    }
+    countriesIndex = idx;
+    return { countriesGeo, countriesIndex };
+  }
+
+  function pointInRing(point, ring){
+    const x = point[0], y = point[1];
+    let inside = false;
+    for(let i=0, j=ring.length-1; i<ring.length; j=i++){
+      const xi = ring[i][0], yi = ring[i][1];
+      const xj = ring[j][0], yj = ring[j][1];
+      const intersect = ((yi > y) !== (yj > y)) &&
+        (x < (xj - xi) * (y - yi) / ((yj - yi) || 1e-12) + xi);
+      if(intersect) inside = !inside;
+    }
+    return inside;
+  }
+
+  function pointInPolygon(point, geom){
+    if(!geom) return false;
+
+    if(geom.type === "Polygon"){
+      const [outer, ...holes] = geom.coordinates;
+      if(!pointInRing(point, outer)) return false;
+      for(const h of holes) if(pointInRing(point,h)) return false;
+      return true;
+    }
+
+    if(geom.type === "MultiPolygon"){
+      for(const poly of geom.coordinates){
+        const [outer, ...holes] = poly;
+        if(!pointInRing(point, outer)) continue;
+        let inHole = false;
+        for(const h of holes){
+          if(pointInRing(point,h)){ inHole = true; break; }
+        }
+        if(!inHole) return true;
+      }
+      return false;
+    }
+    return false;
+  }
+
+  function countryForLonLat(lon, lat){
+    // nutzt Index (bbox -> polygon test)
+    if(!countriesIndex) return null;
+
+    for(const f of countriesIndex){
+      const bb = f.bbox;
+      if(bb){
+        if(lon < bb[0] || lon > bb[2] || lat < bb[1] || lat > bb[3]) continue;
+      }
+      if(pointInPolygon([lon,lat], f.geom)) return f.iso;
+    }
+    return null;
+  }
+
+  function haversineKm(lat1, lon1, lat2, lon2){
+    const R = 6371;
+    const toRad = d => d * Math.PI / 180;
+    const dLat = toRad(lat2-lat1);
+    const dLon = toRad(lon2-lon1);
+    const a =
+      Math.sin(dLat/2)**2 +
+      Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
+    return 2 * R * Math.asin(Math.sqrt(a));
+  }
+
+  function downsampleLineString(coords, maxPoints=700){
+    if(!coords || coords.length <= maxPoints) return coords;
+    const step = Math.ceil(coords.length / maxPoints);
+    const out = [];
+    for(let i=0;i<coords.length;i+=step) out.push(coords[i]);
+    if(out[out.length-1] !== coords[coords.length-1]) out.push(coords[coords.length-1]);
+    return out;
+  }
+
+  async function splitRouteByCountry(routeGeo){
+    if(!routeGeo || routeGeo.type !== "LineString" || !Array.isArray(routeGeo.coordinates)) return null;
+
+    await loadCountriesGeo();
+
+    const coordsRaw = routeGeo.coordinates; // [ [lon,lat], ... ]
+    const coords = downsampleLineString(coordsRaw, 700);
+    if(coords.length < 2) return null;
+
+    const kmByCC = {};
+    for(let i=1;i<coords.length;i++){
+      const [lon1,lat1] = coords[i-1];
+      const [lon2,lat2] = coords[i];
+      const segKm = haversineKm(lat1,lon1,lat2,lon2);
+      if(segKm <= 0) continue;
+
+      const midLon = (lon1+lon2)/2;
+      const midLat = (lat1+lat2)/2;
+
+      const cc = countryForLonLat(midLon, midLat) || "—";
+      kmByCC[cc] = (kmByCC[cc] || 0) + segKm;
+    }
+
+    return kmByCC;
+  }
+
+  // ---------- Toll/Vignette Model (deins, aber sauber getrennt) ----------
+  // Hinweis: Das sind weiterhin Modellwerte, aber Split ist jetzt "echt".
+  const tollPer100km = {
+    DE:0, AT:6, CH:4, FR:10, IT:9, ES:10, NL:0, BE:0,
+    PL:6, CZ:4, SK:4, HU:5, SI:5, HR:5, RO:3, BG:3,
+    US:3, CA:2, GB:0, AU:5, RU:1
+  };
+  const vignetteFlat = {
+    AT: 11.50, CH: 40.00, CZ: 12.00, SK: 12.00, HU: 16.00, SI: 16.00, RO: 3.50, BG: 7.50
+  };
+
+  function estimateTollForCountry(cc, km){
+    const rate = (tollPer100km[cc] ?? 5);
+    return Math.round(((km / 100) * rate) * 100) / 100;
+  }
+  function estimateVignetteForCountry(cc){
+    const v = vignetteFlat[cc];
+    return Number.isFinite(v) ? v : 0;
+  }
+
+  async function renderTollBreakdown(){
+    const mySeq = ++tollRenderSeq;
+
+    if(!routeKm || !lastRouteGeo){
+      tollTotalEl.textContent = '—';
+      vignetteTotalEl.textContent = '—';
+      tollVignetteSumEl.textContent = '—';
+      tollBreakdownEl.textContent = 'Gib Start/Ziel ein und berechne die Strecke.';
+      lastTollTotal = 0;
+      lastVignetteTotal = 0;
+      return;
+    }
+
+    // Split nur einmal pro Route berechnen (cached)
+    if(!lastKmByCountry){
+      tollBreakdownEl.innerHTML = '<span class="small">Länderanteile werden aus der Route berechnet…</span>';
+      try{
+        lastKmByCountry = await splitRouteByCountry(lastRouteGeo);
+      }catch(e){
+        lastKmByCountry = null;
+      }
+    }
+
+    // Falls inzwischen eine neue Route kam -> abbrechen
+    if(mySeq !== tollRenderSeq) return;
+
+    if(!lastKmByCountry){
+      tollTotalEl.textContent = '—';
+      vignetteTotalEl.textContent = '—';
+      tollVignetteSumEl.textContent = '—';
+      tollBreakdownEl.innerHTML = '<span class="small error">Länder-Split nicht verfügbar (countries-lite.geojson fehlt oder Format passt nicht).</span>';
+      lastTollTotal = 0;
+      lastVignetteTotal = 0;
+      return;
+    }
+
+    const parts = Object.entries(lastKmByCountry)
+      .filter(([cc,km]) => cc && cc !== "—" && km > 0.4) // kleine Reststücke raus
+      .sort((a,b)=> b[1]-a[1])
+      .map(([cc,km]) => ({cc, km}));
+
+    if(!parts.length){
+      tollBreakdownEl.innerHTML = '<span class="small">Keine Länder erkannt.</span>';
+      return;
+    }
+
+    let tollSum = 0;
+    let vignetteSum = 0;
+    const seen = new Set();
+
+    const lines = parts.map(p => {
+      const name = getCountryName(p.cc);
+      const toll = estimateTollForCountry(p.cc, p.km);
+      tollSum += toll;
+
+      if(!seen.has(p.cc)){
+        vignetteSum += estimateVignetteForCountry(p.cc);
+        seen.add(p.cc);
+      }
+
+      const rate = (tollPer100km[p.cc] ?? 5);
+      return `• ${name} (${p.cc}): ${fmtL(p.km)} km × ${fmt(rate).replace('.', ',')} €/100 km ≈ <b>${fmtMoney(toll)}</b>`;
+    });
+
+    lastTollTotal = tollSum;
+    lastVignetteTotal = vignetteSum;
+
+    tollTotalEl.textContent = fmtMoney(tollSum);
+    vignetteTotalEl.textContent = fmtMoney(vignetteSum);
+    tollVignetteSumEl.textContent = fmtMoney(tollSum + vignetteSum);
+
+    const vignetteLine = vignetteSum > 0
+      ? `<br><br><span class="small">Vignetten (fix, je Land einmal): <b>${fmtMoney(vignetteSum)}</b></span>`
+      : '';
+
+    tollBreakdownEl.innerHTML =
+      lines.join('<br>') +
+      vignetteLine +
+      `<br><span class="small">Hinweis: Länderanteile basieren auf der echten Straßenroute (OSRM) – ohne zusätzliche API-Abfragen.</span>`;
+  }
+
+  // ---------- Route Buttons ----------
+  const btnGeocode = document.getElementById('btn-geocode');
+
+  btnGeocode.addEventListener('click', async () => {
+    const now = Date.now();
+    if(isRouting) return;
+    if(now - lastRouteClick < 900) return;
+    lastRouteClick = now;
+
+    const from = placeFromEl.value.trim();
+    const to = placeToEl.value.trim();
+
+    if(!from || !to){
+      tollInfoEl.textContent = 'Bitte Start und Ziel eingeben.';
+      tollInfoEl.classList.add('error');
+      return;
+    }
+
+    try{
+      isRouting = true;
+      btnGeocode.disabled = true;
+
+      tollInfoEl.textContent = 'Route wird berechnet…';
+      tollInfoEl.classList.remove('error');
+
+      const a = await geocode(from);
+      const b = await geocode(to);
+      if(!a || !b){
+        tollInfoEl.textContent = 'Bitte Stadt/Ort + Land eingeben (z. B. "Paris, Frankreich"), nicht nur das Land.';
+        tollInfoEl.classList.add('error');
+        return;
+      }
+
+      startCC = await reverseCountryCode(a.lat, a.lon);
+      destCC  = await reverseCountryCode(b.lat, b.lon);
+
+      const startName = getCountryName(startCC);
+      const destName  = getCountryName(destCC);
+
+      badgeEl.innerHTML =
+        `Erkannt: <b>Start</b> ${startName} (${startCC||'—'}), <b>Ziel</b> ${destName} (${destCC||'—'})` +
+        (!countryPrices ? `<br><span class="error">⚠ Preisdatei fehlt: prices/country-prices.js</span>` : '');
+
+      if(startCC && destCC && startCC !== destCC) priceModeWrap.style.display = 'block';
+      else priceModeWrap.style.display = 'none';
+
+      clearMarkers();
+      addMarker(a.lat,a.lon,'Start: ' + a.name);
+      addMarker(b.lat,b.lon,'Ziel: ' + b.name);
+
+      routeKm = await getRouteOSRM(a.lat, a.lon, b.lat, b.lon);
+      kmEl.value = Math.round(routeKm*10)/10;
+
+      await applyDetectedPrices(a.lat, a.lon, b.lat, b.lon);
+      await renderTollBreakdown();
+
+      tollInfoEl.textContent = `Strecke: ${fmtL(routeKm)} km.`;
+      setTimeout(safeInvalidate, 120);
+
+    }catch(e){
+      tollInfoEl.textContent = 'Fehler bei Routing/Geocoding. Bitte Verbindung prüfen oder anderen Ort versuchen.';
+      tollInfoEl.classList.add('error');
+    }finally{
+      isRouting = false;
+      btnGeocode.disabled = false;
+    }
+  });
+
+  document.getElementById('btn-clearmap').addEventListener('click', () => {
+    clearMarkers(); clearRoute();
+    map.setView([51.1657, 10.4515], 5);
+
+    placeFromEl.value = '';
+    placeToEl.value = '';
+    badgeEl.textContent = '';
+    priceModeWrap.style.display = 'none';
+
+    startCC = null; destCC = null;
+    routeKm = 0;
+
+    lastRouteGeo = null;
+    lastKmByCountry = null;
+
+    tollInfoEl.textContent = '';
+    tollInfoEl.classList.remove('error');
+
+    lastTollTotal = 0;
+    lastVignetteTotal = 0;
+    renderTollBreakdown();
+
+    setTimeout(safeInvalidate, 120);
+  });
+
+  // Spinner km
+  document.getElementById('km-inc').addEventListener('click', ()=>{ const cur = parse(kmEl.value)||0; kmEl.value = Math.round((cur+1)*10)/10; });
+  document.getElementById('km-dec').addEventListener('click', ()=>{ const cur = parse(kmEl.value)||0; kmEl.value = Math.max(0, Math.round((cur-1)*10)/10); });
+
+  // ---------- Costs ----------
+  function estimateRunningPer100(consumptionL100){
+    if(!Number.isFinite(consumptionL100) || consumptionL100 <= 0) return 12.0;
+    const est = 1.2 * consumptionL100 + 3.5;
+    return Math.max(5, Math.min(30, Math.round(est * 10) / 10));
+  }
+
+  document.getElementById('calc-fuel').addEventListener('click', () => {
+    const km = parse(kmEl.value);
+    const v  = parse(consumptionEl.value);
+    let p    = parse(priceEl.value);
+    const passengers = Math.max(1, Math.floor(parse(passengersEl.value) || 1));
+
+    if(!Number.isFinite(p)){
+      p = (fuelPrices[fuelTypeEl.value] ?? NaN);
+    }
+    if(Number.isNaN(km) || km <= 0 || Number.isNaN(v) || Number.isNaN(p)){
+      priceInfoEl.textContent = 'Bitte Strecke, Verbrauch und Preis korrekt eingeben.';
+      priceInfoEl.classList.add('error');
+      return;
+    }
+    priceInfoEl.textContent = '';
+    priceInfoEl.classList.remove('error');
+
+    const liters = (km * v) / 100;
+    const costFuel = liters * p;
+
+    const runningPer100Base = estimateRunningPer100(v);
+    const tollPer100 = (km > 0) ? ((lastTollTotal + lastVignetteTotal) / km * 100) : 0;
+    const runningPer100Total = runningPer100Base + (tollPer100 || 0);
+
+    const costRunning = (km * runningPer100Total) / 100;
+    const total = costFuel + costRunning;
+    const perPerson = total / passengers;
+    const avgPer100 = (total / km) * 100;
+
+    litersEl.textContent = fmtL(liters) + ' L';
+    costFuelEl.textContent = fmtMoney(costFuel);
+    costRunningEl.textContent = fmtMoney(costRunning);
+    costTotalEl.textContent = fmtMoney(total);
+    costPersonEl.textContent = fmtMoney(perPerson);
+    avg100El.textContent = fmtMoney(avgPer100) + ' /100km';
+    runningEstEl.textContent = fmtMoney(runningPer100Total) + ' /100km';
+
+    // CO2
+    const isDiesel = (fuelTypeEl.value === 'diesel');
+    const co2FactorKgPerL = isDiesel ? 2.65 : 2.33;
+    const co2Kg = liters * co2FactorKgPerL;
+    const co2PerPersonKg = co2Kg / passengers;
+
+    co2TotalEl.textContent = fmt(co2Kg).replace('.', ',') + ' kg';
+    co2PerPersonEl.textContent = fmt(co2PerPersonKg).replace('.', ',') + ' kg';
+
+    const gPerKmCar = 164;
+    const gPerPkmRail = 26;
+    const gPerPkmFlight = 290;
+
+    const cmpCarKg = (km * gPerKmCar) / 1000;
+    const cmpRailKg = (km * passengers * gPerPkmRail) / 1000;
+    const cmpFlightKg = (km * passengers * gPerPkmFlight) / 1000;
+
+    cmpCarEl.textContent = fmt(cmpCarKg).replace('.', ',') + ' kg';
+    cmpRailEl.textContent = fmt(cmpRailKg).replace('.', ',') + ' kg';
+    cmpFlightEl.textContent = fmt(cmpFlightKg).replace('.', ',') + ' kg';
+  });
+
+  document.getElementById('reset-fuel').addEventListener('click', () => {
+    kmEl.value = '';
+    consumptionEl.value = '7.5';
+    priceEl.value = '';
+    passengersEl.value = 1;
+
+    litersEl.textContent='0,00 L';
+    costFuelEl.textContent='€0,00';
+    costRunningEl.textContent='€0,00';
+    costTotalEl.textContent='€0,00';
+    costPersonEl.textContent='€0,00';
+    avg100El.textContent='€0,00 /100km';
+    runningEstEl.textContent='—';
+
+    co2TotalEl.textContent='—';
+    co2PerPersonEl.textContent='—';
+    cmpCarEl.textContent='—';
+    cmpRailEl.textContent='—';
+    cmpFlightEl.textContent='—';
+
+    userEditedPrice = false;
+    fuelPrices = { ...fallbackPrices };
+    renderAvgPrices();
+
+    lastTollTotal = 0;
+    lastVignetteTotal = 0;
+
+    // Route-Daten zurücksetzen
+    lastRouteGeo = null;
+    lastKmByCountry = null;
+    routeKm = 0;
+
+    renderTollBreakdown();
+
+    clearMarkers();
+    clearRoute();
+    map.setView([51.1657, 10.4515],5);
+    setTimeout(safeInvalidate, 120);
+  });
+
+  // initial
+  renderTollBreakdown();
+});
+</script>
 
   <!-- ✅ Active Nav -->
   <script src="/assets/js/active-nav.js" defer></script>
@@ -989,6 +1216,7 @@
 
 </body>
 </html>
+
 
 
 
