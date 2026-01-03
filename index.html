@@ -820,41 +820,49 @@ async function getRouteOSRM(lat1, lon1, lat2, lon2){
 async function splitRouteByCountry(routeGeo){
   if(!routeGeo || routeGeo.type !== "LineString" || !Array.isArray(routeGeo.coordinates)) return null;
 
-  await loadCountriesGeo();
-
   const coordsRaw = routeGeo.coordinates; // [ [lon,lat], ... ]
-  const coords = downsampleLineString(coordsRaw, 700);
+  const coords = downsampleLineString(coordsRaw, 220); // weniger Punkte = weniger Arbeit
   if(coords.length < 2) return null;
 
-  const kmByCC = {};
+  // Max. wie viele Reverse-Abfragen pro Route (wichtig gegen Blocking)
+  const MAX_SAMPLES = 12;
 
-  for(let i=1;i<coords.length;i++){
-    const [lon1,lat1] = coords[i-1];
-    const [lon2,lat2] = coords[i];
-    const segKm = haversineKm(lat1,lon1,lat2,lon2);
+  // Wir samplen gleichmäßig über die Route:
+  // Indizes: 0 ... last
+  const sampleIdx = [];
+  for(let s=0; s<MAX_SAMPLES; s++){
+    const t = (MAX_SAMPLES === 1) ? 0 : s/(MAX_SAMPLES-1);
+    const idx = Math.round(t * (coords.length-1));
+    if(sampleIdx[sampleIdx.length-1] !== idx) sampleIdx.push(idx);
+  }
+
+  // Sample-Punkte als [lat,lon]
+  const samples = sampleIdx.map(i => {
+    const [lon,lat] = coords[i];
+    return { lat, lon };
+  });
+
+  // Reverse auf Samples (cache schützt)
+  const sampleCC = [];
+  for(const p of samples){
+    const cc = await reverseCountryCode(p.lat, p.lon);
+    sampleCC.push(cc || "—");
+  }
+
+  // km zwischen Samples berechnen und dem Land des jeweiligen Abschnitts zuordnen
+  const kmByCC = {};
+  for(let i=1;i<samples.length;i++){
+    const a = samples[i-1], b = samples[i];
+    const segKm = haversineKm(a.lat,a.lon,b.lat,b.lon);
     if(segKm <= 0) continue;
 
-    const midLon = (lon1+lon2)/2;
-    const midLat = (lat1+lat2)/2;
-
-    let cc = countryForLonLat(midLon, midLat);
-
-    // Fallback 1: Start/Ende
-    if(!cc){
-      cc = countryForLonLat(lon1, lat1) || countryForLonLat(lon2, lat2);
-    }
-
-    // Fallback 2: letztes Land merken
-    if(!cc){
-      cc = kmByCC.__lastCC || "—";
-    } else {
-      kmByCC.__lastCC = cc;
-    }
+    // Land für Abschnitt: wenn gleich -> easy, sonst nimm Zielpunkt-Land (meist Grenzübertritt)
+    const ccA = sampleCC[i-1], ccB = sampleCC[i];
+    const cc = (ccB && ccB !== "—") ? ccB : (ccA || "—");
 
     kmByCC[cc] = (kmByCC[cc] || 0) + segKm;
   }
 
-  delete kmByCC.__lastCC;
   return kmByCC;
 }
 
@@ -1235,6 +1243,7 @@ async function splitRouteByCountry(routeGeo){
 
 </body>
 </html>
+
 
 
 
